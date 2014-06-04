@@ -3,9 +3,8 @@
   "version": "0.0.1",
   "description": "Retext implementation of gemojis",
   "keywords": [
-    "porter",
-    "stemmer",
-    "retext"
+    "retext",
+    "gemoji"
   ],
   "author": "Titus Wormer <tituswormer@gmail.com>",
   "license": "MIT",
