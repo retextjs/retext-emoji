@@ -4,18 +4,8 @@
 
 ## Installation
 
-### With NPM
-
 ```sh
 $ npm install retext-emoji
-```
-
-### Git
-
-```sh
-git clone https://github.com/wooorm/retext-emoji.git
-cd retext-emoji
-npm install
 ```
 
 ## Usage & API
