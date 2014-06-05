@@ -26,7 +26,7 @@ var text = new Retext()
 
 - `options` (`Object`)
 - `options.convert` (`encode` or `decode`):
-  - When `encode`, converts named Gemojis into their unicode equivalent (e.g., `:pig:` to `🐷`);
+  - When `encode`, converts named Gemoji’s into their unicode equivalent (e.g., `:pig:` to `🐷`);
   - When `decode`, converts named unicode emojis into their named equivalent (e.g., `🐷` to `:pig:`);
 
 ## License
