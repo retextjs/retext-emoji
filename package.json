@@ -4,7 +4,8 @@
   "description": "Retext implementation of gemojis",
   "keywords": [
     "retext",
-    "gemoji"
+    "gemoji",
+    "emoji"
   ],
   "author": "Titus Wormer <tituswormer@gmail.com>",
   "license": "MIT",
