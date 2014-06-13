@@ -1,10 +1,11 @@
 'use strict';
 
-var emoji, Retext, AST, content, assert, fs, baseSentence,
-    fullStop, encodeRetext, decodeRetext, inputs, outputs,
-    unsupportedOutputs;
+var emoji, gemoji, Retext, AST, content, assert, fs, baseSentence,
+    fullStop, encodeRetext, decodeRetext, names, name, unicode, unsupported,
+    iterator;
 
 emoji = require('..');
+gemoji = require('gemoji');
 AST = require('retext-ast');
 content = require('retext-content');
 Retext = require('retext');
@@ -457,53 +458,43 @@ describe('emoji()', function () {
     });
 });
 
-inputs = fs.readFileSync('node_modules/gemoji/spec/input.txt', 'utf-8')
-    .split('\n');
-
-outputs = fs.readFileSync('node_modules/gemoji/spec/output.txt', 'utf-8')
-    .split('\n');
-
-// Convert escaped unicode characters into actual unicode characters.
-inputs = inputs.map(function (input) {
-    return input.replace(/\\u([\d\w]{4})/gi, function (match, $1) {
-        return String.fromCharCode(parseInt($1, 16));
-    });
-});
-
-// Remove last newline.
-inputs.pop();
-outputs.pop();
+names = gemoji.name;
 
 // Delete unsupported gemoji.
-delete inputs[outputs.indexOf('m')];
-delete inputs[outputs.indexOf('information_source')];
+unsupported = ['m', 'information_source'];
+iterator = -1;
 
-inputs.forEach(function (input, index) {
-    var output = ':' + outputs[index] + ':';
+while (unsupported[++iterator]) {
+    delete names[unsupported[iterator]];
+}
 
-    describe('emoji `' + output + '`', function () {
-        it('should decode the emoticon (from `' + input + '` to `' +
-            output + '`)', function () {
-                var source = baseSentence + input + fullStop,
+for (name in names) {
+    unicode = names[name];
+    name = ':' + name + ':';
+
+    describe('emoji `' + unicode + '`', function () {
+        it('should decode the emoticon (from `' + unicode + '` to `' +
+            name + '`)', function () {
+                var source = baseSentence + unicode + fullStop,
                     tree = decodeRetext.parse(source),
                     emoji = tree.head.head.tail.prev;
 
-                assert(tree.toString() === baseSentence + output + fullStop);
-                assert(emoji.toString() === output);
+                assert(tree.toString() === baseSentence + name + fullStop);
+                assert(emoji.toString() === name);
                 assert(emoji.type === emoji.PUNCTUATION_NODE);
             }
         );
 
-        it('should encode the emoticon (from `' + output + '` to `' + input +
+        it('should encode the emoticon (from `' + name + '` to `' + unicode +
             '`)', function () {
-                var source = baseSentence + output + fullStop,
+                var source = baseSentence + name + fullStop,
                     tree = encodeRetext.parse(source),
                     emoji = tree.head.head.tail.prev;
 
-                assert(tree.toString() === baseSentence + input + fullStop);
-                assert(emoji.toString() === input);
+                assert(tree.toString() === baseSentence + unicode + fullStop);
+                assert(emoji.toString() === unicode);
                 assert(emoji.type === emoji.PUNCTUATION_NODE);
             }
         );
     });
-});
+}
