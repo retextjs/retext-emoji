@@ -11,8 +11,14 @@ See [Browser Support](#browser-support) for more information (a.k.a. don’t wor
 
 ## Installation
 
+NPM:
 ```sh
 $ npm install retext-emoji
+```
+
+Component.js:
+```sh
+$ component install wooorm/retext-emoji
 ```
 
 ## Usage & API
