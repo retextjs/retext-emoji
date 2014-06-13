@@ -1,6 +1,6 @@
 # retext-emoji [![Build Status](https://travis-ci.org/wooorm/retext-emoji.png)](https://travis-ci.org/wooorm/retext-emoji)
 
-**[retext](https://github.com/wooorm/retext "Retext")** implementation of the textual parts of [Gemoji](https://github.com/github/gemoji "Github Emojis").
+**[retext](https://github.com/wooorm/retext "Retext")** encoding of gemoji short-codes to unicode, and decoding from unicode to short-code.
 
 ## Installation
 
@@ -26,8 +26,8 @@ var text = new Retext()
 
 - `options` (`Object`)
 - `options.convert` (`encode` or `decode`):
-  - When `encode`, converts named Gemoji’s into their unicode equivalent (e.g., `:pig:` to `🐷`);
-  - When `decode`, converts named unicode emojis into their named equivalent (e.g., `🐷` to `:pig:`);
+  - When `encode`, converts short-codes into their unicode equivalent (e.g., `:pig:` to `🐷`);
+  - When `decode`, converts unicode emojis into their short-code equivalent (e.g., `🐷` to `:pig:`);
 
 ## License
 
