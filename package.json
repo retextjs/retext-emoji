@@ -29,5 +29,21 @@
     "lint": "node_modules/.bin/eslint index.js --env node --env browser --rule 'quotes: [2, single]' && node_modules/.bin/eslint spec/retext-emoji.spec.js --env node --env mocha --rule 'quotes: [2, single], no-loop-func: false' && node_modules/.bin/jscs index.js spec/retext-emoji.spec.js --reporter=inline",
     "coverage": "node_modules/.bin/istanbul cover node_modules/.bin/_mocha -- -- spec spec/retext-emoji.spec.js",
     "make": "npm run-script lint && npm run-script coverage"
+  },
+  "testling": {
+    "files": "spec/retext-emoji.spec.js",
+    "harness": "mocha",
+    "browsers": [
+      "iexplore/latest",
+      "chrome/latest",
+      "chrome/canary",
+      "firefox/latest",
+      "firefox/nightly",
+      "opera/latest",
+      "opera/next",
+      "safari/latest",
+      "iphone/latest",
+      "android-browser/latest"
+    ]
   }
 }
