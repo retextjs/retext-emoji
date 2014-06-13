@@ -1,21 +1,32 @@
+'use strict';
 
-var emoji = require('..'),
-    Retext = require('retext'),
-    assert = require('assert'),
-    fs = require('fs'),
-    baseSentence = 'Lack of cross-device emoji support makes me ',
-    fullStop = '.',
-    encodeRetext, decodeRetext,
-    inputs, outputs,
-    unsupportedInput, unsupportedOuput;
+var emoji, Retext, AST, content, assert, fs, baseSentence,
+    fullStop, encodeRetext, decodeRetext, inputs, outputs,
+    unsupportedInputs, unsupportedOuputs, unsupportedInput, unsupportedOuput;
 
-encodeRetext = new Retext().use(emoji({
-    'convert' : 'encode'
-}));
+emoji = require('..');
+AST = require('retext-ast');
+content = require('retext-content');
+Retext = require('retext');
+assert = require('assert');
+fs = require('fs');
 
-decodeRetext = new Retext().use(emoji({
-    'convert' : 'decode'
-}));
+baseSentence = 'Lack of cross-device emoji support makes me ';
+fullStop = '.';
+
+encodeRetext = new Retext()
+    .use(AST)
+    .use(content)
+    .use(emoji({
+        'convert' : 'encode'
+    }));
+
+decodeRetext = new Retext()
+    .use(AST)
+    .use(content)
+    .use(emoji({
+        'convert' : 'decode'
+    }));
 
 describe('emoji()', function () {
     it('should be of type `function`', function () {
