@@ -11,11 +11,11 @@
   "license": "MIT",
   "devDependencies": {
     "complexity-report": "~1.0.3",
-    "istanbul": "~0.2.10",
+    "istanbul": "~0.2.11",
     "jscs": "^1.4.5",
     "jshint": "~2.5.1",
     "mocha": "~1.20.1",
-    "retext": "~0.0.4"
+    "retext": "~0.0.9"
   },
   "dependencies": {
     "gemoji": "~0.0.1"
