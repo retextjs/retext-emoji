@@ -16,7 +16,7 @@
     "mocha": "~1.20.1",
     "retext-ast": "~0.0.2",
     "retext-content": "~0.0.1",
-    "retext": "~0.0.9"
+    "retext": "~0.0.10"
   },
   "dependencies": {
     "gemoji": "~0.0.1"
