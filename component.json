@@ -9,7 +9,7 @@
     "emoji"
   ],
   "dependencies": {
-    "wooorm/gemoji": "^0.0.1"
+    "wooorm/gemoji": "^0.0.2"
   },
   "scripts" : [
     "index.js"
