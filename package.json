@@ -11,15 +11,15 @@
   "license": "MIT",
   "devDependencies": {
     "istanbul": "~0.2.11",
-    "jscs": "^1.5.1",
+    "jscs": "^1.5.3",
     "eslint": "^0.6.2",
     "mocha": "~1.20.1",
-    "retext-ast": "~0.0.2",
-    "retext-content": "~0.0.2",
-    "retext": "~0.0.11"
+    "retext-ast": "~0.0.3",
+    "retext-content": "~0.0.3",
+    "retext": "~0.0.12"
   },
   "dependencies": {
-    "gemoji": "~0.0.2"
+    "gemoji": "~0.0.3"
   },
   "repository": {
     "type": "git",
