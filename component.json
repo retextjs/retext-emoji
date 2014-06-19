@@ -2,7 +2,7 @@
   "name": "retext-emoji",
   "repository": "wooorm/retext-emoji",
   "description": "Retext implementation of gemojis",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "keywords": [
     "retext",
     "gemoji",
