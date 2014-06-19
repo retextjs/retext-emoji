@@ -10,7 +10,6 @@ AST = require('retext-ast');
 content = require('retext-content');
 Retext = require('retext');
 assert = require('assert');
-fs = require('fs');
 
 baseSentence = 'Lack of cross-device emoji support makes me ';
 fullStop = '.';
