@@ -1,4 +1,15 @@
 
+n.n.n / 2014-07-13
+==================
+
+ * Added changelog
+ * Fixed a grammar mistake
+ * Mentioned support emoji
+ * Refactor for latest retext changes (by hooking into the parser)
+ * Removed the consistent-return eslint-rule for API
+ * Updated gemoji, eslint, istanbul, retext, retext-ast, retext-content
+ * Removed functionality to browserify unit tests by default
+
 0.0.5 / 2014-06-19
 ==================
 
