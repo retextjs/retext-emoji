@@ -10,7 +10,6 @@
   "author": "Titus Wormer <tituswormer@gmail.com>",
   "license": "MIT",
   "devDependencies": {
-    "browserify": "^4.1.11",
     "eslint": "^0.6.2",
     "istanbul": "~0.2.11",
     "jscs": "^1.5.3",
@@ -33,10 +32,8 @@
     "lint-api": "node_modules/.bin/eslint index.js --env node --env browser --rule 'quotes: [2, single]'",
     "lint-test": "node_modules/.bin/eslint spec/retext-emoji.spec.js --env node --env mocha --rule 'quotes: [2, single], no-loop-func: false'",
     "lint-style": "node_modules/.bin/jscs index.js spec/retext-emoji.spec.js --reporter=inline",
-    "prepublish": "npm run-script build-browser",
-    "build-browser": "node_modules/.bin/browserify spec/retext-emoji.spec.js -o spec/browser.spec.js",
     "coverage": "node_modules/.bin/istanbul cover node_modules/.bin/_mocha -- -- spec/retext-emoji.spec.js",
-    "make": "npm run-script build-browser && npm run-script lint && npm run-script coverage"
+    "make": "npm run-script lint && npm run-script coverage"
   },
   "testling": {
     "files": "spec/retext-emoji.spec.js",
