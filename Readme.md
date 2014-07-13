@@ -40,7 +40,7 @@ new Retext()
 - `options` (`Object`)
 - `options.convert` (`encode` or `decode`):
   - When `encode`, converts short-codes into their unicode equivalent (e.g., `:pig:` to `🐷`);
-  - When `decode`, converts unicode emojis into their short-code equivalent (e.g., `🐷` to `:pig:`);
+  - When `decode`, converts unicode emoji into their short-code equivalent (e.g., `🐷` to `:pig:`);
 
 ## Supported Gemoji
 retext-emoji should support every gemoji [wooorm/gemoji](https://github.com/wooorm/gemoji) supports. There's a whole list of supported gemoji at [gemoji's repo](https://github.com/wooorm/gemoji/#supported-gemoji).
