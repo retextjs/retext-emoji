@@ -5,84 +5,112 @@ var gemoji, shortcode, shortcodes, names, unicode;
 gemoji = require('gemoji');
 
 names = gemoji.name;
+unicode = gemoji.unicode;
 shortcodes = gemoji.shortcode = {};
 
 for (shortcode in names) {
     shortcodes[':' + shortcode + ':'] = names[shortcode];
 }
 
-function onchangeFactory(method) {
-    return function () {
-        var self = this,
-            value = self.toString(),
-            startNode, nodes, iterator, emoticon;
+function mergeEmojiExceptions(child, index, parent) {
+    var siblings = parent.children,
+        children = child.children,
+        iterator = index,
+        childIterator, node, nodes, value, length;
 
-        if (value !== ':') {
-            method(self, value);
+    if (
+        child.type === 'WordNode' &&
+        0 in children &&
+        children[0].value in unicode
+    ) {
+        parent.children[index] = {
+            'type' : 'PunctuationNode',
+            'children' : children
+        };
+
+        return index - 1;
+    }
+
+    if (
+        child.type !== 'PunctuationNode' ||
+        !(0 in children) ||
+        children[0].value !== ':') {
             return;
+    }
+
+    nodes = [];
+
+    while (siblings[--iterator]) {
+        node = siblings[iterator];
+        nodes = nodes.concat(node.children.reverse());
+
+        if (
+            node.type === 'PunctuationNode' &&
+            node.children[0].value === ':'
+        ) {
+            break;
         }
+    }
 
-        startNode = self.prev;
-        nodes = [];
-        iterator = -1;
+    if (iterator === -1) {
+        return;
+    }
 
-        while (startNode) {
-            if (startNode.type === startNode.PUNCTUATION_NODE) {
-                value = startNode.toString();
+    nodes = nodes.reverse().concat(children);
 
-                if (value === ':') {
-                    emoticon = nodes.reverse().join('');
+    childIterator = -1;
+    length = nodes.length;
+    value = '';
 
-                    if (gemoji.name[emoticon]) {
-                        startNode.remove();
+    while (++childIterator < length) {
+        value += nodes[childIterator].value;
+    }
 
-                        while (nodes[++iterator]) {
-                            nodes[iterator].remove();
-                        }
+    if (!(value in shortcodes)) {
+        return;
+    }
 
-                        self.fromString(':' + emoticon + ':');
-                    }
+    siblings.splice(iterator, index - iterator);
+    child.children = nodes;
 
-                    return;
-                }
-
-                // Many gemojis contain underscores, and two contain
-                // dashes (`:e-mail:` and `:non-potable_water:`).
-                if (value !== '_' && value !== '-') {
-                    return;
-                }
-            }
-            nodes.push(startNode);
-            startNode = startNode.prev;
-        }
-    };
+    return iterator;
 }
 
-function encode(node, value) {
-    value = gemoji.shortcode[value];
+function encode() {
+    var self = this,
+        value = shortcodes[self.toString()];
 
     if (value) {
-        node.fromString(value);
+        self.tail.remove();
+        self.head.remove();
+        self.head.fromString(value);
     }
 }
 
-function decode(node, value) {
-    value = gemoji.unicode[value];
+function decode() {
+    var self = this,
+        value = unicode[self.toString()];
 
     if (value) {
-        node.fromString(':' + value + ':');
+        self.head.fromString(value);
+        self.prepend(new self.TextOM.TextNode(':'));
+        self.append(new self.TextOM.TextNode(':'));
     }
 }
 
 function attachFactory(type) {
     return function (retext) {
-        var TextOM = retext.parser.TextOM,
-            onchange = onchangeFactory(
-                type === 'encode' ? encode : decode
-            );
+        var parser = retext.parser,
+            TextOM = parser.TextOM,
+            onchange = type === 'encode' ? encode : decode;
 
-        TextOM.PunctuationNode.on('changetext', onchange);
-        TextOM.PunctuationNode.on('changeprev', onchange);
+        parser.tokenizeSentenceModifiers = [
+                mergeEmojiExceptions
+            ].concat(parser.tokenizeSentenceModifiers);
+
+        TextOM.PunctuationNode.on('changetextinside', onchange);
+        TextOM.PunctuationNode.on('insertinside', onchange);
+        TextOM.PunctuationNode.on('removeinside', onchange);
     };
 }
 
