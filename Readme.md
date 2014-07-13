@@ -29,7 +29,7 @@ $ component install wooorm/retext-emoji
 var Retext = require('retext'),
     emoji = require('retext-emoji');
 
-var text = new Retext()
+new Retext()
     .use(emoji({
         'convert' : 'encode'
     }))
@@ -41,6 +41,9 @@ var text = new Retext()
 - `options.convert` (`encode` or `decode`):
   - When `encode`, converts short-codes into their unicode equivalent (e.g., `:pig:` to `🐷`);
   - When `decode`, converts unicode emojis into their short-code equivalent (e.g., `🐷` to `:pig:`);
+
+## Supported Gemoji
+retext-emoji should support every gemoji [wooorm/gemoji](https://github.com/wooorm/gemoji) supports. There's a whole list of supported gemoji at [gemoji's repo](https://github.com/wooorm/gemoji/#supported-gemoji).
 
 ## Browser Support
 Pretty much every browser (available through browserstack) runs all retext-emoji unit tests.
