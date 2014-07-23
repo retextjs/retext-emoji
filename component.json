@@ -1,0 +1,13 @@
+{
+  "name": "retext-emoji-gh-pages",
+  "private" : true,
+  "repository": "wooorm/retext-emoji",
+  "dependencies": {
+    "wooorm/retext-emoji": "^0.1.0",
+    "wooorm/retext": "^0.1.0-rc.5"
+  },
+  "scripts": [
+    "index.js"
+  ],
+  "license": "MIT"
+}
