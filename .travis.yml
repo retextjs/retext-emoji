@@ -1,8 +1,15 @@
-language: "node_js"
+language: node_js
 before_install:
-  - "npm update -g npm"
-script: "npm run-script test-travis"
+- npm update -g npm
+script: npm run-script test-travis
 node_js:
-  - "0.10"
-  - "0.11"
-after_script: "npm install coveralls@2.10.0 && cat ./coverage/lcov.info | coveralls"
+- '0.10'
+- '0.11'
+after_script: npm install coveralls@2.10.0 && cat ./coverage/lcov.info | coveralls
+deploy:
+  provider: npm
+  email: tituswormer@gmail.com
+  api_key:
+    secure: YYptygfWt/5wH/bmLVoMAubrtAleHGVJcaNkhlCnONlT5XPeMrsSYvYZuWu6tAmonDVsl17mZs2d/FmQltjI2AntiSzEWvdfBVvYf7SBrpqIE8ZzGNqIkfs169e54JfnEADvKEHefkz7MxDUud1PqV/KcbzVWqcci9pvsBEu8bg=
+  on:
+    repo: wooorm/retext-emoji
