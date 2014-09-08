@@ -914,10 +914,7 @@ describe('emoji()', function () {
     );
 });
 
-for (name in gemoji.name) {
-    unicode = gemoji.name[name];
-    name = ':' + name + ':';
-
+function describeEmoji(name, unicode) {
     describe('emoji `' + unicode + '`', function () {
         it('should decode the emoticon (from `' + unicode + '` to `' +
             name + '`)', function () {
@@ -943,4 +940,8 @@ for (name in gemoji.name) {
             }
         );
     });
+}
+
+for (name in gemoji.name) {
+    describeEmoji(':' + name + ':', gemoji.name[name]);
 }
