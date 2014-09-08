@@ -1,4 +1,17 @@
 
+n.n.n / 2014-09-08
+==================
+
+ * Add bower.json
+ * Add cached Object#hasOwnProperty
+ * Fix failing emoji (closes #3)
+ * Remove unused variable
+ * Fixed a bug in the spec where emoji were not correctly tested
+ * Fix incorrect plug-in name in an error
+ * Add retext as a peer dependency
+ * Add npm deployment to travis
+ * Update eslint, mocha, retext-content
+
 0.1.0 / 2014-07-13
 ==================
 
