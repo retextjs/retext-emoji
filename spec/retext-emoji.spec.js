@@ -1,7 +1,7 @@
 'use strict';
 
 var emoji, gemoji, Retext, AST, content, assert, baseSentence,
-    fullStop, encodeRetext, decodeRetext, name, unicode;
+    fullStop, encodeRetext, decodeRetext, name;
 
 emoji = require('..');
 gemoji = require('gemoji');
