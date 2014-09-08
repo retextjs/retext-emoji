@@ -116,7 +116,7 @@ function attachFactory(type) {
 
 function emoji(options) {
     if (arguments.length > 1) {
-        throw new TypeError('Illegal invocation: smartypants was' +
+        throw new TypeError('Illegal invocation: retext-emoji was' +
             ' called by Retext, but should be called by the user');
     }
 
