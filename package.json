@@ -18,6 +18,9 @@
     "retext-ast": "^0.1.0",
     "retext-content": "^0.2.0"
   },
+  "peerDependencies": {
+    "retext": "^0.1.0"
+  },
   "dependencies": {
     "gemoji": "^0.1.0"
   },
