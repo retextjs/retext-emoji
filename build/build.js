@@ -902,10 +902,10 @@ while (gemoji[++iterator]) {
 
 });
 
-require.register("wooorm~retext-emoji@0.1.0", function (exports, module) {
+require.register("wooorm~retext-emoji@0.1.1", function (exports, module) {
 'use strict';
 
-var gemoji, shortcode, shortcodes, names, unicode;
+var gemoji, shortcode, shortcodes, names, unicode, has;
 
 gemoji = require("wooorm~gemoji@0.1.0");
 
@@ -913,8 +913,13 @@ names = gemoji.name;
 unicode = gemoji.unicode;
 shortcodes = gemoji.shortcode = {};
 
+has = Object.prototype.hasOwnProperty;
+
 for (shortcode in names) {
-    shortcodes[':' + shortcode + ':'] = names[shortcode];
+    /* istanbul ignore else */
+    if (has.call(names, shortcode)) {
+        shortcodes[':' + shortcode + ':'] = names[shortcode];
+    }
 }
 
 function mergeEmojiExceptions(child, index, parent) {
@@ -925,15 +930,43 @@ function mergeEmojiExceptions(child, index, parent) {
 
     if (
         child.type === 'WordNode' &&
-        0 in children &&
-        children[0].value in unicode
+        0 in children
     ) {
-        parent.children[index] = {
-            'type' : 'PunctuationNode',
-            'children' : children
-        };
+        value = children[0].value;
 
-        return index - 1;
+        if (has.call(unicode, value)) {
+            siblings[index] = {
+                'type' : 'PunctuationNode',
+                'children' : children
+            };
+
+            return index - 1;
+        }
+
+        node = siblings[index - 1];
+
+        if (
+            node && node.type === 'PunctuationNode' &&
+            0 in node.children
+        ) {
+            value = node.children[0].value + value;
+
+            if (has.call(unicode, value)) {
+                console.log('node!');
+                siblings.splice(index - 1, 2, {
+                    'type' : 'WordNode',
+                    'children' : [
+                        {
+                            'type' : 'TextNode',
+                            'value' : value
+                        }
+                    ]
+                });
+                console.log('value: ' + value + '.');
+
+                return index - 2;
+            }
+        }
     }
 
     if (
@@ -971,7 +1004,7 @@ function mergeEmojiExceptions(child, index, parent) {
         value += nodes[childIterator].value;
     }
 
-    if (!(value in shortcodes)) {
+    if (!has.call(shortcodes, value)) {
         return;
     }
 
@@ -986,8 +1019,10 @@ function encode() {
         value = shortcodes[self.toString()];
 
     if (value) {
-        self.tail.remove();
-        self.head.remove();
+        while (self.tail) {
+            self.tail.remove();
+        }
+
         self.head.fromString(value);
     }
 }
@@ -1021,7 +1056,7 @@ function attachFactory(type) {
 
 function emoji(options) {
     if (arguments.length > 1) {
-        throw new TypeError('Illegal invocation: smartypants was' +
+        throw new TypeError('Illegal invocation: retext-emoji was' +
             ' called by Retext, but should be called by the user');
     }
 
@@ -1049,7 +1084,7 @@ exports = module.exports = emoji;
 
 });
 
-require.register("wooorm~parse-latin@0.1.0-rc.11", function (exports, module) {
+require.register("wooorm~parse-latin@0.1.3", function (exports, module) {
 /**!
  * parse-latin
  *
@@ -1059,8 +1094,11 @@ require.register("wooorm~parse-latin@0.1.0-rc.11", function (exports, module) {
 'use strict';
 
 var EXPRESSION_ABBREVIATION_PREFIX, EXPRESSION_NEW_LINE,
+    EXPRESSION_MULTI_NEW_LINE,
     EXPRESSION_AFFIX_PUNCTUATION, EXPRESSION_INNER_WORD_PUNCTUATION,
+    EXPRESSION_INITIAL_WORD_PUNCTUATION, EXPRESSION_FINAL_WORD_PUNCTUATION,
     EXPRESSION_LOWER_INITIAL_EXCEPTION,
+    EXPRESSION_NUMERICAL, EXPRESSION_TERMINAL_MARKER,
     GROUP_ALPHABETIC, GROUP_ASTRAL, GROUP_CLOSING_PUNCTUATION,
     GROUP_COMBINING_DIACRITICAL_MARK, GROUP_COMBINING_NONSPACING_MARK,
     GROUP_FINAL_PUNCTUATION, GROUP_LETTER_LOWER, GROUP_NUMERICAL,
@@ -1075,7 +1113,7 @@ var EXPRESSION_ABBREVIATION_PREFIX, EXPRESSION_NEW_LINE,
  *
  * @param {string} value
  * @return {string}
- * @api private
+ * @private
  */
 function expand(value) {
     return value.replace(/\w{4}/g, '\\u$&');
@@ -1087,7 +1125,7 @@ function expand(value) {
  * "Borrowed" from XRegexp.
  *
  * @global
- * @api private
+ * @private
  * @constant
  */
 GROUP_NUMERICAL = expand(
@@ -1124,7 +1162,7 @@ GROUP_NUMERICAL = expand(
  * "Borrowed" from XRegexp.
  *
  * @global
- * @api private
+ * @private
  * @constant
  */
 GROUP_LETTER_LOWER = expand('0061-007A00B500DF-00F600F8-00FF010101030105' +
@@ -1175,7 +1213,7 @@ GROUP_LETTER_LOWER = expand('0061-007A00B500DF-00F600F8-00FF010101030105' +
  * "Borrowed" from XRegexp.
  *
  * @global
- * @api private
+ * @private
  * @constant
  */
 GROUP_ALPHABETIC = expand('0041-005A0061-007A00AA00B500BA00C0-00D6' +
@@ -1240,7 +1278,7 @@ GROUP_ALPHABETIC = expand('0041-005A0061-007A00AA00B500BA00C0-00D6' +
  * "Borrowed" from XRegexp.
  *
  * @global
- * @api private
+ * @private
  * @constant
  */
 GROUP_WHITE_SPACE = expand(
@@ -1252,7 +1290,7 @@ GROUP_WHITE_SPACE = expand(
  * Marks for Symbols, Blocks.
  *
  * @global
- * @api private
+ * @private
  * @constant
  */
 GROUP_COMBINING_DIACRITICAL_MARK = expand('20D0-20FF0300-036F');
@@ -1261,7 +1299,7 @@ GROUP_COMBINING_DIACRITICAL_MARK = expand('20D0-20FF0300-036F');
  * Expose Unicode Mark, Nonspacing Block.
  *
  * @global
- * @api private
+ * @private
  * @constant
  */
 GROUP_COMBINING_NONSPACING_MARK = expand('0300-036F0483-04870591-05BD' +
@@ -1297,7 +1335,7 @@ GROUP_COMBINING_NONSPACING_MARK = expand('0300-036F0483-04870591-05BD' +
  * - Combining Diacritical Marks for Symbols block;
  *
  * @global
- * @api private
+ * @private
  * @constant
  */
 GROUP_WORD = GROUP_NUMERICAL + GROUP_ALPHABETIC +
@@ -1307,7 +1345,7 @@ GROUP_WORD = GROUP_NUMERICAL + GROUP_ALPHABETIC +
  * Expose Unicode Cs (Other, Surrogate) category.
  *
  * @global
- * @api private
+ * @private
  * @constant
  */
 GROUP_ASTRAL = expand('D800-DBFFDC00-DFFF');
@@ -1315,11 +1353,17 @@ GROUP_ASTRAL = expand('D800-DBFFDC00-DFFF');
 /**
  * Expose interrobang, question-, and exclamation mark.
  *
+ * - Full stop;
+ * - Interrobang;
+ * - Question mark;
+ * - Exclamation mark;
+ * - Horizontal ellipsis.
+ *
  * @global
- * @api private
+ * @private
  * @constant
  */
-GROUP_TERMINAL_MARKER = '\\.\\u203D?!';
+GROUP_TERMINAL_MARKER = '\\.\\u203D?!\\u2026';
 
 /**
  * Expose Unicode Pe (Punctuation, Close) category.
@@ -1327,7 +1371,7 @@ GROUP_TERMINAL_MARKER = '\\.\\u203D?!';
  * "Borrowed" from XRegexp.
  *
  * @global
- * @api private
+ * @private
  * @constant
  */
 GROUP_CLOSING_PUNCTUATION = expand('0029005D007D0F3B0F3D169C2046' +
@@ -1343,7 +1387,7 @@ GROUP_CLOSING_PUNCTUATION = expand('0029005D007D0F3B0F3D169C2046' +
  * "Borrowed" from XRegexp.
  *
  * @global
- * @api private
+ * @private
  * @constant
  */
 GROUP_FINAL_PUNCTUATION = expand('00BB2019201D203A2E032E052E0A2E0D2E1D2E21');
@@ -1357,7 +1401,7 @@ GROUP_FINAL_PUNCTUATION = expand('00BB2019201D203A2E032E052E0A2E0D2E1D2E21');
  * - followed by full stop.
  *
  * @global
- * @api private
+ * @private
  * @constant
  */
 EXPRESSION_ABBREVIATION_PREFIX = new RegExp(
@@ -1386,7 +1430,7 @@ EXPRESSION_ABBREVIATION_PREFIX = new RegExp(
  * the sentence's terminal marker.
  *
  * @global
- * @api private
+ * @private
  * @constant
  */
 EXPRESSION_AFFIX_PUNCTUATION = new RegExp(
@@ -1394,6 +1438,7 @@ EXPRESSION_AFFIX_PUNCTUATION = new RegExp(
         GROUP_CLOSING_PUNCTUATION +
         GROUP_FINAL_PUNCTUATION +
         GROUP_TERMINAL_MARKER +
+        '"\'' +
     '])\\1*$'
 );
 
@@ -1401,38 +1446,103 @@ EXPRESSION_AFFIX_PUNCTUATION = new RegExp(
  * Matches a string consisting of one or more new line characters.
  *
  * @global
- * @api private
+ * @private
  * @constant
  */
 EXPRESSION_NEW_LINE = /^(\r?\n|\r)+$/;
 
 /**
- * Matches punctuation which can be used to join two (sub?) words together.
+ * Matches a string consisting of two or more new line characters.
+ *
+ * @global
+ * @private
+ * @constant
+ */
+EXPRESSION_MULTI_NEW_LINE = /^(\r?\n|\r){2,}$/;
+
+/**
+ * Matches a sentence terminal marker, one or more of the following:
+ *
+ * - Full stop;
+ * - Interrobang;
+ * - Question mark;
+ * - Exclamation mark;
+ * - Horizontal ellipsis.
+ *
+ * @global
+ * @private
+ * @constant
+ */
+EXPRESSION_TERMINAL_MARKER = new RegExp(
+    '^([' + GROUP_TERMINAL_MARKER + ']+)$'
+);
+
+/**
+ * Matches punctuation part of the surrounding words.
  *
  * Includes:
  * - Hyphen-minus;
+ * - At sign;
+ * - Question mark;
+ * - Equals sign;
  * - full-stop;
  * - colon;
  * - Dumb single quote;
  * - Right single quote;
+ * - Ampersand;
  * - Soft hyphen;
  * - Hyphen;
  * - Non-breaking hyphen;
  * - Hyphenation point;
- * - Middle dot
+ * - Middle dot;
+ * - Slash (one or more);
+ * - Underscore (one or more).
  *
  * @global
- * @api private
+ * @private
  * @constant
  */
 EXPRESSION_INNER_WORD_PUNCTUATION =
-    /^[-.:'\/\u2019\u00AD\u00B7\u2010\2011\u2027]$/;
+    /^([-@?=.:'\u2019&\u00AD\u00B7\u2010\2011\u2027]|[_\/]+)$/;
+
+/**
+ * Matches punctuation part of the next word.
+ *
+ * Includes:
+ * - Ampersand;
+ *
+ * @global
+ * @private
+ * @constant
+ */
+EXPRESSION_INITIAL_WORD_PUNCTUATION = /^&$/;
+
+/**
+ * Matches punctuation part of the previous word.
+ *
+ * Includes:
+ * - Hyphen-minus.
+ *
+ * @global
+ * @private
+ * @constant
+ */
+EXPRESSION_FINAL_WORD_PUNCTUATION = /^-$/;
+
+/**
+ * Matches a number.
+ *
+ * @global
+ * @private
+ * @constant
+ */
+EXPRESSION_NUMERICAL = new RegExp('^[' + GROUP_NUMERICAL + ']+$');
 
 /**
  * Matches an initial lower case letter.
  *
  * @global
- * @api private
+ * @private
  * @constant
  */
 EXPRESSION_LOWER_INITIAL_EXCEPTION = new RegExp(
@@ -1444,10 +1554,10 @@ EXPRESSION_LOWER_INITIAL_EXCEPTION = new RegExp(
 /**
  * Apply modifiers on a token.
  *
- * @param {Function[]} modifiers
+ * @param {Array.<Function>} modifiers
  * @param {Object} parent
  * @global
- * @api private
+ * @private
  */
 function modify(modifiers, parent) {
     var length = modifiers.length,
@@ -1486,7 +1596,7 @@ function modify(modifiers, parent) {
  * @param {Object} token
  * @return {string} - The stringified token.
  * @global
- * @api private
+ * @private
  */
 function tokenToString(token) {
     var value = '',
@@ -1520,12 +1630,12 @@ function tokenToString(token) {
  * @param {string} options.type          - The type of parent node to create.
  * @param {string} options.tokenizer     - The property where the child
  *                                         tokenizer lives
- * @param {Function[]} options.modifiers - The initial modifiers to apply on
- *                                         each parse.
+ * @param {Array.<Function>} options.modifiers - The initial modifiers to
+ *                                         apply on each parse.
  * @param {RegExp} options.delimiter     - The delimiter to break children at.
  * @return {Function} - The tokenizer.
  * @global
- * @api private
+ * @private
  */
 function tokenizerFactory(context, options) {
     var name = options.name;
@@ -1575,20 +1685,67 @@ function tokenizerFactory(context, options) {
 }
 
 /**
- * Merges two words surrounding certain punctuation marks.
+ * Merges certain punctuation marks into their previous words.
  *
  * @param {Object} child
  * @param {number} index
  * @param {Object} parent
- * @return {number?} - Either void, or the next index to iterate over.
+ * @return {undefined|number} - Either void, or the next index to iterate
+ *     over.
  *
  * @global
- * @api private
+ * @private
  */
-function mergeInnerWordPunctuation(child, index, parent) {
+function mergeInitialWordPunctuation(child, index, parent) {
+    var children, next, hasPreviousWord, hasNextWord;
+
+    if (
+        child.type !== 'PunctuationNode' ||
+        !EXPRESSION_INITIAL_WORD_PUNCTUATION.test(tokenToString(child))
+    ) {
+        return;
+    }
+
+    children = parent.children;
+    next = children[index + 1];
+
+    hasPreviousWord = index !== 0 && children[index - 1].type === 'WordNode';
+    hasNextWord = next && next.type === 'WordNode';
+
+    if (hasPreviousWord || !hasNextWord) {
+        return;
+    }
+
+    /* Remove `child` from parent. */
+    children.splice(index, 1);
+
+    /* Add the punctuation mark at the start of the next node. */
+    next.children.unshift(child);
+
+    /* Next, iterate over the node at the previous position. */
+    return index - 1;
+}
+
+/**
+ * Merges certain punctuation marks into their preceding words.
+ *
+ * @param {Object} child
+ * @param {number} index
+ * @param {Object} parent
+ * @return {undefined|number} - Either void, or the next index to iterate
+ *     over.
+ *
+ * @global
+ * @private
+ */
+function mergeFinalWordPunctuation(child, index, parent) {
     var children, prev, next;
 
-    if (index === 0 || child.type !== 'PunctuationNode') {
+    if (
+        index === 0 ||
+        child.type !== 'PunctuationNode' ||
+        !EXPRESSION_FINAL_WORD_PUNCTUATION.test(tokenToString(child))
+    ) {
         return;
     }
 
@@ -1597,43 +1754,98 @@ function mergeInnerWordPunctuation(child, index, parent) {
     next = children[index + 1];
 
     if (
-        prev.type !== 'WordNode' || !next ||
-        (
-            next.type !== 'WordNode' &&
-            next.type !== 'PunctuationNode'
-        )
+        (next && next.type === 'WordNode') ||
+        !(prev && prev.type === 'WordNode')
     ) {
         return;
     }
 
-    if (!EXPRESSION_INNER_WORD_PUNCTUATION.test(child.children[0].value)) {
+    /* Remove `child` from parent. */
+    children.splice(index, 1);
+
+    /* Add the punctuation mark at the end of the previous node. */
+    prev.children.push(child);
+
+    /* Next, iterate over the node *now* at the current position (which was
+     * the next node). */
+    return index;
+}
+
+/**
+ * Merges two words surrounding certain punctuation marks.
+ *
+ * @param {Object} child
+ * @param {number} index
+ * @param {Object} parent
+ * @return {undefined|number} - Either void, or the next index to iterate
+ *     over.
+ *
+ * @global
+ * @private
+ */
+function mergeInnerWordPunctuation(child, index, parent) {
+    var children, prev, otherChild,
+        iterator, tokens, queue;
+
+    if (index === 0 || child.type !== 'PunctuationNode') {
         return;
     }
 
-    /* e.g., C.I.A{.}\'s, where in curly brackets the child is depicted. */
-    if (next.type === 'PunctuationNode') {
-        if (
-            child.children[0].value !== '.' ||
-            !EXPRESSION_INNER_WORD_PUNCTUATION.test(next.children[0].value)
-        ) {
-            return;
-        }
+    children = parent.children;
+    prev = children[index - 1];
 
-        /* Remove `child` from parent. */
-        children.splice(index, 1);
-
-        /* Add `child` to the previous children. */
-        prev.children.push(child);
-
-        return index - 1;
+    if (!prev || prev.type !== 'WordNode') {
+        return;
     }
 
-    /* Remove `child` and `next` from parent. */
-    children.splice(index, 2);
+    iterator = index - 1;
+    tokens = [];
+    queue = [];
 
-    prev.children = prev.children.concat(child, next.children);
+    /*
+     * - Is a token which is neither word nor inner word punctuation is
+     *   found, the loop is broken.
+     * - If a inner word punctuation mark is found, it's queued.
+     * - If a word is found, it's queued (and the queue stored and emptied).
+     */
+    while (children[++iterator]) {
+        otherChild = children[iterator];
 
-    return index - 1;
+        if (otherChild.type === 'WordNode') {
+            tokens = tokens.concat(queue, otherChild.children);
+            queue = [];
+            continue;
+        }
+
+        if (
+            otherChild.type === 'PunctuationNode' &&
+            EXPRESSION_INNER_WORD_PUNCTUATION.test(tokenToString(otherChild))
+        ) {
+            queue.push(otherChild);
+            continue;
+        }
+
+        break;
+    }
+
+    /* If no tokens were found, exit. */
+    if (!tokens.length) {
+        return;
+    }
+
+    /* If there was a queue found, remove its length from iterator. */
+    if (queue.length) {
+        iterator -= queue.length;
+    }
+
+    /* Remove every (one or more) inner-word punctuation marks, and children
+     * of words. */
+    children.splice(index, iterator - index);
+
+    /* Add all found tokens to prev.children */
+    prev.children = prev.children.concat(tokens);
+
+    return index;
 }
 
 /**
@@ -1642,17 +1854,18 @@ function mergeInnerWordPunctuation(child, index, parent) {
  * @param {Object} child
  * @param {number} index
  * @param {Object} parent
- * @return {number?} - Either void, or the next index to iterate over.
+ * @return {undefined|number} - Either void, or the next index to iterate
+ *     over.
  *
  * @global
- * @api private
+ * @private
  */
 function mergeInitialisms(child, index, parent) {
-    var prev, children, length, iterator;
+    var prev, children, length, iterator, otherChild, isAllDigits, value;
 
     if (
         index === 0 || child.type !== 'PunctuationNode' ||
-        child.children[0].value !== '.'
+        tokenToString(child) !== '.'
     ) {
         return;
     }
@@ -1673,22 +1886,27 @@ function mergeInitialisms(child, index, parent) {
     }
 
     iterator = length;
+    isAllDigits = true;
 
     while (children[--iterator]) {
+        otherChild = children[iterator];
+        value = tokenToString(otherChild);
+
         if (iterator % 2 === 0) {
             /* istanbul ignore if: TOSPEC: Currently not spec-able, but
              * future-friendly */
-            if (children[iterator].type !== 'TextNode') {
+            if (otherChild.type !== 'TextNode') {
                 return;
             }
 
-            if (children[iterator].value.length > 1) {
+            if (value.length > 1) {
                 return;
             }
-        } else if (
-            children[iterator].type !== 'PunctuationNode' ||
-            children[iterator].children[0].value !== '.'
-        ) {
+
+            if (!EXPRESSION_NUMERICAL.test(value)) {
+                isAllDigits = false;
+            }
+        } else if (otherChild.type !== 'PunctuationNode' || value !== '.') {
             /* istanbul ignore else: TOSPEC */
             if (iterator < length - 2) {
                 break;
@@ -1696,6 +1914,10 @@ function mergeInitialisms(child, index, parent) {
                 return;
             }
         }
+    }
+
+    if (isAllDigits) {
+        return;
     }
 
     /* Remove `child` from parent. */
@@ -1712,10 +1934,11 @@ function mergeInitialisms(child, index, parent) {
  * @param {Object} child
  * @param {number} index
  * @param {Object} parent
- * @return {number?} - Either void, or the next index to iterate over.
+ * @return {undefined|number} - Either void, or the next index to iterate
+ *     over.
  *
  * @global
- * @api private
+ * @private
  */
 function mergePrefixExceptions(child, index, parent) {
     var children = child.children,
@@ -1733,7 +1956,7 @@ function mergePrefixExceptions(child, index, parent) {
 
     if (
         !node || node.type !== 'PunctuationNode' ||
-        node.children[0].value !== '.'
+        tokenToString(node) !== '.'
     ) {
         return;
     }
@@ -1743,7 +1966,7 @@ function mergePrefixExceptions(child, index, parent) {
     if (!node ||
         node.type !== 'WordNode' ||
         !EXPRESSION_ABBREVIATION_PREFIX.test(
-            node.children[0].value.toLowerCase()
+            tokenToString(node).toLowerCase()
         )
     ) {
         return;
@@ -1765,10 +1988,11 @@ function mergePrefixExceptions(child, index, parent) {
  * @param {Object} child
  * @param {number} index
  * @param {Object} parent
- * @return {number?} - Either void, or the next index to iterate over.
+ * @return {undefined|number} - Either void, or the next index to iterate
+ *     over.
  *
  * @global
- * @api private
+ * @private
  */
 function mergeAffixExceptions(child, index, parent) {
     var children = child.children,
@@ -1795,7 +2019,7 @@ function mergeAffixExceptions(child, index, parent) {
     if (
         !node ||
         node.type !== 'PunctuationNode' ||
-        node.children[0].value !== ','
+        !(tokenToString(node) === ',' || tokenToString(node) === ';')
     ) {
         return;
     }
@@ -1818,10 +2042,11 @@ function mergeAffixExceptions(child, index, parent) {
  * @param {Object} child
  * @param {number} index
  * @param {Object} parent
- * @return {number?} - Either void, or the next index to iterate over.
+ * @return {undefined|number} - Either void, or the next index to iterate
+ *     over.
  *
  * @global
- * @api private
+ * @private
  */
 function makeInitialWhiteSpaceAndSourceSiblings(child, index, parent) {
     var children = child.children;
@@ -1847,10 +2072,11 @@ function makeInitialWhiteSpaceAndSourceSiblings(child, index, parent) {
  * @param {Object} child
  * @param {number} index
  * @param {Object} parent
- * @return {number?} - Either void, or the next index to iterate over.
+ * @return {undefined|number} - Either void, or the next index to iterate
+ *     over.
  *
  * @global
- * @api private
+ * @private
  */
 function makeFinalWhiteSpaceAndSourceSiblings(child, index, parent) {
     var children = child.children;
@@ -1870,16 +2096,140 @@ function makeFinalWhiteSpaceAndSourceSiblings(child, index, parent) {
 }
 
 /**
+ * Merges non-terminal marker full stops into, if available, the previous
+ * word, or if available, the next word.
+ *
+ * @param {Object} child
+ * @param {number} index
+ * @return {undefined}
+ *
+ * @global
+ * @private
+ */
+function mergeRemainingFullStops(child, index) {
+    var children = child.children,
+        iterator = children.length,
+        grandchild, prev, next, hasFoundDelimiter;
+
+    hasFoundDelimiter = false;
+
+    while (children[--iterator]) {
+        grandchild = children[iterator];
+
+        if (grandchild.type !== 'PunctuationNode') {
+            /* This is a sentence without terminal marker, so we 'fool' the
+             * code to make it think we have found one. */
+            if (grandchild.type === 'WordNode') {
+                hasFoundDelimiter = true;
+            }
+            continue;
+        }
+
+        /* Exit when this token is not a terminal marker. */
+        if (!EXPRESSION_TERMINAL_MARKER.test(tokenToString(grandchild))) {
+            continue;
+        }
+
+        /* Exit when this is the first terminal marker found (starting at the
+         * end), so it should not be merged. */
+        if (!hasFoundDelimiter) {
+            hasFoundDelimiter = true;
+            continue;
+        }
+
+        /* Only merge a single full stop. */
+        if (tokenToString(grandchild) !== '.') {
+            continue;
+        }
+
+        prev = children[iterator - 1];
+        next = children[iterator + 1];
+
+        if (prev && prev.type === 'WordNode') {
+            /* Exit when the full stop is followed by a space and another,
+             * full stop, such as: `{.} .` */
+            if (
+                next && next.type === 'WhiteSpaceNode' &&
+                children[iterator + 2] &&
+                children[iterator + 2].type === 'PunctuationNode' &&
+                tokenToString(children[iterator + 2]) === '.'
+            ) {
+                continue;
+            }
+
+            /* Remove `child` from parent. */
+            children.splice(iterator, 1);
+
+            /* Add the punctuation mark at the end of the previous node. */
+            prev.children.push(grandchild);
+
+            iterator--;
+        } else if (next && next.type === 'WordNode') {
+            /* Remove `child` from parent. */
+            children.splice(iterator, 1);
+
+            /* Add the punctuation mark at the start of the next node. */
+            next.children.unshift(grandchild);
+        }
+    }
+}
+
+/**
+ * Breaks a sentence if a node containing two or more white spaces is found.
+ *
+ * @param {Object} child
+ * @param {number} index
+ * @param {Object} parent
+ * @return {undefined|number} - Either void, or the next index to iterate
+ *     over.
+ *
+ * @global
+ * @private
+ */
+function breakImplicitSentences(child, index, parent) {
+    if (child.type !== 'SentenceNode') {
+        return;
+    }
+
+    var children = child.children,
+        iterator = -1,
+        length = children.length,
+        node;
+
+    while (++iterator < length) {
+        node = children[iterator];
+
+        if (node.type !== 'WhiteSpaceNode') {
+            continue;
+        }
+
+        if (!EXPRESSION_MULTI_NEW_LINE.test(tokenToString(node))) {
+            continue;
+        }
+
+        child.children = children.slice(0, iterator);
+
+        parent.children.splice(index + 1, 0, node, {
+            'type' : 'SentenceNode',
+            'children' : children.slice(iterator + 1)
+        });
+
+        return index + 2;
+    }
+}
+
+/**
  * Merges a sentence into its previous sentence, when the sentence starts
  * with a lower case letter.
  *
  * @param {Object} child
  * @param {number} index
  * @param {Object} parent
- * @return {number?} - Either void, or the next index to iterate over.
+ * @return {undefined|number} - Either void, or the next index to iterate
+ *     over.
  *
  * @global
- * @api private
+ * @private
  */
 function mergeInitialLowerCaseLetterSentences(child, index, parent) {
     var node, children, iterator, previousChild;
@@ -1899,9 +2249,7 @@ function mergeInitialLowerCaseLetterSentences(child, index, parent) {
             return;
         } else if (node.type === 'WordNode') {
             if (
-                !EXPRESSION_LOWER_INITIAL_EXCEPTION.test(
-                    node.children[0].value
-                )
+                !EXPRESSION_LOWER_INITIAL_EXCEPTION.test(tokenToString(node))
             ) {
                 return;
             }
@@ -1926,10 +2274,11 @@ function mergeInitialLowerCaseLetterSentences(child, index, parent) {
  * @param {Object} child
  * @param {number} index
  * @param {Object} parent
- * @return {number?} - Either void, or the next index to iterate over.
+ * @return {undefined|number} - Either void, or the next index to iterate
+ *     over.
  *
  * @global
- * @api private
+ * @private
  */
 function mergeNonWordSentences(child, index, parent) {
     var children, iterator, otherChild;
@@ -1973,10 +2322,11 @@ function mergeNonWordSentences(child, index, parent) {
  * @param {Object} child
  * @param {number} index
  * @param {Object} parent
- * @return {number?} - Either void, or the next index to iterate over.
+ * @return {undefined|number} - Either void, or the next index to iterate
+ *     over.
  *
  * @global
- * @api private
+ * @private
  */
 function mergeSourceLines(child, index, parent) {
     var iterator, siblings, sibling, value;
@@ -1984,7 +2334,7 @@ function mergeSourceLines(child, index, parent) {
     if (
         !child ||
         child.type !== 'WhiteSpaceNode' ||
-        !EXPRESSION_NEW_LINE.test(child.children[0].value)
+        !EXPRESSION_NEW_LINE.test(tokenToString(child))
     ) {
         return;
     }
@@ -2002,12 +2352,12 @@ function mergeSourceLines(child, index, parent) {
 
         if (
             sibling.type === 'WhiteSpaceNode' &&
-            EXPRESSION_NEW_LINE.test(sibling.children[0].value)
+            EXPRESSION_NEW_LINE.test(tokenToString(sibling))
         ) {
             break;
         }
 
-        value = sibling.children[0].value + value;
+        value = tokenToString(sibling) + value;
     }
 
     if (!value) {
@@ -2029,10 +2379,11 @@ function mergeSourceLines(child, index, parent) {
  * @param {Object} child
  * @param {number} index
  * @param {Object} parent
- * @return {number?} - Either void, or the next index to iterate over.
+ * @return {undefined|number} - Either void, or the next index to iterate
+ *     over.
  *
  * @global
- * @api private
+ * @private
  */
 function mergeAffixPunctuation(child, index, parent) {
     var children = child.children;
@@ -2043,7 +2394,7 @@ function mergeAffixPunctuation(child, index, parent) {
 
     if (
         children[0].type !== 'PunctuationNode' ||
-        !EXPRESSION_AFFIX_PUNCTUATION.test(children[0].children[0].value)
+        !EXPRESSION_AFFIX_PUNCTUATION.test(tokenToString(children[0]))
     ) {
         return;
     }
@@ -2059,10 +2410,11 @@ function mergeAffixPunctuation(child, index, parent) {
  * @param {Object} child
  * @param {number} index
  * @param {Object} parent
- * @return {number?} - Either void, or the next index to iterate over.
+ * @return {undefined|number} - Either void, or the next index to iterate
+ *     over.
  *
  * @global
- * @api private
+ * @private
  */
 function removeEmptyNodes(child, index, parent) {
     if ('children' in child && !child.children.length) {
@@ -2072,11 +2424,51 @@ function removeEmptyNodes(child, index, parent) {
 }
 
 /**
+ * Returns a function which in turn returns nodes of the given type.
+ *
+ * @param {string} type
+ * @return {Function} - A function which creates nodes of the given type.
+ * @global
+ * @private
+ */
+function createNodeFactory(type) {
+    return function (value) {
+        return {
+            'type' : type,
+            'children' : [
+                this.tokenizeText(value)
+            ]
+        };
+    };
+}
+
+/**
+ * Returns a function which in turn returns text nodes of the given type.
+ *
+ * @param {string} type
+ * @return {Function} - A function which creates text nodes of the given type.
+ * @global
+ * @private
+ */
+function createTextNodeFactory(type) {
+    return function (value) {
+        if (value === null || value === undefined) {
+            value = '';
+        }
+
+        return {
+            'type' : type,
+            'value' : String(value)
+        };
+    };
+}
+
+/**
  * `ParseLatin` contains the functions needed to tokenize natural Latin-script
  * language into a syntax tree.
  *
  * @constructor
- * @api public
+ * @public
  */
 function ParseLatin() {
     /*
@@ -2097,7 +2489,7 @@ parseLatinPrototype = ParseLatin.prototype;
  * - One or more astral plane characters;
  * - One or more of the same character;
  *
- * @api private
+ * @private
  * @memberof ParseLatin#
  */
 parseLatinPrototype.EXPRESSION_TOKEN = new RegExp(
@@ -2111,7 +2503,7 @@ parseLatinPrototype.EXPRESSION_TOKEN = new RegExp(
 /**
  * Matches a word.
  *
- * @api private
+ * @private
  * @memberof ParseLatin#
  */
 parseLatinPrototype.EXPRESSION_WORD = new RegExp(
@@ -2121,7 +2513,7 @@ parseLatinPrototype.EXPRESSION_WORD = new RegExp(
 /**
  * Matches a string containing ONLY white space.
  *
- * @api private
+ * @private
  * @memberof ParseLatin#
  */
 parseLatinPrototype.EXPRESSION_WHITE_SPACE = new RegExp(
@@ -2133,9 +2525,9 @@ parseLatinPrototype.EXPRESSION_WHITE_SPACE = new RegExp(
  * white space, and everything else (punctuation).
  *
  * @param {string?} value
- * @return {Object[]} - An array of tokens.
+ * @return {Array.<Object>} - An array of tokens.
  *
- * @api public
+ * @public
  * @memberof ParseLatin#
  */
 parseLatinPrototype.tokenize = function (value) {
@@ -2194,7 +2586,7 @@ parseLatinPrototype.tokenize = function (value) {
  * @param {string?} value
  * @return {Object} - A classified token.
  *
- * @api private
+ * @private
  * @memberof ParseLatin#
  */
 parseLatinPrototype.classifier = function (value) {
@@ -2205,39 +2597,85 @@ parseLatinPrototype.classifier = function (value) {
      * space.
      */
     if (this.EXPRESSION_WHITE_SPACE.test(value)) {
-        type = 'WhiteSpaceNode';
+        type = 'WhiteSpace';
     /*
      * Otherwise, if the token contains just word characters, classify it as
      * a word.
      */
     } else if (this.EXPRESSION_WORD.test(value)) {
-        type = 'WordNode';
+        type = 'Word';
     /*
      * Otherwise, classify it as punctuation.
      */
     } else {
-        type = 'PunctuationNode';
+        type = 'Punctuation';
     }
 
     /* Return a token. */
-    return {
-        'type' : type,
-        'children' : [
-            {
-                'type' : 'TextNode',
-                'value' : value
-            }
-        ]
-    };
+    return this['tokenize' + type](value);
 };
+
+/**
+ * Returns a source node, with its value set to the given value.
+ *
+ * @param {string} value
+ * @return {Object} - The SourceNode.
+ * @private
+ * @memberof ParseLatin#
+ */
+parseLatinPrototype.tokenizeSource = createTextNodeFactory('SourceNode');
+
+/**
+ * Returns a text node, with its value set to the given value.
+ *
+ * @param {string} value
+ * @return {Object} - The TextNode.
+ * @private
+ * @memberof ParseLatin#
+ */
+parseLatinPrototype.tokenizeText = createTextNodeFactory('TextNode');
+
+/**
+ * Returns a word node, with its children set to a single text node, its
+ * value set to the given value.
+ *
+ * @param {string} value
+ * @return {Object} - The WordNode.
+ * @private
+ * @memberof ParseLatin#
+ */
+parseLatinPrototype.tokenizeWord = createNodeFactory('WordNode');
+
+/**
+ * Returns a white space node, with its children set to a single text node,
+ * its value set to the given value.
+ *
+ * @param {string} value
+ * @return {Object} - The whiteSpaceNode.
+ * @private
+ * @memberof ParseLatin#
+ */
+parseLatinPrototype.tokenizeWhiteSpace = createNodeFactory('WhiteSpaceNode');
+
+/**
+ * Returns a punctuation node, with its children set to a single text node,
+ * its value set to the given value.
+ *
+ * @param {string} value
+ * @return {Object} - The PunctuationNode.
+ * @private
+ * @memberof ParseLatin#
+ */
+parseLatinPrototype.tokenizePunctuation =
+    createNodeFactory('PunctuationNode');
 
 /**
  * Tokenize natural Latin-script language into a sentence token.
  *
  * @param {string?} value
- * @return {Object[]} - A sentence token.
+ * @return {Object} - A sentence token.
  *
- * @api private
+ * @private
  * @memberof ParseLatin#
  */
 parseLatinPrototype.tokenizeSentence = function (value) {
@@ -2256,6 +2694,8 @@ parseLatinPrototype.tokenizeSentence = function (value) {
 };
 
 parseLatinPrototype.tokenizeSentenceModifiers = [
+    mergeInitialWordPunctuation,
+    mergeFinalWordPunctuation,
     mergeInnerWordPunctuation,
     mergeSourceLines,
     mergeInitialisms
@@ -2265,24 +2705,26 @@ parseLatinPrototype.tokenizeSentenceModifiers = [
  * Tokenize natural Latin-script language into a paragraph token.
  *
  * @param {string?} value
- * @return {Object[]} - A paragraph token.
+ * @return {Object} - A paragraph token.
  *
- * @api private
+ * @private
  * @memberof ParseLatin#
  */
 parseLatinPrototype.tokenizeParagraph = tokenizerFactory(ParseLatin, {
     'name' : 'tokenizeParagraph',
     'tokenizer' : 'tokenizeSentence',
     'type' : 'ParagraphNode',
-    'delimiter' : new RegExp('^([' + GROUP_TERMINAL_MARKER + ']+)$'),
+    'delimiter' : EXPRESSION_TERMINAL_MARKER,
     'modifiers' : [
-        mergePrefixExceptions,
-        mergeAffixExceptions,
         mergeNonWordSentences,
         mergeAffixPunctuation,
         mergeInitialLowerCaseLetterSentences,
+        mergePrefixExceptions,
+        mergeAffixExceptions,
+        mergeRemainingFullStops,
         makeInitialWhiteSpaceAndSourceSiblings,
         makeFinalWhiteSpaceAndSourceSiblings,
+        breakImplicitSentences,
         removeEmptyNodes
     ]
 });
@@ -2291,9 +2733,9 @@ parseLatinPrototype.tokenizeParagraph = tokenizerFactory(ParseLatin, {
  * Tokenize natural Latin-script language into a root token.
  *
  * @param {string?} value
- * @return {Object[]} - A root token.
+ * @return {Object} - A root token.
  *
- * @api private
+ * @private
  * @memberof ParseLatin#
  */
 parseLatinPrototype.tokenizeRoot = tokenizerFactory(ParseLatin, {
@@ -2308,9 +2750,9 @@ parseLatinPrototype.tokenizeRoot = tokenizerFactory(ParseLatin, {
  * Tokenize natural Latin-script language into a syntax tree.
  *
  * @param {string?} value
- * @return {Object[]} - The tokenized document.
+ * @return {Object} - The tokenized document.
  *
- * @api public
+ * @public
  * @memberof ParseLatin#
  */
 parseLatinPrototype.parse = function (value) {
@@ -2324,7 +2766,7 @@ module.exports = ParseLatin;
 
 });
 
-require.register("wooorm~textom@0.1.0-rc.4", function (exports, module) {
+require.register("wooorm~textom@0.1.1", function (exports, module) {
 'use strict';
 
 /**
@@ -3398,11 +3840,11 @@ module.exports = TextOMConstructor;
 
 });
 
-require.register("wooorm~retext@0.1.0-rc.6", function (exports, module) {
+require.register("wooorm~retext@0.1.1", function (exports, module) {
 'use strict';
 
-var TextOMConstructor = require("wooorm~textom@0.1.0-rc.4"),
-    ParseLatin = require("wooorm~parse-latin@0.1.0-rc.11");
+var TextOMConstructor = require("wooorm~textom@0.1.1"),
+    ParseLatin = require("wooorm~parse-latin@0.1.3");
 
 function fromAST(TextOM, ast) {
     var iterator = -1,
@@ -3455,7 +3897,7 @@ function useImmediately(rootNode, use) {
  * `Retext`.
  *
  * @param {Function?} parser - the parser to use. Defaults to parse-latin.
- * @api public
+ * @public
  * @constructor
  */
 function Retext(parser) {
@@ -3486,7 +3928,7 @@ function Retext(parser) {
  *                                    modifying TextOM or a parser, do it
  *                                    in this method.
  * @return this
- * @api public
+ * @public
  */
 Retext.prototype.use = function (plugin) {
     if (typeof plugin !== 'function') {
@@ -3515,7 +3957,7 @@ Retext.prototype.use = function (plugin) {
  *
  * @param {String?} source - The source to convert.
  * @return {Node} - A RootNode containing the tokenised source.
- * @api public
+ * @public
  */
 Retext.prototype.parse = function (source) {
     var self = this,
@@ -3535,7 +3977,7 @@ Retext.prototype.parse = function (source) {
  * on with its parent plugin.
  *
  * @param {Node} tree - The tree to apply plugins to.
- * @api public
+ * @public
  */
 Retext.prototype.applyPlugins = function (tree) {
     var self = this,
@@ -3560,8 +4002,8 @@ exports = module.exports = Retext;
 });
 
 require.register("retext-emoji-gh-pages", function (exports, module) {
-var emoji = require("wooorm~retext-emoji@0.1.0"),
-    Retext = require("wooorm~retext@0.1.0-rc.6"),
+var emoji = require("wooorm~retext-emoji@0.1.1"),
+    Retext = require("wooorm~retext@0.1.1"),
     inputElement = document.getElementsByTagName('textarea')[0],
     outputElement = document.getElementsByTagName('textarea')[1],
     convertElement = document.getElementsByName('convert')[0],
