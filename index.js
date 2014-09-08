@@ -1,6 +1,6 @@
 'use strict';
 
-var gemoji, shortcode, shortcodes, names, unicode;
+var gemoji, shortcode, shortcodes, names, unicode, has;
 
 gemoji = require('gemoji');
 
@@ -8,8 +8,13 @@ names = gemoji.name;
 unicode = gemoji.unicode;
 shortcodes = gemoji.shortcode = {};
 
+has = Object.prototype.hasOwnProperty;
+
 for (shortcode in names) {
-    shortcodes[':' + shortcode + ':'] = names[shortcode];
+    /* istanbul ignore else */
+    if (has.call(names, shortcode)) {
+        shortcodes[':' + shortcode + ':'] = names[shortcode];
+    }
 }
 
 function mergeEmojiExceptions(child, index, parent) {
@@ -24,7 +29,7 @@ function mergeEmojiExceptions(child, index, parent) {
     ) {
         value = children[0].value;
 
-        if (value in unicode) {
+        if (has.call(unicode, value)) {
             siblings[index] = {
                 'type' : 'PunctuationNode',
                 'children' : children
@@ -41,7 +46,7 @@ function mergeEmojiExceptions(child, index, parent) {
         ) {
             value = node.children[0].value + value;
 
-            if (value in unicode) {
+            if (has.call(unicode, value)) {
                 console.log('node!');
                 siblings.splice(index - 1, 2, {
                     'type' : 'WordNode',
@@ -94,7 +99,7 @@ function mergeEmojiExceptions(child, index, parent) {
         value += nodes[childIterator].value;
     }
 
-    if (!(value in shortcodes)) {
+    if (!has.call(shortcodes, value)) {
         return;
     }
 
