@@ -20,15 +20,43 @@ function mergeEmojiExceptions(child, index, parent) {
 
     if (
         child.type === 'WordNode' &&
-        0 in children &&
-        children[0].value in unicode
+        0 in children
     ) {
-        parent.children[index] = {
-            'type' : 'PunctuationNode',
-            'children' : children
-        };
+        value = children[0].value;
 
-        return index - 1;
+        if (value in unicode) {
+            siblings[index] = {
+                'type' : 'PunctuationNode',
+                'children' : children
+            };
+
+            return index - 1;
+        }
+
+        node = siblings[index - 1];
+
+        if (
+            node && node.type === 'PunctuationNode' &&
+            0 in node.children
+        ) {
+            value = node.children[0].value + value;
+
+            if (value in unicode) {
+                console.log('node!');
+                siblings.splice(index - 1, 2, {
+                    'type' : 'WordNode',
+                    'children' : [
+                        {
+                            'type' : 'TextNode',
+                            'value' : value
+                        }
+                    ]
+                });
+                console.log('value: ' + value + '.');
+
+                return index - 2;
+            }
+        }
     }
 
     if (
@@ -81,8 +109,10 @@ function encode() {
         value = shortcodes[self.toString()];
 
     if (value) {
-        self.tail.remove();
-        self.head.remove();
+        while (self.tail) {
+            self.tail.remove();
+        }
+
         self.head.fromString(value);
     }
 }
