@@ -1015,7 +1015,7 @@ function describeEmoji(key, unicode) {
 
     describe(unicode, function () {
         if (gemoji.unicode[unicode] === key) {
-            it('should decode, from `' + unicode + '` to `' + shortcode + '`',
+            it('should decode, from ' + unicode + ' to `' + shortcode + '`',
                 function (done) {
                     var source;
 
@@ -1040,7 +1040,7 @@ function describeEmoji(key, unicode) {
             );
         }
 
-        it('should encode, from `' + shortcode + '` to `' + unicode + '`',
+        it('should encode, from `' + shortcode + '` to ' + unicode,
             function (done) {
                 var source;
 
