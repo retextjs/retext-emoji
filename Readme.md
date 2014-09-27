@@ -4,14 +4,19 @@
 
 ## Installation
 
-NPM:
+npm:
 ```sh
 $ npm install retext-emoji
 ```
 
-Component.js:
+Component:
 ```sh
 $ component install wooorm/retext-emoji
+```
+
+Bower:
+```sh
+$ bower install retext-emoji
 ```
 
 ## Usage & API
