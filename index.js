@@ -47,7 +47,6 @@ function mergeEmojiExceptions(child, index, parent) {
             value = node.children[0].value + value;
 
             if (has.call(unicode, value)) {
-                console.log('node!');
                 siblings.splice(index - 1, 2, {
                     'type' : 'WordNode',
                     'children' : [
@@ -57,7 +56,6 @@ function mergeEmojiExceptions(child, index, parent) {
                         }
                     ]
                 });
-                console.log('value: ' + value + '.');
 
                 return index - 2;
             }
