@@ -85,7 +85,7 @@ describe('emoji()', function () {
             new Retext().use(emoji({
                 'test' : 'encode'
             }));
-        }, /object Object/);
+        }, /undefined/);
     });
 
     it('should throw when `convert` is neither `encode` nor `decode`',
