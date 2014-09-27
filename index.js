@@ -6,7 +6,11 @@ var emoji = require('retext-emoji'),
     retext;
 
 function makeSmarter() {
-    outputElement.value = retext.parse(inputElement.value).toString();
+    retext.parse(inputElement.value, function (err, tree) {
+        if (err) throw err;
+
+        outputElement.value = tree;
+    })
 }
 
 function onchange(event) {

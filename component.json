@@ -3,8 +3,8 @@
   "private" : true,
   "repository": "wooorm/retext-emoji",
   "dependencies": {
-    "wooorm/retext-emoji": "^0.1.1",
-    "wooorm/retext": "^0.1.0-rc.5"
+    "wooorm/retext-emoji": "^0.1.2",
+    "wooorm/retext": "^0.2.0-rc.2"
   },
   "scripts": [
     "index.js"

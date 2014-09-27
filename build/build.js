@@ -52,934 +52,155 @@ require.define = function (name, exports) {
     exports: exports
   };
 };
-require.register("wooorm~gemoji@0.1.0", function (exports, module) {
+require.register("wooorm~gemoji@0.1.1", function (exports, module) {
 'use strict';
 
-var gemoji, namedGemoji, unicodeGemoji, shortcode, unicode, iterator;
+var gemoji, named, unicodes, unicode, has, key;
 
-module.exports.unicode = unicodeGemoji = {};
-module.exports.name = namedGemoji = {};
-
-gemoji = (
-    'sunny|\u2600|' +
-    'umbrella|\u2614|' +
-    'cloud|\u2601|' +
-    'snowflake|\u2744|' +
-    'snowman|\u26C4|' +
-    'zap|\u26A1|' +
-    'cyclone|\uD83C\uDF00|' +
-    'foggy|\uD83C\uDF01|' +
-    'ocean|\uD83C\uDF0A|' +
-    'cat|\uD83D\uDC31|' +
-    'dog|\uD83D\uDC36|' +
-    'mouse|\uD83D\uDC2D|' +
-    'hamster|\uD83D\uDC39|' +
-    'rabbit|\uD83D\uDC30|' +
-    'wolf|\uD83D\uDC3A|' +
-    'frog|\uD83D\uDC38|' +
-    'tiger|\uD83D\uDC2F|' +
-    'koala|\uD83D\uDC28|' +
-    'bear|\uD83D\uDC3B|' +
-    'pig|\uD83D\uDC37|' +
-    'pig_nose|\uD83D\uDC3D|' +
-    'cow|\uD83D\uDC2E|' +
-    'boar|\uD83D\uDC17|' +
-    'monkey_face|\uD83D\uDC35|' +
-    'monkey|\uD83D\uDC12|' +
-    'horse|\uD83D\uDC34|' +
-    'racehorse|\uD83D\uDC0E|' +
-    'camel|\uD83D\uDC2B|' +
-    'sheep|\uD83D\uDC11|' +
-    'elephant|\uD83D\uDC18|' +
-    'panda_face|\uD83D\uDC3C|' +
-    'snake|\uD83D\uDC0D|' +
-    'bird|\uD83D\uDC26|' +
-    'baby_chick|\uD83D\uDC24|' +
-    'hatched_chick|\uD83D\uDC25|' +
-    'hatching_chick|\uD83D\uDC23|' +
-    'chicken|\uD83D\uDC14|' +
-    'penguin|\uD83D\uDC27|' +
-    'turtle|\uD83D\uDC22|' +
-    'bug|\uD83D\uDC1B|' +
-    'honeybee|\uD83D\uDC1D|' +
-    'ant|\uD83D\uDC1C|' +
-    'beetle|\uD83D\uDC1E|' +
-    'snail|\uD83D\uDC0C|' +
-    'octopus|\uD83D\uDC19|' +
-    'tropical_fish|\uD83D\uDC20|' +
-    'fish|\uD83D\uDC1F|' +
-    'whale|\uD83D\uDC33|' +
-    'whale2|\uD83D\uDC0B|' +
-    'dolphin|\uD83D\uDC2C|' +
-    'cow2|\uD83D\uDC04|' +
-    'ram|\uD83D\uDC0F|' +
-    'rat|\uD83D\uDC00|' +
-    'water_buffalo|\uD83D\uDC03|' +
-    'tiger2|\uD83D\uDC05|' +
-    'rabbit2|\uD83D\uDC07|' +
-    'dragon|\uD83D\uDC09|' +
-    'goat|\uD83D\uDC10|' +
-    'rooster|\uD83D\uDC13|' +
-    'dog2|\uD83D\uDC15|' +
-    'pig2|\uD83D\uDC16|' +
-    'mouse2|\uD83D\uDC01|' +
-    'ox|\uD83D\uDC02|' +
-    'dragon_face|\uD83D\uDC32|' +
-    'blowfish|\uD83D\uDC21|' +
-    'crocodile|\uD83D\uDC0A|' +
-    'dromedary_camel|\uD83D\uDC2A|' +
-    'leopard|\uD83D\uDC06|' +
-    'cat2|\uD83D\uDC08|' +
-    'poodle|\uD83D\uDC29|' +
-    'paw_prints|\uD83D\uDC3E|' +
-    'bouquet|\uD83D\uDC90|' +
-    'cherry_blossom|\uD83C\uDF38|' +
-    'tulip|\uD83C\uDF37|' +
-    'four_leaf_clover|\uD83C\uDF40|' +
-    'rose|\uD83C\uDF39|' +
-    'sunflower|\uD83C\uDF3B|' +
-    'hibiscus|\uD83C\uDF3A|' +
-    'maple_leaf|\uD83C\uDF41|' +
-    'leaves|\uD83C\uDF43|' +
-    'fallen_leaf|\uD83C\uDF42|' +
-    'herb|\uD83C\uDF3F|' +
-    'mushroom|\uD83C\uDF44|' +
-    'cactus|\uD83C\uDF35|' +
-    'palm_tree|\uD83C\uDF34|' +
-    'evergreen_tree|\uD83C\uDF32|' +
-    'deciduous_tree|\uD83C\uDF33|' +
-    'chestnut|\uD83C\uDF30|' +
-    'seedling|\uD83C\uDF31|' +
-    'blossom|\uD83C\uDF3C|' +
-    'ear_of_rice|\uD83C\uDF3E|' +
-    'shell|\uD83D\uDC1A|' +
-    'globe_with_meridians|\uD83C\uDF10|' +
-    'sun_with_face|\uD83C\uDF1E|' +
-    'full_moon_with_face|\uD83C\uDF1D|' +
-    'new_moon_with_face|\uD83C\uDF1A|' +
-    'new_moon|\uD83C\uDF11|' +
-    'waxing_crescent_moon|\uD83C\uDF12|' +
-    'first_quarter_moon|\uD83C\uDF13|' +
-    'waxing_gibbous_moon|\uD83C\uDF14|' +
-    'full_moon|\uD83C\uDF15|' +
-    'waning_gibbous_moon|\uD83C\uDF16|' +
-    'last_quarter_moon|\uD83C\uDF17|' +
-    'waning_crescent_moon|\uD83C\uDF18|' +
-    'last_quarter_moon_with_face|\uD83C\uDF1C|' +
-    'first_quarter_moon_with_face|\uD83C\uDF1B|' +
-    'moon|\uD83C\uDF19|' +
-    'earth_africa|\uD83C\uDF0D|' +
-    'earth_americas|\uD83C\uDF0E|' +
-    'earth_asia|\uD83C\uDF0F|' +
-    'volcano|\uD83C\uDF0B|' +
-    'milky_way|\uD83C\uDF0C|' +
-    'partly_sunny|\u26C5|' +
-    'bamboo|\uD83C\uDF8D|' +
-    'gift_heart|\uD83D\uDC9D|' +
-    'dolls|\uD83C\uDF8E|' +
-    'gift_heart|\uD83D\uDC9D|' +
-    'school_satchel|\uD83C\uDF92|' +
-    'mortar_board|\uD83C\uDF93|' +
-    'flags|\uD83C\uDF8F|' +
-    'fireworks|\uD83C\uDF86|' +
-    'sparkler|\uD83C\uDF87|' +
-    'wind_chime|\uD83C\uDF90|' +
-    'rice_scene|\uD83C\uDF91|' +
-    'jack_o_lantern|\uD83C\uDF83|' +
-    'ghost|\uD83D\uDC7B|' +
-    'santa|\uD83C\uDF85|' +
-    '8ball|\uD83C\uDFB1|' +
-    'alarm_clock|\u23F0|' +
-    'apple|\uD83C\uDF4E|' +
-    'art|\uD83C\uDFA8|' +
-    'baby_bottle|\uD83C\uDF7C|' +
-    'balloon|\uD83C\uDF88|' +
-    'banana|\uD83C\uDF4C|' +
-    'bar_chart|\uD83D\uDCCA|' +
-    'baseball|\u26BE|' +
-    'basketball|\uD83C\uDFC0|' +
-    'bath|\uD83D\uDEC0|' +
-    'bathtub|\uD83D\uDEC1|' +
-    'battery|\uD83D\uDD0B|' +
-    'beer|\uD83C\uDF7A|' +
-    'beers|\uD83C\uDF7B|' +
-    'bell|\uD83D\uDD14|' +
-    'bento|\uD83C\uDF71|' +
-    'bicyclist|\uD83D\uDEB4|' +
-    'bikini|\uD83D\uDC59|' +
-    'birthday|\uD83C\uDF82|' +
-    'black_joker|\uD83C\uDCCF|' +
-    'black_nib|\u2712|' +
-    'blue_book|\uD83D\uDCD8|' +
-    'bomb|\uD83D\uDCA3|' +
-    'bookmark|\uD83D\uDD16|' +
-    'bookmark_tabs|\uD83D\uDCD1|' +
-    'books|\uD83D\uDCDA|' +
-    'boot|\uD83D\uDC62|' +
-    'bowling|\uD83C\uDFB3|' +
-    'bread|\uD83C\uDF5E|' +
-    'briefcase|\uD83D\uDCBC|' +
-    'bulb|\uD83D\uDCA1|' +
-    'cake|\uD83C\uDF70|' +
-    'calendar|\uD83D\uDCC6|' +
-    'calling|\uD83D\uDCF2|' +
-    'camera|\uD83D\uDCF7|' +
-    'candy|\uD83C\uDF6C|' +
-    'card_index|\uD83D\uDCC7|' +
-    'cd|\uD83D\uDCBF|' +
-    'chart_with_downwards_trend|\uD83D\uDCC9|' +
-    'chart_with_upwards_trend|\uD83D\uDCC8|' +
-    'cherries|\uD83C\uDF52|' +
-    'chocolate_bar|\uD83C\uDF6B|' +
-    'christmas_tree|\uD83C\uDF84|' +
-    'clapper|\uD83C\uDFAC|' +
-    'clipboard|\uD83D\uDCCB|' +
-    'closed_book|\uD83D\uDCD5|' +
-    'closed_lock_with_key|\uD83D\uDD10|' +
-    'closed_umbrella|\uD83C\uDF02|' +
-    'clubs|\u2663|' +
-    'cocktail|\uD83C\uDF78|' +
-    'coffee|\u2615|' +
-    'computer|\uD83D\uDCBB|' +
-    'confetti_ball|\uD83C\uDF8A|' +
-    'cookie|\uD83C\uDF6A|' +
-    'corn|\uD83C\uDF3D|' +
-    'credit_card|\uD83D\uDCB3|' +
-    'crown|\uD83D\uDC51|' +
-    'crystal_ball|\uD83D\uDD2E|' +
-    'curry|\uD83C\uDF5B|' +
-    'custard|\uD83C\uDF6E|' +
-    'dango|\uD83C\uDF61|' +
-    'dart|\uD83C\uDFAF|' +
-    'date|\uD83D\uDCC5|' +
-    'diamonds|\u2666|' +
-    'dollar|\uD83D\uDCB5|' +
-    'door|\uD83D\uDEAA|' +
-    'doughnut|\uD83C\uDF69|' +
-    'dress|\uD83D\uDC57|' +
-    'dvd|\uD83D\uDCC0|' +
-    'e-mail|\uD83D\uDCE7|' +
-    'egg|\uD83C\uDF73|' +
-    'eggplant|\uD83C\uDF46|' +
-    'electric_plug|\uD83D\uDD0C|' +
-    'email|\u2709|' +
-    'euro|\uD83D\uDCB6|' +
-    'eyeglasses|\uD83D\uDC53|' +
-    'fax|\uD83D\uDCE0|' +
-    'file_folder|\uD83D\uDCC1|' +
-    'fish_cake|\uD83C\uDF65|' +
-    'fishing_pole_and_fish|\uD83C\uDFA3|' +
-    'flashlight|\uD83D\uDD26|' +
-    'floppy_disk|\uD83D\uDCBE|' +
-    'flower_playing_cards|\uD83C\uDFB4|' +
-    'football|\uD83C\uDFC8|' +
-    'fork_and_knife|\uD83C\uDF74|' +
-    'fried_shrimp|\uD83C\uDF64|' +
-    'fries|\uD83C\uDF5F|' +
-    'game_die|\uD83C\uDFB2|' +
-    'gem|\uD83D\uDC8E|' +
-    'gift|\uD83C\uDF81|' +
-    'golf|\u26F3|' +
-    'grapes|\uD83C\uDF47|' +
-    'green_apple|\uD83C\uDF4F|' +
-    'green_book|\uD83D\uDCD7|' +
-    'guitar|\uD83C\uDFB8|' +
-    'gun|\uD83D\uDD2B|' +
-    'hamburger|\uD83C\uDF54|' +
-    'hammer|\uD83D\uDD28|' +
-    'handbag|\uD83D\uDC5C|' +
-    'headphones|\uD83C\uDFA7|' +
-    'hearts|\u2665|' +
-    'high_brightness|\uD83D\uDD06|' +
-    'high_heel|\uD83D\uDC60|' +
-    'hocho|\uD83D\uDD2A|' +
-    'honey_pot|\uD83C\uDF6F|' +
-    'horse_racing|\uD83C\uDFC7|' +
-    'hourglass|\u231B|' +
-    'hourglass_flowing_sand|\u23F3|' +
-    'ice_cream|\uD83C\uDF68|' +
-    'icecream|\uD83C\uDF66|' +
-    'inbox_tray|\uD83D\uDCE5|' +
-    'incoming_envelope|\uD83D\uDCE8|' +
-    'information_source|\u2139\uFE0F|' +
-    'iphone|\uD83D\uDCF1|' +
-    'jeans|\uD83D\uDC56|' +
-    'key|\uD83D\uDD11|' +
-    'kimono|\uD83D\uDC58|' +
-    'ledger|\uD83D\uDCD2|' +
-    'lemon|\uD83C\uDF4B|' +
-    'lipstick|\uD83D\uDC84|' +
-    'lock|\uD83D\uDD12|' +
-    'lock_with_ink_pen|\uD83D\uDD0F|' +
-    'lollipop|\uD83C\uDF6D|' +
-    'loop|\u27BF|' +
-    'loudspeaker|\uD83D\uDCE2|' +
-    'low_brightness|\uD83D\uDD05|' +
-    'm|\u24C2\uFE0F|' +
-    'mag|\uD83D\uDD0D|' +
-    'mag_right|\uD83D\uDD0E|' +
-    'mahjong|\uD83C\uDC04|' +
-    'mailbox|\uD83D\uDCEB|' +
-    'mailbox_closed|\uD83D\uDCEA|' +
-    'mailbox_with_mail|\uD83D\uDCEC|' +
-    'mailbox_with_no_mail|\uD83D\uDCED|' +
-    'mans_shoe|\uD83D\uDC5E|' +
-    'meat_on_bone|\uD83C\uDF56|' +
-    'mega|\uD83D\uDCE3|' +
-    'melon|\uD83C\uDF48|' +
-    'memo|\uD83D\uDCDD|' +
-    'microphone|\uD83C\uDFA4|' +
-    'microscope|\uD83D\uDD2C|' +
-    'minidisc|\uD83D\uDCBD|' +
-    'money_with_wings|\uD83D\uDCB8|' +
-    'moneybag|\uD83D\uDCB0|' +
-    'mountain_bicyclist|\uD83D\uDEB5|' +
-    'movie_camera|\uD83C\uDFA5|' +
-    'musical_keyboard|\uD83C\uDFB9|' +
-    'musical_score|\uD83C\uDFBC|' +
-    'mute|\uD83D\uDD07|' +
-    'name_badge|\uD83D\uDCDB|' +
-    'necktie|\uD83D\uDC54|' +
-    'newspaper|\uD83D\uDCF0|' +
-    'no_bell|\uD83D\uDD15|' +
-    'notebook|\uD83D\uDCD3|' +
-    'notebook_with_decorative_cover|\uD83D\uDCD4|' +
-    'nut_and_bolt|\uD83D\uDD29|' +
-    'oden|\uD83C\uDF62|' +
-    'open_file_folder|\uD83D\uDCC2|' +
-    'orange_book|\uD83D\uDCD9|' +
-    'outbox_tray|\uD83D\uDCE4|' +
-    'page_facing_up|\uD83D\uDCC4|' +
-    'page_with_curl|\uD83D\uDCC3|' +
-    'pager|\uD83D\uDCDF|' +
-    'paperclip|\uD83D\uDCCE|' +
-    'peach|\uD83C\uDF51|' +
-    'pear|\uD83C\uDF50|' +
-    'pencil2|\u270F|' +
-    'phone|\u260E|' +
-    'pill|\uD83D\uDC8A|' +
-    'pineapple|\uD83C\uDF4D|' +
-    'pizza|\uD83C\uDF55|' +
-    'postal_horn|\uD83D\uDCEF|' +
-    'postbox|\uD83D\uDCEE|' +
-    'pouch|\uD83D\uDC5D|' +
-    'poultry_leg|\uD83C\uDF57|' +
-    'pound|\uD83D\uDCB7|' +
-    'purse|\uD83D\uDC5B|' +
-    'pushpin|\uD83D\uDCCC|' +
-    'radio|\uD83D\uDCFB|' +
-    'ramen|\uD83C\uDF5C|' +
-    'ribbon|\uD83C\uDF80|' +
-    'rice|\uD83C\uDF5A|' +
-    'rice_ball|\uD83C\uDF59|' +
-    'rice_cracker|\uD83C\uDF58|' +
-    'ring|\uD83D\uDC8D|' +
-    'rugby_football|\uD83C\uDFC9|' +
-    'running_shirt_with_sash|\uD83C\uDFBD|' +
-    'sake|\uD83C\uDF76|' +
-    'sandal|\uD83D\uDC61|' +
-    'satellite|\uD83D\uDCE1|' +
-    'saxophone|\uD83C\uDFB7|' +
-    'scissors|\u2702|' +
-    'scroll|\uD83D\uDCDC|' +
-    'seat|\uD83D\uDCBA|' +
-    'shaved_ice|\uD83C\uDF67|' +
-    'shirt|\uD83D\uDC55|' +
-    'shower|\uD83D\uDEBF|' +
-    'ski|\uD83C\uDFBF|' +
-    'smoking|\uD83D\uDEAC|' +
-    'snowboarder|\uD83C\uDFC2|' +
-    'soccer|\u26BD|' +
-    'sound|\uD83D\uDD09|' +
-    'space_invader|\uD83D\uDC7E|' +
-    'spades|\u2660|' +
-    'spaghetti|\uD83C\uDF5D|' +
-    'speaker|\uD83D\uDD0A|' +
-    'stew|\uD83C\uDF72|' +
-    'straight_ruler|\uD83D\uDCCF|' +
-    'strawberry|\uD83C\uDF53|' +
-    'surfer|\uD83C\uDFC4|' +
-    'sushi|\uD83C\uDF63|' +
-    'sweet_potato|\uD83C\uDF60|' +
-    'swimmer|\uD83C\uDFCA|' +
-    'syringe|\uD83D\uDC89|' +
-    'tada|\uD83C\uDF89|' +
-    'tanabata_tree|\uD83C\uDF8B|' +
-    'tangerine|\uD83C\uDF4A|' +
-    'tea|\uD83C\uDF75|' +
-    'telephone_receiver|\uD83D\uDCDE|' +
-    'telescope|\uD83D\uDD2D|' +
-    'tennis|\uD83C\uDFBE|' +
-    'toilet|\uD83D\uDEBD|' +
-    'tomato|\uD83C\uDF45|' +
-    'tophat|\uD83C\uDFA9|' +
-    'triangular_ruler|\uD83D\uDCD0|' +
-    'trophy|\uD83C\uDFC6|' +
-    'tropical_drink|\uD83C\uDF79|' +
-    'trumpet|\uD83C\uDFBA|' +
-    'tv|\uD83D\uDCFA|' +
-    'unlock|\uD83D\uDD13|' +
-    'vhs|\uD83D\uDCFC|' +
-    'video_camera|\uD83D\uDCF9|' +
-    'video_game|\uD83C\uDFAE|' +
-    'violin|\uD83C\uDFBB|' +
-    'watch|\u231A|' +
-    'watermelon|\uD83C\uDF49|' +
-    'wine_glass|\uD83C\uDF77|' +
-    'womans_clothes|\uD83D\uDC5A|' +
-    'womans_hat|\uD83D\uDC52|' +
-    'wrench|\uD83D\uDD27|' +
-    'yen|\uD83D\uDCB4|' +
-    'smile|\uD83D\uDE04|' +
-    'laughing|\uD83D\uDE06|' +
-    'blush|\uD83D\uDE0A|' +
-    'smiley|\uD83D\uDE03|' +
-    'relaxed|\u263A|' +
-    'smirk|\uD83D\uDE0F|' +
-    'heart_eyes|\uD83D\uDE0D|' +
-    'kissing_heart|\uD83D\uDE18|' +
-    'kissing_closed_eyes|\uD83D\uDE1A|' +
-    'flushed|\uD83D\uDE33|' +
-    'relieved|\uD83D\uDE25|' +
-    'satisfied|\uD83D\uDE0C|' +
-    'grin|\uD83D\uDE01|' +
-    'wink|\uD83D\uDE09|' +
-    'stuck_out_tongue_winking_eye|\uD83D\uDE1C|' +
-    'stuck_out_tongue_closed_eyes|\uD83D\uDE1D|' +
-    'grinning|\uD83D\uDE00|' +
-    'kissing|\uD83D\uDE17|' +
-    'kissing_smiling_eyes|\uD83D\uDE19|' +
-    'stuck_out_tongue|\uD83D\uDE1B|' +
-    'sleeping|\uD83D\uDE34|' +
-    'worried|\uD83D\uDE1F|' +
-    'frowning|\uD83D\uDE26|' +
-    'anguished|\uD83D\uDE27|' +
-    'open_mouth|\uD83D\uDE2E|' +
-    'grimacing|\uD83D\uDE2C|' +
-    'confused|\uD83D\uDE15|' +
-    'hushed|\uD83D\uDE2F|' +
-    'expressionless|\uD83D\uDE11|' +
-    'unamused|\uD83D\uDE12|' +
-    'sweat_smile|\uD83D\uDE05|' +
-    'sweat|\uD83D\uDE13|' +
-    'weary|\uD83D\uDE29|' +
-    'pensive|\uD83D\uDE14|' +
-    'disappointed|\uD83D\uDE1E|' +
-    'confounded|\uD83D\uDE16|' +
-    'fearful|\uD83D\uDE28|' +
-    'cold_sweat|\uD83D\uDE30|' +
-    'persevere|\uD83D\uDE23|' +
-    'cry|\uD83D\uDE22|' +
-    'sob|\uD83D\uDE2D|' +
-    'joy|\uD83D\uDE02|' +
-    'astonished|\uD83D\uDE32|' +
-    'scream|\uD83D\uDE31|' +
-    'tired_face|\uD83D\uDE2B|' +
-    'angry|\uD83D\uDE20|' +
-    'rage|\uD83D\uDE21|' +
-    'triumph|\uD83D\uDE24|' +
-    'sleepy|\uD83D\uDE2A|' +
-    'yum|\uD83D\uDE0B|' +
-    'mask|\uD83D\uDE37|' +
-    'sunglasses|\uD83D\uDE0E|' +
-    'dizzy_face|\uD83D\uDE35|' +
-    'imp|\uD83D\uDC7F|' +
-    'smiling_imp|\uD83D\uDE08|' +
-    'neutral_face|\uD83D\uDE10|' +
-    'no_mouth|\uD83D\uDE36|' +
-    'innocent|\uD83D\uDE07|' +
-    'alien|\uD83D\uDC7D|' +
-    'yellow_heart|\uD83D\uDC9B|' +
-    'blue_heart|\uD83D\uDC99|' +
-    'purple_heart|\uD83D\uDC9C|' +
-    'heart|\u2764|' +
-    'green_heart|\uD83D\uDC9A|' +
-    'broken_heart|\uD83D\uDC94|' +
-    'heartbeat|\uD83D\uDC93|' +
-    'heartpulse|\uD83D\uDC97|' +
-    'two_hearts|\uD83D\uDC95|' +
-    'revolving_hearts|\uD83D\uDC9E|' +
-    'cupid|\uD83D\uDC98|' +
-    'sparkling_heart|\uD83D\uDC96|' +
-    'sparkles|\u2728|' +
-    'star|\u2B50|' +
-    'star2|\uD83C\uDF1F|' +
-    'dizzy|\uD83D\uDCAB|' +
-    'boom|\uD83D\uDCA5|' +
-    'anger|\uD83D\uDCA2|' +
-    'exclamation|\u2757|' +
-    'question|\u2753|' +
-    'grey_exclamation|\u2755|' +
-    'grey_question|\u2754|' +
-    'zzz|\uD83D\uDCA4|' +
-    'dash|\uD83D\uDCA8|' +
-    'sweat_drops|\uD83D\uDCA6|' +
-    'notes|\uD83C\uDFB6|' +
-    'musical_note|\uD83C\uDFB5|' +
-    'fire|\uD83D\uDD25|' +
-    'poop|\uD83D\uDCA9|' +
-    'thumbsup|\uD83D\uDC4D|' +
-    'thumbsdown|\uD83D\uDC4E|' +
-    'ok_hand|\uD83D\uDC4C|' +
-    'punch|\uD83D\uDC4A|' +
-    'fist|\u270A|' +
-    'v|\u270C|' +
-    'wave|\uD83D\uDC4B|' +
-    'hand|\u270B|' +
-    'open_hands|\uD83D\uDC50|' +
-    'point_up|\u261D|' +
-    'point_down|\uD83D\uDC47|' +
-    'point_left|\uD83D\uDC48|' +
-    'point_right|\uD83D\uDC49|' +
-    'raised_hands|\uD83D\uDE4C|' +
-    'pray|\uD83D\uDE4F|' +
-    'point_up_2|\uD83D\uDC46|' +
-    'clap|\uD83D\uDC4F|' +
-    'muscle|\uD83D\uDCAA|' +
-    'walking|\uD83D\uDEB6|' +
-    'runner|\uD83C\uDFC3|' +
-    'couple|\uD83D\uDC6B|' +
-    'family|\uD83D\uDC6A|' +
-    'two_men_holding_hands|\uD83D\uDC6C|' +
-    'two_women_holding_hands|\uD83D\uDC6D|' +
-    'dancer|\uD83D\uDC83|' +
-    'dancers|\uD83D\uDC6F|' +
-    'ok_woman|\uD83D\uDE46|' +
-    'no_good|\uD83D\uDE45|' +
-    'information_desk_person|\uD83D\uDC81|' +
-    'raised_hand|\uD83D\uDE4B|' +
-    'bride_with_veil|\uD83D\uDC70|' +
-    'person_with_pouting_face|\uD83D\uDE4E|' +
-    'person_frowning|\uD83D\uDE4D|' +
-    'bow|\uD83D\uDE47|' +
-    'couplekiss|\uD83D\uDC8F|' +
-    'couple_with_heart|\uD83D\uDC91|' +
-    'massage|\uD83D\uDC86|' +
-    'haircut|\uD83D\uDC87|' +
-    'nail_care|\uD83D\uDC85|' +
-    'boy|\uD83D\uDC66|' +
-    'girl|\uD83D\uDC67|' +
-    'woman|\uD83D\uDC69|' +
-    'man|\uD83D\uDC68|' +
-    'baby|\uD83D\uDC76|' +
-    'older_woman|\uD83D\uDC75|' +
-    'older_man|\uD83D\uDC74|' +
-    'person_with_blond_hair|\uD83D\uDC71|' +
-    'man_with_gua_pi_mao|\uD83D\uDC72|' +
-    'man_with_turban|\uD83D\uDC73|' +
-    'construction_worker|\uD83D\uDC77|' +
-    'cop|\uD83D\uDC6E|' +
-    'angel|\uD83D\uDC7C|' +
-    'princess|\uD83D\uDC78|' +
-    'smiley_cat|\uD83D\uDE3A|' +
-    'smile_cat|\uD83D\uDE38|' +
-    'heart_eyes_cat|\uD83D\uDE3B|' +
-    'kissing_cat|\uD83D\uDE3D|' +
-    'smirk_cat|\uD83D\uDE3C|' +
-    'scream_cat|\uD83D\uDE40|' +
-    'crying_cat_face|\uD83D\uDE3F|' +
-    'joy_cat|\uD83D\uDE39|' +
-    'pouting_cat|\uD83D\uDE3E|' +
-    'japanese_ogre|\uD83D\uDC79|' +
-    'japanese_goblin|\uD83D\uDC7A|' +
-    'see_no_evil|\uD83D\uDE48|' +
-    'hear_no_evil|\uD83D\uDE49|' +
-    'speak_no_evil|\uD83D\uDE4A|' +
-    'guardsman|\uD83D\uDC82|' +
-    'skull|\uD83D\uDC80|' +
-    'feet|\uD83D\uDC63|' +
-    'lips|\uD83D\uDC44|' +
-    'kiss|\uD83D\uDC8B|' +
-    'droplet|\uD83D\uDCA7|' +
-    'ear|\uD83D\uDC42|' +
-    'eyes|\uD83D\uDC40|' +
-    'nose|\uD83D\uDC43|' +
-    'tongue|\uD83D\uDC45|' +
-    'love_letter|\uD83D\uDC8C|' +
-    'bust_in_silhouette|\uD83D\uDC64|' +
-    'busts_in_silhouette|\uD83D\uDC65|' +
-    'speech_balloon|\uD83D\uDCAC|' +
-    'thought_balloon|\uD83D\uDCAD|' +
-    'aerial_tramway|\uD83D\uDEA1|' +
-    'airplane|\u2708|' +
-    'ambulance|\uD83D\uDE91|' +
-    'anchor|\u2693|' +
-    'articulated_lorry|\uD83D\uDE9B|' +
-    'atm|\uD83C\uDFE7|' +
-    'bank|\uD83C\uDFE6|' +
-    'barber|\uD83D\uDC88|' +
-    'beginner|\uD83D\uDD30|' +
-    'bike|\uD83D\uDEB2|' +
-    'blue_car|\uD83D\uDE99|' +
-    'boat|\u26F5|' +
-    'bridge_at_night|\uD83C\uDF09|' +
-    'bullettrain_front|\uD83D\uDE85|' +
-    'bullettrain_side|\uD83D\uDE84|' +
-    'bus|\uD83D\uDE8C|' +
-    'busstop|\uD83D\uDE8F|' +
-    'car|\uD83D\uDE97|' +
-    'carousel_horse|\uD83C\uDFA0|' +
-    'checkered_flag|\uD83C\uDFC1|' +
-    'church|\u26EA|' +
-    'circus_tent|\uD83C\uDFAA|' +
-    'city_sunrise|\uD83C\uDF07|' +
-    'city_sunset|\uD83C\uDF06|' +
-    'construction|\uD83D\uDEA7|' +
-    'convenience_store|\uD83C\uDFEA|' +
-    'crossed_flags|\uD83C\uDF8C|' +
-    'department_store|\uD83C\uDFEC|' +
-    'european_castle|\uD83C\uDFF0|' +
-    'european_post_office|\uD83C\uDFE4|' +
-    'factory|\uD83C\uDFED|' +
-    'ferris_wheel|\uD83C\uDFA1|' +
-    'fire_engine|\uD83D\uDE92|' +
-    'fountain|\u26F2|' +
-    'fuelpump|\u26FD|' +
-    'helicopter|\uD83D\uDE81|' +
-    'hospital|\uD83C\uDFE5|' +
-    'hotel|\uD83C\uDFE8|' +
-    'hotsprings|\u2668|' +
-    'house|\uD83C\uDFE0|' +
-    'house_with_garden|\uD83C\uDFE1|' +
-    'japan|\uD83D\uDDFE|' +
-    'japanese_castle|\uD83C\uDFEF|' +
-    'light_rail|\uD83D\uDE88|' +
-    'love_hotel|\uD83C\uDFE9|' +
-    'minibus|\uD83D\uDE90|' +
-    'monorail|\uD83D\uDE9D|' +
-    'mount_fuji|\uD83D\uDDFB|' +
-    'mountain_cableway|\uD83D\uDEA0|' +
-    'mountain_railway|\uD83D\uDE9E|' +
-    'moyai|\uD83D\uDDFF|' +
-    'office|\uD83C\uDFE2|' +
-    'oncoming_automobile|\uD83D\uDE98|' +
-    'oncoming_bus|\uD83D\uDE8D|' +
-    'oncoming_police_car|\uD83D\uDE94|' +
-    'oncoming_taxi|\uD83D\uDE96|' +
-    'performing_arts|\uD83C\uDFAD|' +
-    'police_car|\uD83D\uDE93|' +
-    'post_office|\uD83C\uDFE3|' +
-    'railway_car|\uD83D\uDE83|' +
-    'rainbow|\uD83C\uDF08|' +
-    'rocket|\uD83D\uDE80|' +
-    'roller_coaster|\uD83C\uDFA2|' +
-    'rotating_light|\uD83D\uDEA8|' +
-    'round_pushpin|\uD83D\uDCCD|' +
-    'rowboat|\uD83D\uDEA3|' +
-    'school|\uD83C\uDFEB|' +
-    'ship|\uD83D\uDEA2|' +
-    'slot_machine|\uD83C\uDFB0|' +
-    'speedboat|\uD83D\uDEA4|' +
-    'stars|\uD83C\uDF03|' +
-    'station|\uD83D\uDE89|' +
-    'statue_of_liberty|\uD83D\uDDFD|' +
-    'steam_locomotive|\uD83D\uDE82|' +
-    'sunrise|\uD83C\uDF05|' +
-    'sunrise_over_mountains|\uD83C\uDF04|' +
-    'suspension_railway|\uD83D\uDE9F|' +
-    'taxi|\uD83D\uDE95|' +
-    'tent|\u26FA|' +
-    'ticket|\uD83C\uDFAB|' +
-    'tokyo_tower|\uD83D\uDDFC|' +
-    'tractor|\uD83D\uDE9C|' +
-    'traffic_light|\uD83D\uDEA5|' +
-    'train2|\uD83D\uDE86|' +
-    'tram|\uD83D\uDE8A|' +
-    'triangular_flag_on_post|\uD83D\uDEA9|' +
-    'trolleybus|\uD83D\uDE8E|' +
-    'truck|\uD83D\uDE9A|' +
-    'vertical_traffic_light|\uD83D\uDEA6|' +
-    'warning|\u26A0|' +
-    'wedding|\uD83D\uDC92|' +
-    'jp|\uD83C\uDDEF\uD83C\uDDF5|' +
-    'kr|\uD83C\uDDF0\uD83C\uDDF7|' +
-    'cn|\uD83C\uDDE8\uD83C\uDDF3|' +
-    'us|\uD83C\uDDFA\uD83C\uDDF8|' +
-    'fr|\uD83C\uDDEB\uD83C\uDDF7|' +
-    'es|\uD83C\uDDEA\uD83C\uDDF8|' +
-    'it|\uD83C\uDDEE\uD83C\uDDF9|' +
-    'ru|\uD83C\uDDF7\uD83C\uDDFA|' +
-    'gb|\uD83C\uDDEC\uD83C\uDDE7|' +
-    'de|\uD83C\uDDE9\uD83C\uDDEA|' +
-    '100|\uD83D\uDCAF|' +
-    '1234|\uD83D\uDD22|' +
-    'a|\uD83C\uDD70|' +
-    'ab|\uD83C\uDD8E|' +
-    'abc|\uD83D\uDD24|' +
-    'abcd|\uD83D\uDD21|' +
-    'accept|\uD83C\uDE51|' +
-    'aquarius|\u2652|' +
-    'aries|\u2648|' +
-    'arrow_backward|\u25C0|' +
-    'arrow_double_down|\u23EC|' +
-    'arrow_double_up|\u23EB|' +
-    'arrow_down|\u2B07|' +
-    'arrow_down_small|\uD83D\uDD3D|' +
-    'arrow_forward|\u25B6|' +
-    'arrow_heading_down|\u2935|' +
-    'arrow_heading_up|\u2934|' +
-    'arrow_left|\u2B05|' +
-    'arrow_lower_left|\u2199|' +
-    'arrow_lower_right|\u2198|' +
-    'arrow_right|\u27A1|' +
-    'arrow_right_hook|\u21AA|' +
-    'arrow_up|\u2B06|' +
-    'arrow_up_down|\u2195|' +
-    'arrow_up_small|\uD83D\uDD3C|' +
-    'arrow_upper_left|\u2196|' +
-    'arrow_upper_right|\u2197|' +
-    'arrows_clockwise|\uD83D\uDD03|' +
-    'arrows_counterclockwise|\uD83D\uDD04|' +
-    'b|\uD83C\uDD71|' +
-    'baby_symbol|\uD83D\uDEBC|' +
-    'baggage_claim|\uD83D\uDEC4|' +
-    'ballot_box_with_check|\u2611|' +
-    'bangbang|\u203C|' +
-    'black_circle|\u26AB|' +
-    'black_square_button|\uD83D\uDD32|' +
-    'cancer|\u264B|' +
-    'capital_abcd|\uD83D\uDD20|' +
-    'capricorn|\u2651|' +
-    'chart|\uD83D\uDCB9|' +
-    'children_crossing|\uD83D\uDEB8|' +
-    'cinema|\uD83C\uDFA6|' +
-    'cl|\uD83C\uDD91|' +
-    'clock1|\uD83D\uDD50|' +
-    'clock10|\uD83D\uDD59|' +
-    'clock1030|\uD83D\uDD65|' +
-    'clock11|\uD83D\uDD5A|' +
-    'clock1130|\uD83D\uDD66|' +
-    'clock12|\uD83D\uDD5B|' +
-    'clock1230|\uD83D\uDD67|' +
-    'clock130|\uD83D\uDD5C|' +
-    'clock2|\uD83D\uDD51|' +
-    'clock230|\uD83D\uDD5D|' +
-    'clock3|\uD83D\uDD52|' +
-    'clock330|\uD83D\uDD5E|' +
-    'clock4|\uD83D\uDD53|' +
-    'clock430|\uD83D\uDD5F|' +
-    'clock5|\uD83D\uDD54|' +
-    'clock530|\uD83D\uDD60|' +
-    'clock6|\uD83D\uDD55|' +
-    'clock630|\uD83D\uDD61|' +
-    'clock7|\uD83D\uDD56|' +
-    'clock730|\uD83D\uDD62|' +
-    'clock8|\uD83D\uDD57|' +
-    'clock830|\uD83D\uDD63|' +
-    'clock9|\uD83D\uDD58|' +
-    'clock930|\uD83D\uDD64|' +
-    'congratulations|\u3297|' +
-    'cool|\uD83C\uDD92|' +
-    'copyright|\u00A9|' +
-    'curly_loop|\u27B0|' +
-    'currency_exchange|\uD83D\uDCB1|' +
-    'customs|\uD83D\uDEC3|' +
-    'diamond_shape_with_a_dot_inside|\uD83D\uDCA0|' +
-    'do_not_litter|\uD83D\uDEAF|' +
-    'eight|\u0038\uFE0F\u20E3|' +
-    'eight_pointed_black_star|\u2734|' +
-    'eight_spoked_asterisk|\u2733|' +
-    'end|\uD83D\uDD1A|' +
-    'fast_forward|\u23E9|' +
-    'five|\u0035\uFE0F\u20E3|' +
-    'four|\u0034\uFE0F\u20E3|' +
-    'free|\uD83C\uDD93|' +
-    'gemini|\u264A|' +
-    'hash|\u0023\uFE0F\u20E3|' +
-    'heart_decoration|\uD83D\uDC9F|' +
-    'heavy_check_mark|\u2714|' +
-    'heavy_division_sign|\u2797|' +
-    'heavy_dollar_sign|\uD83D\uDCB2|' +
-    'heavy_minus_sign|\u2796|' +
-    'heavy_multiplication_x|\u2716|' +
-    'heavy_plus_sign|\u2795|' +
-    'id|\uD83C\uDD94|' +
-    'ideograph_advantage|\uD83C\uDE50|' +
-    'interrobang|\u2049|' +
-    'keycap_ten|\uD83D\uDD1F|' +
-    'koko|\uD83C\uDE01|' +
-    'large_blue_circle|\uD83D\uDD35|' +
-    'large_blue_diamond|\uD83D\uDD37|' +
-    'large_orange_diamond|\uD83D\uDD36|' +
-    'left_luggage|\uD83D\uDEC5|' +
-    'left_right_arrow|\u2194|' +
-    'leftwards_arrow_with_hook|\u21A9|' +
-    'leo|\u264C|' +
-    'libra|\u264E|' +
-    'link|\uD83D\uDD17|' +
-    'mens|\uD83D\uDEB9|' +
-    'metro|\uD83D\uDE87|' +
-    'mobile_phone_off|\uD83D\uDCF4|' +
-    'negative_squared_cross_mark|\u274E|' +
-    'new|\uD83C\uDD95|' +
-    'ng|\uD83C\uDD96|' +
-    'nine|\u0039\uFE0F\u20E3|' +
-    'no_bicycles|\uD83D\uDEB3|' +
-    'no_entry|\u26D4|' +
-    'no_entry_sign|\uD83D\uDEAB|' +
-    'no_mobile_phones|\uD83D\uDCF5|' +
-    'no_pedestrians|\uD83D\uDEB7|' +
-    'no_smoking|\uD83D\uDEAD|' +
-    'non-potable_water|\uD83D\uDEB1|' +
-    'o|\u2B55|' +
-    'o2|\uD83C\uDD7E|' +
-    'ok|\uD83C\uDD97|' +
-    'on|\uD83D\uDD1B|' +
-    'one|\u0031\uFE0F\u20E3|' +
-    'ophiuchus|\u26CE|' +
-    'parking|\uD83C\uDD7F|' +
-    'part_alternation_mark|\u303D|' +
-    'passport_control|\uD83D\uDEC2|' +
-    'pisces|\u2653|' +
-    'potable_water|\uD83D\uDEB0|' +
-    'put_litter_in_its_place|\uD83D\uDEAE|' +
-    'radio_button|\uD83D\uDD18|' +
-    'recycle|\u267B|' +
-    'red_circle|\uD83D\uDD34|' +
-    'registered|\u00AE|' +
-    'repeat|\uD83D\uDD01|' +
-    'repeat_one|\uD83D\uDD02|' +
-    'restroom|\uD83D\uDEBB|' +
-    'rewind|\u23EA|' +
-    'sa|\uD83C\uDE02|' +
-    'sagittarius|\u2650|' +
-    'scorpius|\u264F|' +
-    'secret|\u3299|' +
-    'seven|\u0037\uFE0F\u20E3|' +
-    'signal_strength|\uD83D\uDCF6|' +
-    'six|\u0036\uFE0F\u20E3|' +
-    'six_pointed_star|\uD83D\uDD2F|' +
-    'small_blue_diamond|\uD83D\uDD39|' +
-    'small_orange_diamond|\uD83D\uDD38|' +
-    'small_red_triangle|\uD83D\uDD3A|' +
-    'small_red_triangle_down|\uD83D\uDD3B|' +
-    'soon|\uD83D\uDD1C|' +
-    'sos|\uD83C\uDD98|' +
-    'symbols|\uD83D\uDD23|' +
-    'taurus|\u2649|' +
-    'three|\u0033\uFE0F\u20E3|' +
-    'tm|\u2122|' +
-    'top|\uD83D\uDD1D|' +
-    'trident|\uD83D\uDD31|' +
-    'twisted_rightwards_arrows|\uD83D\uDD00|' +
-    'two|\u0032\uFE0F\u20E3|' +
-    'u5272|\uD83C\uDE39|' +
-    'u5408|\uD83C\uDE34|' +
-    'u55b6|\uD83C\uDE3A|' +
-    'u6307|\uD83C\uDE2F|' +
-    'u6708|\uD83C\uDE37|' +
-    'u6709|\uD83C\uDE36|' +
-    'u6e80|\uD83C\uDE35|' +
-    'u7121|\uD83C\uDE1A|' +
-    'u7533|\uD83C\uDE38|' +
-    'u7981|\uD83C\uDE32|' +
-    'u7a7a|\uD83C\uDE33|' +
-    'underage|\uD83D\uDD1E|' +
-    'up|\uD83C\uDD99|' +
-    'vibration_mode|\uD83D\uDCF3|' +
-    'virgo|\u264D|' +
-    'vs|\uD83C\uDD9A|' +
-    'wavy_dash|\u3030|' +
-    'wc|\uD83D\uDEBE|' +
-    'wheelchair|\u267F|' +
-    'white_check_mark|\u2705|' +
-    'white_circle|\u26AA|' +
-    'white_flower|\uD83D\uDCAE|' +
-    'white_square_button|\uD83D\uDD33|' +
-    'womens|\uD83D\uDEBA|' +
-    'x|\u274C|' +
-    'zero|\u0030\uFE0F\u20E3'
-).split('|');
-
-iterator = -1;
-
-while (gemoji[++iterator]) {
-    shortcode = gemoji[iterator];
-    unicode = gemoji[++iterator];
-    namedGemoji[shortcode] = unicode;
-    unicodeGemoji[unicode] = shortcode;
-}
-
-});
-
-require.register("wooorm~retext-emoji@0.1.1", function (exports, module) {
-'use strict';
-
-var gemoji, shortcode, shortcodes, names, unicode, has;
-
-gemoji = require("wooorm~gemoji@0.1.0");
-
-names = gemoji.name;
-unicode = gemoji.unicode;
-shortcodes = gemoji.shortcode = {};
+gemoji = require("wooorm~gemoji@0.1.1/data/gemoji.json");
 
 has = Object.prototype.hasOwnProperty;
 
-for (shortcode in names) {
+unicodes = {};
+named = {};
+
+for (key in gemoji) {
     /* istanbul ignore else */
-    if (has.call(names, shortcode)) {
-        shortcodes[':' + shortcode + ':'] = names[shortcode];
+    if (has.call(gemoji, key)) {
+        unicode = gemoji[key];
+        named[key] = unicode;
+
+        /* Some unicode emoji have aliasses, here we make sure the emoji is
+         * written once. */
+        if (!has.call(unicodes, unicode)) {
+            unicodes[unicode] = key;
+        }
     }
 }
 
+exports.unicode = unicodes;
+exports.name = named;
+
+});
+
+require.define("wooorm~gemoji@0.1.1/data/gemoji.json", {"100":"💯","1234":"🔢","smile":"😄","smiley":"😃","grinning":"😀","blush":"😊","relaxed":"☺️","wink":"😉","heart_eyes":"😍","kissing_heart":"😘","kissing_closed_eyes":"😚","kissing":"😗","kissing_smiling_eyes":"😙","stuck_out_tongue_winking_eye":"😜","stuck_out_tongue_closed_eyes":"😝","stuck_out_tongue":"😛","flushed":"😳","grin":"😁","pensive":"😔","relieved":"😌","unamused":"😒","disappointed":"😞","persevere":"😣","cry":"😢","joy":"😂","sob":"😭","sleepy":"😪","disappointed_relieved":"😥","cold_sweat":"😰","sweat_smile":"😅","sweat":"😓","weary":"😩","tired_face":"😫","fearful":"😨","scream":"😱","angry":"😠","rage":"😡","triumph":"😤","confounded":"😖","laughing":"😆","satisfied":"😆","yum":"😋","mask":"😷","sunglasses":"😎","sleeping":"😴","dizzy_face":"😵","astonished":"😲","worried":"😟","frowning":"😦","anguished":"😧","smiling_imp":"😈","imp":"👿","open_mouth":"😮","grimacing":"😬","neutral_face":"😐","confused":"😕","hushed":"😯","no_mouth":"😶","innocent":"😇","smirk":"😏","expressionless":"😑","man_with_gua_pi_mao":"👲","man_with_turban":"👳","cop":"👮","construction_worker":"👷","guardsman":"💂","baby":"👶","boy":"👦","girl":"👧","man":"👨","woman":"👩","older_man":"👴","older_woman":"👵","person_with_blond_hair":"👱","angel":"👼","princess":"👸","smiley_cat":"😺","smile_cat":"😸","heart_eyes_cat":"😻","kissing_cat":"😽","smirk_cat":"😼","scream_cat":"🙀","crying_cat_face":"😿","joy_cat":"😹","pouting_cat":"😾","japanese_ogre":"👹","japanese_goblin":"👺","see_no_evil":"🙈","hear_no_evil":"🙉","speak_no_evil":"🙊","skull":"💀","alien":"👽","hankey":"💩","poop":"💩","shit":"💩","fire":"🔥","sparkles":"✨","star2":"🌟","dizzy":"💫","boom":"💥","collision":"💥","anger":"💢","sweat_drops":"💦","droplet":"💧","zzz":"💤","dash":"💨","ear":"👂","eyes":"👀","nose":"👃","tongue":"👅","lips":"👄","+1":"👍","thumbsup":"👍","-1":"👎","thumbsdown":"👎","ok_hand":"👌","facepunch":"👊","punch":"👊","fist":"✊","v":"✌️","wave":"👋","hand":"✋","raised_hand":"✋","open_hands":"👐","point_up_2":"👆","point_down":"👇","point_right":"👉","point_left":"👈","raised_hands":"🙌","pray":"🙏","point_up":"☝️","clap":"👏","muscle":"💪","walking":"🚶","runner":"🏃","running":"🏃","dancer":"💃","couple":"👫","family":"👪","two_men_holding_hands":"👬","two_women_holding_hands":"👭","couplekiss":"💏","couple_with_heart":"💑","dancers":"👯","ok_woman":"🙆","no_good":"🙅","information_desk_person":"💁","raising_hand":"🙋","massage":"💆","haircut":"💇","nail_care":"💅","bride_with_veil":"👰","person_with_pouting_face":"🙎","person_frowning":"🙍","bow":"🙇","tophat":"🎩","crown":"👑","womans_hat":"👒","athletic_shoe":"👟","mans_shoe":"👞","shoe":"👞","sandal":"👡","high_heel":"👠","boot":"👢","shirt":"👕","tshirt":"👕","necktie":"👔","womans_clothes":"👚","dress":"👗","running_shirt_with_sash":"🎽","jeans":"👖","kimono":"👘","bikini":"👙","briefcase":"💼","handbag":"👜","pouch":"👝","purse":"👛","eyeglasses":"👓","ribbon":"🎀","closed_umbrella":"🌂","lipstick":"💄","yellow_heart":"💛","blue_heart":"💙","purple_heart":"💜","green_heart":"💚","heart":"❤️","broken_heart":"💔","heartpulse":"💗","heartbeat":"💓","two_hearts":"💕","sparkling_heart":"💖","revolving_hearts":"💞","cupid":"💘","love_letter":"💌","kiss":"💋","ring":"💍","gem":"💎","bust_in_silhouette":"👤","busts_in_silhouette":"👥","speech_balloon":"💬","footprints":"👣","thought_balloon":"💭","dog":"🐶","wolf":"🐺","cat":"🐱","mouse":"🐭","hamster":"🐹","rabbit":"🐰","frog":"🐸","tiger":"🐯","koala":"🐨","bear":"🐻","pig":"🐷","pig_nose":"🐽","cow":"🐮","boar":"🐗","monkey_face":"🐵","monkey":"🐒","horse":"🐴","sheep":"🐑","elephant":"🐘","panda_face":"🐼","penguin":"🐧","bird":"🐦","baby_chick":"🐤","hatched_chick":"🐥","hatching_chick":"🐣","chicken":"🐔","snake":"🐍","turtle":"🐢","bug":"🐛","bee":"🐝","honeybee":"🐝","ant":"🐜","beetle":"🐞","snail":"🐌","octopus":"🐙","shell":"🐚","tropical_fish":"🐠","fish":"🐟","dolphin":"🐬","flipper":"🐬","whale":"🐳","whale2":"🐋","cow2":"🐄","ram":"🐏","rat":"🐀","water_buffalo":"🐃","tiger2":"🐅","rabbit2":"🐇","dragon":"🐉","racehorse":"🐎","goat":"🐐","rooster":"🐓","dog2":"🐕","pig2":"🐖","mouse2":"🐁","ox":"🐂","dragon_face":"🐲","blowfish":"🐡","crocodile":"🐊","camel":"🐫","dromedary_camel":"🐪","leopard":"🐆","cat2":"🐈","poodle":"🐩","feet":"🐾","paw_prints":"🐾","bouquet":"💐","cherry_blossom":"🌸","tulip":"🌷","four_leaf_clover":"🍀","rose":"🌹","sunflower":"🌻","hibiscus":"🌺","maple_leaf":"🍁","leaves":"🍃","fallen_leaf":"🍂","herb":"🌿","ear_of_rice":"🌾","mushroom":"🍄","cactus":"🌵","palm_tree":"🌴","evergreen_tree":"🌲","deciduous_tree":"🌳","chestnut":"🌰","seedling":"🌱","blossom":"🌼","globe_with_meridians":"🌐","sun_with_face":"🌞","full_moon_with_face":"🌝","new_moon_with_face":"🌚","new_moon":"🌑","waxing_crescent_moon":"🌒","first_quarter_moon":"🌓","moon":"🌔","waxing_gibbous_moon":"🌔","full_moon":"🌕","waning_gibbous_moon":"🌖","last_quarter_moon":"🌗","waning_crescent_moon":"🌘","last_quarter_moon_with_face":"🌜","first_quarter_moon_with_face":"🌛","crescent_moon":"🌙","earth_africa":"🌍","earth_americas":"🌎","earth_asia":"🌏","volcano":"🌋","milky_way":"🌌","stars":"🌠","star":"⭐","sunny":"☀️","partly_sunny":"⛅","cloud":"☁️","zap":"⚡","umbrella":"☔","snowflake":"❄️","snowman":"⛄","cyclone":"🌀","foggy":"🌁","rainbow":"🌈","ocean":"🌊","bamboo":"🎍","gift_heart":"💝","dolls":"🎎","school_satchel":"🎒","mortar_board":"🎓","flags":"🎏","fireworks":"🎆","sparkler":"🎇","wind_chime":"🎐","rice_scene":"🎑","jack_o_lantern":"🎃","ghost":"👻","santa":"🎅","christmas_tree":"🎄","gift":"🎁","tanabata_tree":"🎋","tada":"🎉","confetti_ball":"🎊","balloon":"🎈","crossed_flags":"🎌","crystal_ball":"🔮","movie_camera":"🎥","camera":"📷","video_camera":"📹","vhs":"📼","cd":"💿","dvd":"📀","minidisc":"💽","floppy_disk":"💾","computer":"💻","iphone":"📱","phone":"☎️","telephone":"☎️","telephone_receiver":"📞","pager":"📟","fax":"📠","satellite":"📡","tv":"📺","radio":"📻","loud_sound":"🔊","sound":"🔉","speaker":"🔈","mute":"🔇","bell":"🔔","no_bell":"🔕","loudspeaker":"📢","mega":"📣","hourglass_flowing_sand":"⏳","hourglass":"⌛","alarm_clock":"⏰","watch":"⌚","unlock":"🔓","lock":"🔒","lock_with_ink_pen":"🔏","closed_lock_with_key":"🔐","key":"🔑","mag_right":"🔎","bulb":"💡","flashlight":"🔦","high_brightness":"🔆","low_brightness":"🔅","electric_plug":"🔌","battery":"🔋","mag":"🔍","bathtub":"🛁","bath":"🛀","shower":"🚿","toilet":"🚽","wrench":"🔧","nut_and_bolt":"🔩","hammer":"🔨","door":"🚪","smoking":"🚬","bomb":"💣","gun":"🔫","hocho":"🔪","knife":"🔪","pill":"💊","syringe":"💉","moneybag":"💰","yen":"💴","dollar":"💵","pound":"💷","euro":"💶","credit_card":"💳","money_with_wings":"💸","calling":"📲","e-mail":"📧","inbox_tray":"📥","outbox_tray":"📤","email":"✉️","envelope":"✉️","envelope_with_arrow":"📩","incoming_envelope":"📨","postal_horn":"📯","mailbox":"📫","mailbox_closed":"📪","mailbox_with_mail":"📬","mailbox_with_no_mail":"📭","postbox":"📮","package":"📦","memo":"📝","pencil":"📝","page_facing_up":"📄","page_with_curl":"📃","bookmark_tabs":"📑","bar_chart":"📊","chart_with_upwards_trend":"📈","chart_with_downwards_trend":"📉","scroll":"📜","clipboard":"📋","date":"📅","calendar":"📆","card_index":"📇","file_folder":"📁","open_file_folder":"📂","scissors":"✂️","pushpin":"📌","paperclip":"📎","black_nib":"✒️","pencil2":"✏️","straight_ruler":"📏","triangular_ruler":"📐","closed_book":"📕","green_book":"📗","blue_book":"📘","orange_book":"📙","notebook":"📓","notebook_with_decorative_cover":"📔","ledger":"📒","books":"📚","book":"📖","open_book":"📖","bookmark":"🔖","name_badge":"📛","microscope":"🔬","telescope":"🔭","newspaper":"📰","art":"🎨","clapper":"🎬","microphone":"🎤","headphones":"🎧","musical_score":"🎼","musical_note":"🎵","notes":"🎶","musical_keyboard":"🎹","violin":"🎻","trumpet":"🎺","saxophone":"🎷","guitar":"🎸","space_invader":"👾","video_game":"🎮","black_joker":"🃏","flower_playing_cards":"🎴","mahjong":"🀄","game_die":"🎲","dart":"🎯","football":"🏈","basketball":"🏀","soccer":"⚽","baseball":"⚾️","tennis":"🎾","8ball":"🎱","rugby_football":"🏉","bowling":"🎳","golf":"⛳","mountain_bicyclist":"🚵","bicyclist":"🚴","checkered_flag":"🏁","horse_racing":"🏇","trophy":"🏆","ski":"🎿","snowboarder":"🏂","swimmer":"🏊","surfer":"🏄","fishing_pole_and_fish":"🎣","coffee":"☕","tea":"🍵","sake":"🍶","baby_bottle":"🍼","beer":"🍺","beers":"🍻","cocktail":"🍸","tropical_drink":"🍹","wine_glass":"🍷","fork_and_knife":"🍴","pizza":"🍕","hamburger":"🍔","fries":"🍟","poultry_leg":"🍗","meat_on_bone":"🍖","spaghetti":"🍝","curry":"🍛","fried_shrimp":"🍤","bento":"🍱","sushi":"🍣","fish_cake":"🍥","rice_ball":"🍙","rice_cracker":"🍘","rice":"🍚","ramen":"🍜","stew":"🍲","oden":"🍢","dango":"🍡","egg":"🍳","bread":"🍞","doughnut":"🍩","custard":"🍮","icecream":"🍦","ice_cream":"🍨","shaved_ice":"🍧","birthday":"🎂","cake":"🍰","cookie":"🍪","chocolate_bar":"🍫","candy":"🍬","lollipop":"🍭","honey_pot":"🍯","apple":"🍎","green_apple":"🍏","tangerine":"🍊","lemon":"🍋","cherries":"🍒","grapes":"🍇","watermelon":"🍉","strawberry":"🍓","peach":"🍑","melon":"🍈","banana":"🍌","pear":"🍐","pineapple":"🍍","sweet_potato":"🍠","eggplant":"🍆","tomato":"🍅","corn":"🌽","house":"🏠","house_with_garden":"🏡","school":"🏫","office":"🏢","post_office":"🏣","hospital":"🏥","bank":"🏦","convenience_store":"🏪","love_hotel":"🏩","hotel":"🏨","wedding":"💒","church":"⛪","department_store":"🏬","european_post_office":"🏤","city_sunrise":"🌇","city_sunset":"🌆","japanese_castle":"🏯","european_castle":"🏰","tent":"⛺","factory":"🏭","tokyo_tower":"🗼","japan":"🗾","mount_fuji":"🗻","sunrise_over_mountains":"🌄","sunrise":"🌅","night_with_stars":"🌃","statue_of_liberty":"🗽","bridge_at_night":"🌉","carousel_horse":"🎠","ferris_wheel":"🎡","fountain":"⛲","roller_coaster":"🎢","ship":"🚢","boat":"⛵","sailboat":"⛵","speedboat":"🚤","rowboat":"🚣","anchor":"⚓","rocket":"🚀","airplane":"✈️","seat":"💺","helicopter":"🚁","steam_locomotive":"🚂","tram":"🚊","station":"🚉","mountain_railway":"🚞","train2":"🚆","bullettrain_side":"🚄","bullettrain_front":"🚅","light_rail":"🚈","metro":"🚇","monorail":"🚝","train":"🚋","railway_car":"🚃","trolleybus":"🚎","bus":"🚌","oncoming_bus":"🚍","blue_car":"🚙","oncoming_automobile":"🚘","car":"🚗","red_car":"🚗","taxi":"🚕","oncoming_taxi":"🚖","articulated_lorry":"🚛","truck":"🚚","rotating_light":"🚨","police_car":"🚓","oncoming_police_car":"🚔","fire_engine":"🚒","ambulance":"🚑","minibus":"🚐","bike":"🚲","aerial_tramway":"🚡","suspension_railway":"🚟","mountain_cableway":"🚠","tractor":"🚜","barber":"💈","busstop":"🚏","ticket":"🎫","vertical_traffic_light":"🚦","traffic_light":"🚥","warning":"⚠️","construction":"🚧","beginner":"🔰","fuelpump":"⛽","izakaya_lantern":"🏮","lantern":"🏮","slot_machine":"🎰","hotsprings":"♨️","moyai":"🗿","circus_tent":"🎪","performing_arts":"🎭","round_pushpin":"📍","triangular_flag_on_post":"🚩","jp":"🇯🇵","kr":"🇰🇷","de":"🇩🇪","cn":"🇨🇳","us":"🇺🇸","fr":"🇫🇷","es":"🇪🇸","it":"🇮🇹","ru":"🇷🇺","gb":"🇬🇧","uk":"🇬🇧","one":"1️⃣","two":"2️⃣","three":"3️⃣","four":"4️⃣","five":"5️⃣","six":"6️⃣","seven":"7️⃣","eight":"8️⃣","nine":"9️⃣","zero":"0️⃣","keycap_ten":"🔟","hash":"#️⃣","symbols":"🔣","arrow_up":"⬆️","arrow_down":"⬇️","arrow_left":"⬅️","arrow_right":"➡️","capital_abcd":"🔠","abcd":"🔡","abc":"🔤","arrow_upper_right":"↗️","arrow_upper_left":"↖️","arrow_lower_right":"↘️","arrow_lower_left":"↙️","left_right_arrow":"↔️","arrow_up_down":"↕️","arrows_counterclockwise":"🔄","arrow_backward":"◀️","arrow_forward":"▶️","arrow_up_small":"🔼","arrow_down_small":"🔽","leftwards_arrow_with_hook":"↩️","arrow_right_hook":"↪️","information_source":"ℹ️","rewind":"⏪","fast_forward":"⏩","arrow_double_up":"⏫","arrow_double_down":"⏬","arrow_heading_down":"⤵️","arrow_heading_up":"⤴️","ok":"🆗","twisted_rightwards_arrows":"🔀","repeat":"🔁","repeat_one":"🔂","new":"🆕","up":"🆙","cool":"🆒","free":"🆓","ng":"🆖","signal_strength":"📶","cinema":"🎦","koko":"🈁","u6307":"🈯","u7a7a":"🈳","u6e80":"🈵","u5408":"🈴","u7981":"🈲","ideograph_advantage":"🉐","u5272":"🈹","u55b6":"🈺","u6709":"🈶","u7121":"🈚","restroom":"🚻","mens":"🚹","womens":"🚺","baby_symbol":"🚼","wc":"🚾","potable_water":"🚰","put_litter_in_its_place":"🚮","parking":"🅿️","wheelchair":"♿","no_smoking":"🚭","u6708":"🈷️","u7533":"🈸","sa":"🈂️","m":"Ⓜ️","passport_control":"🛂","baggage_claim":"🛄","left_luggage":"🛅","customs":"🛃","accept":"🉑","secret":"㊙️","congratulations":"㊗️","cl":"🆑","sos":"🆘","id":"🆔","no_entry_sign":"🚫","underage":"🔞","no_mobile_phones":"📵","do_not_litter":"🚯","non-potable_water":"🚱","no_bicycles":"🚳","no_pedestrians":"🚷","children_crossing":"🚸","no_entry":"⛔","eight_spoked_asterisk":"✳️","sparkle":"❇️","negative_squared_cross_mark":"❎","white_check_mark":"✅","eight_pointed_black_star":"✴️","heart_decoration":"💟","vs":"🆚","vibration_mode":"📳","mobile_phone_off":"📴","a":"🅰️","b":"🅱️","ab":"🆎","o2":"🅾️","diamond_shape_with_a_dot_inside":"💠","loop":"➿","recycle":"♻️","aries":"♈","taurus":"♉","gemini":"♊","cancer":"♋","leo":"♌","virgo":"♍","libra":"♎","scorpius":"♏","sagittarius":"♐","capricorn":"♑","aquarius":"♒","pisces":"♓","ophiuchus":"⛎","six_pointed_star":"🔯","atm":"🏧","chart":"💹","heavy_dollar_sign":"💲","currency_exchange":"💱","copyright":"©️","registered":"®️","tm":"™️","x":"❌","bangbang":"‼️","interrobang":"⁉️","exclamation":"❗","heavy_exclamation_mark":"❗","question":"❓","grey_exclamation":"❕","grey_question":"❔","o":"⭕","top":"🔝","end":"🔚","back":"🔙","on":"🔛","soon":"🔜","arrows_clockwise":"🔃","clock12":"🕛","clock1230":"🕧","clock1":"🕐","clock130":"🕜","clock2":"🕑","clock230":"🕝","clock3":"🕒","clock330":"🕞","clock4":"🕓","clock430":"🕟","clock5":"🕔","clock530":"🕠","clock6":"🕕","clock7":"🕖","clock8":"🕗","clock9":"🕘","clock10":"🕙","clock11":"🕚","clock630":"🕡","clock730":"🕢","clock830":"🕣","clock930":"🕤","clock1030":"🕥","clock1130":"🕦","heavy_multiplication_x":"✖️","heavy_plus_sign":"➕","heavy_minus_sign":"➖","heavy_division_sign":"➗","spades":"♠️","hearts":"♥️","clubs":"♣️","diamonds":"♦️","white_flower":"💮","heavy_check_mark":"✔️","ballot_box_with_check":"☑️","radio_button":"🔘","link":"🔗","curly_loop":"➰","wavy_dash":"〰️","part_alternation_mark":"〽️","trident":"🔱","black_medium_square":"◼️","white_medium_square":"◻️","black_medium_small_square":"◾","white_medium_small_square":"◽","black_small_square":"▪️","white_small_square":"▫️","small_red_triangle":"🔺","black_square_button":"🔲","white_square_button":"🔳","black_circle":"⚫","white_circle":"⚪","red_circle":"🔴","large_blue_circle":"🔵","small_red_triangle_down":"🔻","white_large_square":"⬜","black_large_square":"⬛","large_orange_diamond":"🔶","large_blue_diamond":"🔷","small_orange_diamond":"🔸","small_blue_diamond":"🔹"});
+
+require.register("wooorm~retext-emoji@0.1.2", function (exports, module) {
+'use strict';
+
+/**
+ * Dependencies.
+ */
+
+var gemoji;
+
+gemoji = require("wooorm~gemoji@0.1.1");
+
+/**
+ * Constants.
+ */
+
+var key,
+    shortcodes,
+    names,
+    unicode,
+    has;
+
+names = gemoji.name;
+unicode = gemoji.unicode;
+
+shortcodes = {};
+
+has = Object.prototype.hasOwnProperty;
+
+/**
+ * Quick access to short-codes.
+ */
+
+for (key in names) {
+    /* istanbul ignore else */
+    if (has.call(names, key)) {
+        shortcodes[':' + key + ':'] = names[key];
+    }
+}
+
+/**
+ * Merge gemoji, punctuation marks and words, into a
+ * punctuation node.
+ *
+ * @param {CSTNode} child
+ * @param {number} index
+ * @param {CSTNode} parent
+ * @return {undefined|number} - Either void, or the
+ *   next index to iterate over.
+ */
+
 function mergeEmojiExceptions(child, index, parent) {
-    var siblings = parent.children,
-        children = child.children,
-        iterator = index,
-        childIterator, node, nodes, value, length;
+    var siblings,
+        children,
+        siblingIndex,
+        childIndex,
+        node,
+        nodes,
+        value,
+        length;
+
+    siblings = parent.children;
+    children = child.children;
+    siblingIndex = index;
 
     if (
         child.type === 'WordNode' &&
-        0 in children
+        has.call(children, 0)
     ) {
         value = children[0].value;
 
-        if (has.call(unicode, value)) {
-            siblings[index] = {
-                'type' : 'PunctuationNode',
-                'children' : children
-            };
+        /**
+         * Sometimes a unicode emoji is marked as a
+         * word. Replace it with a `PunctuationNode`.
+         */
 
-            return index - 1;
+        if (has.call(unicode, value)) {
+            siblings[index].type = 'PunctuationNode';
+
+            return;
         }
+
+        /**
+         * Sometimes a unicode emoji is split in two
+         * and marked as a first a `PunctuationNode`,
+         * followed by `WordNode`. Remove the last
+         * and add its value to the first.
+         */
 
         node = siblings[index - 1];
 
         if (
-            node && node.type === 'PunctuationNode' &&
-            0 in node.children
+            node &&
+            node.type === 'PunctuationNode' &&
+            has.call(node.children, 0) &&
+            has.call(unicode, node.children[0].value + value)
         ) {
-            value = node.children[0].value + value;
+            node.children[0].value += value;
 
-            if (has.call(unicode, value)) {
-                console.log('node!');
-                siblings.splice(index - 1, 2, {
-                    'type' : 'WordNode',
-                    'children' : [
-                        {
-                            'type' : 'TextNode',
-                            'value' : value
-                        }
-                    ]
-                });
-                console.log('value: ' + value + '.');
+            siblings.splice(index, 1);
 
-                return index - 2;
-            }
+            return index - 1;
         }
     }
 
     if (
         child.type !== 'PunctuationNode' ||
-        !(0 in children) ||
-        children[0].value !== ':') {
-            return;
+        !has.call(children, 0) ||
+        children[0].value !== ':'
+    ) {
+        return;
     }
 
     nodes = [];
 
-    while (siblings[--iterator]) {
-        node = siblings[iterator];
+    while (siblings[--siblingIndex]) {
+        node = siblings[siblingIndex];
         nodes = nodes.concat(node.children.reverse());
 
         if (
@@ -990,33 +211,42 @@ function mergeEmojiExceptions(child, index, parent) {
         }
     }
 
-    if (iterator === -1) {
+    if (siblingIndex === -1) {
         return;
     }
 
     nodes = nodes.reverse().concat(children);
 
-    childIterator = -1;
+    childIndex = -1;
     length = nodes.length;
     value = '';
 
-    while (++childIterator < length) {
-        value += nodes[childIterator].value;
+    while (++childIndex < length) {
+        value += nodes[childIndex].value;
     }
 
     if (!has.call(shortcodes, value)) {
         return;
     }
 
-    siblings.splice(iterator, index - iterator);
+    siblings.splice(siblingIndex, index - siblingIndex);
     child.children = nodes;
 
-    return iterator;
+    return siblingIndex;
 }
 
+/**
+ * Replace a short-code with a unicode emoji.
+ *
+ * @this {PunctuationNode}
+ */
+
 function encode() {
-    var self = this,
-        value = shortcodes[self.toString()];
+    var self,
+        value;
+
+    self = this;
+    value = shortcodes[self.toString()];
 
     if (value) {
         while (self.tail) {
@@ -1027,60 +257,111 @@ function encode() {
     }
 }
 
+/**
+ * Replace a unicode emoji with a short-code.
+ *
+ * @this {PunctuationNode}
+ */
+
 function decode() {
-    var self = this,
-        value = unicode[self.toString()];
+    var self,
+        value;
+
+    self = this;
+    value = unicode[self.toString()];
 
     if (value) {
         self.head.fromString(value);
+
         self.prepend(new self.TextOM.TextNode(':'));
         self.append(new self.TextOM.TextNode(':'));
     }
 }
 
+/**
+ * Define `attachFactory`.
+ *
+ * @param {string} type - either `encode` or `decode`.
+ * @return {function}
+ */
+
 function attachFactory(type) {
+    var onchange;
+
+    if (type === 'encode') {
+        onchange = encode;
+    } else {
+        onchange = decode;
+    }
+
+    /**
+     * @param {Retext} retext
+     */
+
     return function (retext) {
-        var parser = retext.parser,
-            TextOM = parser.TextOM,
-            onchange = type === 'encode' ? encode : decode;
+        var PunctuationNode;
 
-        parser.tokenizeSentenceModifiers = [
-                mergeEmojiExceptions
-            ].concat(parser.tokenizeSentenceModifiers);
+        PunctuationNode = retext.TextOM.PunctuationNode;
 
-        TextOM.PunctuationNode.on('changetextinside', onchange);
-        TextOM.PunctuationNode.on('insertinside', onchange);
-        TextOM.PunctuationNode.on('removeinside', onchange);
+        retext.parser.tokenizeSentenceModifiers.unshift(mergeEmojiExceptions);
+
+        PunctuationNode.on('changetextinside', onchange);
+        PunctuationNode.on('insertinside', onchange);
+        PunctuationNode.on('removeinside', onchange);
     };
 }
 
-function emoji(options) {
+/**
+ * Define `emojiFactory`.
+ */
+
+function emojiFactory(options) {
+    var convert;
+
     if (arguments.length > 1) {
-        throw new TypeError('Illegal invocation: retext-emoji was' +
-            ' called by Retext, but should be called by the user');
+        throw new TypeError(
+            'Illegal invocation: `emoji` was ' +
+            'invoked by `Retext`, but should be ' +
+            'invoked by the user'
+        );
     }
 
-    if (!options || !('convert' in options)) {
-        throw new TypeError('Illegal invocation: \'' + options +
-            '\' is not a valid arguments for \'emoji\'');
+    if (!options) {
+        throw new TypeError(
+            'Illegal invocation: `' + options + '` ' +
+            'is not a valid value for `options` in ' +
+            '`emoji(options)`'
+        );
     }
 
-    var convert = options.convert;
+    convert = options.convert;
 
-    if (convert !== 'decode' && convert !== 'encode') {
-        throw new TypeError('Illegal invocation: \'' + convert +
-            '\' is not a valid option for `convert` in ' +
-            '\'emoji\'');
+    if (
+        !convert ||
+        (
+            convert !== 'decode' &&
+            convert !== 'encode'
+        )
+    ) {
+        throw new TypeError(
+            'Illegal invocation: `' + convert +
+            '` is not a valid value for ' +
+            '`options.convert` in `emoji(options)`'
+        );
     }
 
-    function method () {}
+    function emoji () {}
 
-    method.attach = attachFactory(convert);
+    emoji.attach = attachFactory(convert);
 
-    return method;
+    return emoji;
 }
 
-exports = module.exports = emoji;
+/**
+ * Expose `emojiFactory`.
+ */
+
+module.exports = emojiFactory;
 
 });
 
@@ -2766,6 +2047,497 @@ module.exports = ParseLatin;
 
 });
 
+require.register("visionmedia~co@3.1.0", function (exports, module) {
+
+/**
+ * slice() reference.
+ */
+
+var slice = Array.prototype.slice;
+
+/**
+ * Expose `co`.
+ */
+
+module.exports = co;
+
+/**
+ * Wrap the given generator `fn` and
+ * return a thunk.
+ *
+ * @param {Function} fn
+ * @return {Function}
+ * @api public
+ */
+
+function co(fn) {
+  var isGenFun = isGeneratorFunction(fn);
+
+  return function (done) {
+    var ctx = this;
+
+    // in toThunk() below we invoke co()
+    // with a generator, so optimize for
+    // this case
+    var gen = fn;
+
+    // we only need to parse the arguments
+    // if gen is a generator function.
+    if (isGenFun) {
+      var args = slice.call(arguments), len = args.length;
+      var hasCallback = len && 'function' == typeof args[len - 1];
+      done = hasCallback ? args.pop() : error;
+      gen = fn.apply(this, args);
+    } else {
+      done = done || error;
+    }
+
+    next();
+
+    // #92
+    // wrap the callback in a setImmediate
+    // so that any of its errors aren't caught by `co`
+    function exit(err, res) {
+      setImmediate(function(){
+        done.call(ctx, err, res);
+      });
+    }
+
+    function next(err, res) {
+      var ret;
+
+      // multiple args
+      if (arguments.length > 2) res = slice.call(arguments, 1);
+
+      // error
+      if (err) {
+        try {
+          ret = gen.throw(err);
+        } catch (e) {
+          return exit(e);
+        }
+      }
+
+      // ok
+      if (!err) {
+        try {
+          ret = gen.next(res);
+        } catch (e) {
+          return exit(e);
+        }
+      }
+
+      // done
+      if (ret.done) return exit(null, ret.value);
+
+      // normalize
+      ret.value = toThunk(ret.value, ctx);
+
+      // run
+      if ('function' == typeof ret.value) {
+        var called = false;
+        try {
+          ret.value.call(ctx, function(){
+            if (called) return;
+            called = true;
+            next.apply(ctx, arguments);
+          });
+        } catch (e) {
+          setImmediate(function(){
+            if (called) return;
+            called = true;
+            next(e);
+          });
+        }
+        return;
+      }
+
+      // invalid
+      next(new TypeError('You may only yield a function, promise, generator, array, or object, '
+        + 'but the following was passed: "' + String(ret.value) + '"'));
+    }
+  }
+}
+
+/**
+ * Convert `obj` into a normalized thunk.
+ *
+ * @param {Mixed} obj
+ * @param {Mixed} ctx
+ * @return {Function}
+ * @api private
+ */
+
+function toThunk(obj, ctx) {
+
+  if (isGeneratorFunction(obj)) {
+    return co(obj.call(ctx));
+  }
+
+  if (isGenerator(obj)) {
+    return co(obj);
+  }
+
+  if (isPromise(obj)) {
+    return promiseToThunk(obj);
+  }
+
+  if ('function' == typeof obj) {
+    return obj;
+  }
+
+  if (isObject(obj) || Array.isArray(obj)) {
+    return objectToThunk.call(ctx, obj);
+  }
+
+  return obj;
+}
+
+/**
+ * Convert an object of yieldables to a thunk.
+ *
+ * @param {Object} obj
+ * @return {Function}
+ * @api private
+ */
+
+function objectToThunk(obj){
+  var ctx = this;
+  var isArray = Array.isArray(obj);
+
+  return function(done){
+    var keys = Object.keys(obj);
+    var pending = keys.length;
+    var results = isArray
+      ? new Array(pending) // predefine the array length
+      : new obj.constructor();
+    var finished;
+
+    if (!pending) {
+      setImmediate(function(){
+        done(null, results)
+      });
+      return;
+    }
+
+    // prepopulate object keys to preserve key ordering
+    if (!isArray) {
+      for (var i = 0; i < pending; i++) {
+        results[keys[i]] = undefined;
+      }
+    }
+
+    for (var i = 0; i < keys.length; i++) {
+      run(obj[keys[i]], keys[i]);
+    }
+
+    function run(fn, key) {
+      if (finished) return;
+      try {
+        fn = toThunk(fn, ctx);
+
+        if ('function' != typeof fn) {
+          results[key] = fn;
+          return --pending || done(null, results);
+        }
+
+        fn.call(ctx, function(err, res){
+          if (finished) return;
+
+          if (err) {
+            finished = true;
+            return done(err);
+          }
+
+          results[key] = res;
+          --pending || done(null, results);
+        });
+      } catch (err) {
+        finished = true;
+        done(err);
+      }
+    }
+  }
+}
+
+/**
+ * Convert `promise` to a thunk.
+ *
+ * @param {Object} promise
+ * @return {Function}
+ * @api private
+ */
+
+function promiseToThunk(promise) {
+  return function(fn){
+    promise.then(function(res) {
+      fn(null, res);
+    }, fn);
+  }
+}
+
+/**
+ * Check if `obj` is a promise.
+ *
+ * @param {Object} obj
+ * @return {Boolean}
+ * @api private
+ */
+
+function isPromise(obj) {
+  return obj && 'function' == typeof obj.then;
+}
+
+/**
+ * Check if `obj` is a generator.
+ *
+ * @param {Mixed} obj
+ * @return {Boolean}
+ * @api private
+ */
+
+function isGenerator(obj) {
+  return obj && 'function' == typeof obj.next && 'function' == typeof obj.throw;
+}
+
+/**
+ * Check if `obj` is a generator function.
+ *
+ * @param {Mixed} obj
+ * @return {Boolean}
+ * @api private
+ */
+
+function isGeneratorFunction(obj) {
+  return obj && obj.constructor && 'GeneratorFunction' == obj.constructor.name;
+}
+
+/**
+ * Check for plain object.
+ *
+ * @param {Mixed} val
+ * @return {Boolean}
+ * @api private
+ */
+
+function isObject(val) {
+  return val && Object == val.constructor;
+}
+
+/**
+ * Throw `err` in a new stack.
+ *
+ * This is used when co() is invoked
+ * without supplying a callback, which
+ * should only be for demonstrational
+ * purposes.
+ *
+ * @param {Error} err
+ * @api private
+ */
+
+function error(err) {
+  if (!err) return;
+  setImmediate(function(){
+    throw err;
+  });
+}
+
+});
+
+require.register("matthewmueller~wrap-fn@0.1.1", function (exports, module) {
+/**
+ * Module Dependencies
+ */
+
+var slice = [].slice;
+var co = require("visionmedia~co@3.1.0");
+var noop = function(){};
+
+/**
+ * Export `wrap-fn`
+ */
+
+module.exports = wrap;
+
+/**
+ * Wrap a function to support
+ * sync, async, and gen functions.
+ *
+ * @param {Function} fn
+ * @param {Function} done
+ * @return {Function}
+ * @api public
+ */
+
+function wrap(fn, done) {
+  done = done || noop;
+
+  return function() {
+    var args = slice.call(arguments);
+    var ctx = this;
+
+    // done
+    if (!fn) {
+      return done.apply(ctx, [null].concat(args));
+    }
+
+    // async
+    if (fn.length > args.length) {
+      return fn.apply(ctx, args.concat(done));
+    }
+
+    // generator
+    if (generator(fn)) {
+      return co(fn).apply(ctx, args.concat(done));
+    }
+
+    // sync
+    return sync(fn, done).apply(ctx, args);
+  }
+}
+
+/**
+ * Wrap a synchronous function execution.
+ *
+ * @param {Function} fn
+ * @param {Function} done
+ * @return {Function}
+ * @api private
+ */
+
+function sync(fn, done) {
+  return function () {
+    var ret;
+
+    try {
+      ret = fn.apply(this, arguments);
+    } catch (err) {
+      return done(err);
+    }
+
+    if (promise(ret)) {
+      ret.then(function (value) { done(null, value); }, done);
+    } else {
+      ret instanceof Error ? done(ret) : done(null, ret);
+    }
+  }
+}
+
+/**
+ * Is `value` a generator?
+ *
+ * @param {Mixed} value
+ * @return {Boolean}
+ * @api private
+ */
+
+function generator(value) {
+  return value
+    && value.constructor
+    && 'GeneratorFunction' == value.constructor.name;
+}
+
+
+/**
+ * Is `value` a promise?
+ *
+ * @param {Mixed} value
+ * @return {Boolean}
+ * @api private
+ */
+
+function promise(value) {
+  return value && 'function' == typeof value.then;
+}
+
+});
+
+require.register("segmentio~ware@1.2.0", function (exports, module) {
+/**
+ * Module Dependencies
+ */
+
+var slice = [].slice;
+var wrap = require("matthewmueller~wrap-fn@0.1.1");
+
+/**
+ * Expose `Ware`.
+ */
+
+module.exports = Ware;
+
+/**
+ * Initialize a new `Ware` manager, with optional `fns`.
+ *
+ * @param {Function or Array or Ware} fn (optional)
+ */
+
+function Ware (fn) {
+  if (!(this instanceof Ware)) return new Ware(fn);
+  this.fns = [];
+  if (fn) this.use(fn);
+}
+
+/**
+ * Use a middleware `fn`.
+ *
+ * @param {Function or Array or Ware} fn
+ * @return {Ware}
+ */
+
+Ware.prototype.use = function (fn) {
+  if (fn instanceof Ware) {
+    return this.use(fn.fns);
+  }
+
+  if (fn instanceof Array) {
+    for (var i = 0, f; f = fn[i++];) this.use(f);
+    return this;
+  }
+
+  this.fns.push(fn);
+  return this;
+};
+
+/**
+ * Run through the middleware with the given `args` and optional `callback`.
+ *
+ * @param {Mixed} args...
+ * @param {Function} callback (optional)
+ * @return {Ware}
+ */
+
+Ware.prototype.run = function () {
+  var fns = this.fns;
+  var ctx = this;
+  var i = 0;
+  var last = arguments[arguments.length - 1];
+  var done = 'function' == typeof last && last;
+  var args = done
+    ? slice.call(arguments, 0, arguments.length - 1)
+    : slice.call(arguments);
+
+  // next step
+  function next (err) {
+    if (err) return done(err);
+    var fn = fns[i++];
+    var arr = slice.call(args);
+
+    if (!fn) {
+      return done && done.apply(null, [null].concat(args));
+    }
+
+    wrap(fn, next).apply(ctx, arr);
+  }
+
+  next();
+
+  return this;
+};
+
+});
+
 require.register("wooorm~textom@0.1.1", function (exports, module) {
 'use strict';
 
@@ -3840,35 +3612,77 @@ module.exports = TextOMConstructor;
 
 });
 
-require.register("wooorm~retext@0.1.1", function (exports, module) {
+require.register("wooorm~retext@0.2.0-rc.3", function (exports, module) {
 'use strict';
 
-var TextOMConstructor = require("wooorm~textom@0.1.1"),
-    ParseLatin = require("wooorm~parse-latin@0.1.3");
+var TextOMConstructor,
+    ParseLatin,
+    Ware,
+    has;
 
-function fromAST(TextOM, ast) {
-    var iterator = -1,
-        children, node, data, attribute;
+/**
+ * Module dependencies.
+ */
 
-    node = new TextOM[ast.type]();
+TextOMConstructor = require("wooorm~textom@0.1.1");
+ParseLatin = require("wooorm~parse-latin@0.1.3");
+Ware = require("segmentio~ware@1.2.0");
 
-    if ('children' in ast) {
-        iterator = -1;
-        children = ast.children;
+/**
+ * Cached, fast, secure existence test.
+ */
 
-        while (children[++iterator]) {
-            node.append(fromAST(TextOM, children[iterator]));
+has = Object.prototype.hasOwnProperty;
+
+/**
+ * Transform a concrete syntax tree into a tree constructed
+ * from a given object model.
+ *
+ * @param {Object} TextOM - the object model.
+ * @param {Object} cst - the concrete syntax tree to
+ *   transform.
+ * @return {Node} the node constructed from the
+ *   CST and the object model.
+ */
+
+function fromCST(TextOM, cst) {
+    var index,
+        node,
+        children,
+        data,
+        attribute;
+
+    node = new TextOM[cst.type]();
+
+    if ('children' in cst) {
+        index = -1;
+        children = cst.children;
+
+        while (children[++index]) {
+            node.append(fromCST(TextOM, children[index]));
         }
     } else {
-        node.fromString(ast.value);
+        node.fromString(cst.value);
     }
 
+    /**
+     * Currently, `data` properties are not really
+     * specified or documented. Therefore, the following
+     * branch is ignored by Istanbul.
+     *
+     * The idea is that plugins and parsers can each
+     * attach data to nodes, in a similar fashion to the
+     * DOMs dataset, which can be stringified and parsed
+     * back and forth between the concrete syntax tree
+     * and the node.
+     */
+
     /* istanbul ignore if: TODO, Untestable, will change soon. */
-    if ('data' in ast) {
-        data = ast.data;
+    if ('data' in cst) {
+        data = cst.data;
 
         for (attribute in data) {
-            if (data.hasOwnProperty(attribute)) {
+            if (has.call(data, attribute)) {
                 node.data[attribute] = data[attribute];
             }
         }
@@ -3877,140 +3691,175 @@ function fromAST(TextOM, ast) {
     return node;
 }
 
-function useImmediately(rootNode, use) {
-    return function (plugin) {
-        var self = this,
-            length = self.plugins.length;
-
-        use.apply(self, arguments);
-
-        if (length !== self.plugins.length) {
-            plugin(rootNode, self);
-        }
-
-        return self;
-    };
-}
-
 /**
- * Define `Retext`. Exported above, and used to instantiate a new
- * `Retext`.
+ * Construct an instance of `Retext`.
  *
- * @param {Function?} parser - the parser to use. Defaults to parse-latin.
- * @public
+ * @param {Function?} parser - the parser to use. Defaults
+ *   to a new instance of `parse-latin`.
  * @constructor
  */
+
 function Retext(parser) {
-    var self = this;
+    var self,
+        TextOM;
 
     if (!parser) {
         parser = new ParseLatin();
     }
 
+    self = this;
+    TextOM = new TextOMConstructor();
+
+    self.ware = new Ware();
     self.parser = parser;
-    self.TextOM = parser.TextOM = new TextOMConstructor();
-    self.TextOM.parser = parser;
-    self.plugins = [];
+    self.TextOM = TextOM;
+
+    /**
+     * Expose `TextOM` on `parser`, and vice versa.
+     */
+
+    parser.TextOM = TextOM;
+    TextOM.parser = parser;
 }
 
 /**
- * `Retext#use` takes a plugin-a humble function-and when the parse
- * method of the Retext instance is called, the plugin will be called
- * with the parsed tree, and the retext instance as arguments.
+ * Attaches `plugin`: a humble function.
  *
- * Note that, during the parsing stage, when the `use` method is called
- * by a plugin, the nested plugin is immediately called, before continuing
- * on with its parent plugin.
+ * When `parse` or `run` is invoked, `plugin` is
+ * invoked with `node` and a `retext` instance.
  *
- * @param {Function} plugin - the plugin to call when parsing.
- * @param {Function?} plugin.attach - called only once with a Retext
- *                                    instance. If you're planning on
- *                                    modifying TextOM or a parser, do it
- *                                    in this method.
+ * If `plugin` contains asynchronous functionality, it
+ * should accept a third argument (`next`) and invoke
+ * it on completion.
+ *
+ * `plugin.attach` is invoked with a `retext` instance
+ * when attached, enabling `plugin` to depend on other
+ * plugins.
+ *
+ * Code to initialize `plugin` should go into its `attach`
+ * method, such as functionality to modify the object model
+ * (TextOM), the parser (e.g., `parse-latin`), or the
+ * `retext` instance. `plugin.attach` is invoked when
+ * `plugin` is attached to a `retext` instance.
+ *
+ * @param {function(Node, Retext, Function?)} plugin -
+ *   functionality to analyze and manipulate a node.
+ * @param {function(Retext)} plugin.attach - functionality
+ *   to initialize `plugin`.
  * @return this
- * @public
  */
+
 Retext.prototype.use = function (plugin) {
+    var self;
+
     if (typeof plugin !== 'function') {
-        throw new TypeError('Illegal invocation: \'' + plugin +
-            '\' is not a valid argument for \'Retext.prototype.use\'');
+        throw new TypeError(
+            'Illegal invocation: `' + plugin + '` ' +
+            'is not a valid argument for `Retext#use(plugin)`'
+        );
     }
 
-    var self = this,
-        plugins = self.plugins;
+    self = this;
 
-    if (plugins.indexOf(plugin) === -1) {
+    if (self.ware.fns.indexOf(plugin) === -1) {
+        self.ware.use(plugin);
+
         if (plugin.attach) {
             plugin.attach(self);
         }
-
-        plugins.push(plugin);
     }
 
     return self;
 };
 
 /**
- * `Retext#parse` takes a source to be given (and parsed) by the parser.
- * Then, `parse` iterates over all plugins, and allows them to modify the
- * TextOM tree created by the parser.
+ * Transform a given value into a node, applies attached
+ * plugins to the node, and invokes `done` with either an
+ * error (first argument) or the transformed node (second
+ * argument).
  *
- * @param {String?} source - The source to convert.
- * @return {Node} - A RootNode containing the tokenised source.
- * @public
+ * @param {string?} value - The value to transform.
+ * @param {function(Error, Node)} done - Callback to
+ *   invoke when the transformations have completed.
+ * @return this
  */
-Retext.prototype.parse = function (source) {
-    var self = this,
-        rootNode = fromAST(self.TextOM, self.parser.tokenizeRoot(source));
 
-    self.applyPlugins(rootNode);
+Retext.prototype.parse = function (value, done) {
+    var self,
+        cst;
 
-    return rootNode;
-};
-
-/**
- * `Retext#applyPlugins` applies the plugins bound to the retext instance to a
- * given tree.
- *
- * Note that, during the parsing stage, when the `use` plugin is called
- * by a plugin, the nested plugin is immediately called, before continuing
- * on with its parent plugin.
- *
- * @param {Node} tree - The tree to apply plugins to.
- * @public
- */
-Retext.prototype.applyPlugins = function (tree) {
-    var self = this,
-        plugins = self.plugins.concat(),
-        iterator = -1,
-        use = self.use;
-
-    self.use = useImmediately(tree, use);
-
-    while (plugins[++iterator]) {
-        plugins[iterator](tree, this);
+    if (typeof done !== 'function') {
+        throw new TypeError(
+            'Illegal invocation: `' + done + '` ' +
+            'is not a valid argument for `Retext#parse(value, done)`.\n' +
+            'This breaking change occurred in 0.2.0-rc.1, see GitHub for ' +
+            'more information.'
+        );
     }
 
-    self.use = use;
+    self = this;
+
+    cst = self.parser.parse(value);
+
+    self.run(fromCST(self.TextOM, cst), done);
+
+    return self;
 };
 
 /**
- * Expose `Retext`. Used to instantiate a new Retext object.
+ * Applies attached plugins to `node` and invokes `done`
+ * with either an error (first argument) or the transformed
+ * `node` (second argument).
+ *
+ * @param {Node} node - The node to apply attached
+ *   plugins to.
+ * @param {function(Error, Node)} done - Callback to
+ *   invoke when the transformations have completed.
+ * @return this
  */
-exports = module.exports = Retext;
+
+Retext.prototype.run = function (node, done) {
+    var self;
+
+    if (typeof done !== 'function') {
+        throw new TypeError(
+            'Illegal invocation: `' + done + '` ' +
+            'is not a valid argument for ' +
+            '`Retext#run(node, done)`.\n' +
+            'This breaking change occurred in 0.2.0-rc.1, see GitHub for ' +
+            'more information.'
+        );
+    }
+
+    self = this;
+
+    self.ware.run(node, self, done);
+
+    return self;
+};
+
+/**
+ * Expose `Retext`.
+ */
+
+module.exports = Retext;
 
 });
 
 require.register("retext-emoji-gh-pages", function (exports, module) {
-var emoji = require("wooorm~retext-emoji@0.1.1"),
-    Retext = require("wooorm~retext@0.1.1"),
+var emoji = require("wooorm~retext-emoji@0.1.2"),
+    Retext = require("wooorm~retext@0.2.0-rc.3"),
     inputElement = document.getElementsByTagName('textarea')[0],
     outputElement = document.getElementsByTagName('textarea')[1],
     convertElement = document.getElementsByName('convert')[0],
     retext;
 
 function makeSmarter() {
-    outputElement.value = retext.parse(inputElement.value).toString();
+    retext.parse(inputElement.value, function (err, tree) {
+        if (err) throw err;
+
+        outputElement.value = tree;
+    })
 }
 
 function onchange(event) {
