@@ -21,28 +21,31 @@ $ bower install retext-emoji
 
 ## Usage & API
 
-### emoji(options?)
+### emoji(options)
 
 ```js
 var Retext = require('retext'),
-    emoji = require('retext-emoji');
+    emoji = require('retext-emoji'),
+    retext;
 
-new Retext()
-    .use(emoji({
-        'convert' : 'encode'
-    }))
-    .parse('It’s raining :cat:s and :dog:s!')
-    .toString(); // 'It’s raining 🐱s and 🐶s!'
+retext = new Retext().use(emoji({
+    'convert' : 'encode'
+}));
+
+retext.parse('It’s raining :cat:s and :dog:s!', function (err, tree) {
+    tree.toString(); // 'It’s raining 🐱s and 🐶s!'
+});
 ```
 
 - `options` (`Object`)
-- `options.convert` (`encode` or `decode`):
+- `options.convert` (`"encode"` or `"decode"`):
   - When `encode`, converts short-codes into their unicode equivalent (e.g., `:pig:` to `🐷`);
   - When `decode`, converts unicode emoji into their short-code equivalent (e.g., `🐷` to `:pig:`);
 
 ## Supported Gemoji
-retext-emoji should support every gemoji [wooorm/gemoji](https://github.com/wooorm/gemoji) supports. There's a whole list of supported gemoji at [gemoji's repo](https://github.com/wooorm/gemoji/#supported-gemoji).
+
+**retext-emoji** supports every  [wooorm/gemoji](https://github.com/wooorm/gemoji). There’s a whole list of supported gemoji at [gemoji's repo](https://github.com/wooorm/gemoji/#supported-gemoji).
 
 ## License
 
-  MIT
+MIT © Titus Wormer
