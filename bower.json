@@ -15,7 +15,7 @@
   },
   "license": "MIT",
   "dependencies": {
-    "gemoji": "^0.1.0"
+    "gemoji": "^0.1.1"
   },
   "main": "index.js",
   "ignore": [
