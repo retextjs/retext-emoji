@@ -1,450 +1,199 @@
 'use strict';
 
-var emoji, gemoji, Retext, AST, content, assert, baseSentence,
-    fullStop, encodeRetext, decodeRetext, name;
+/**
+ * Dependencies.
+ */
+
+var emoji,
+    gemoji,
+    Retext,
+    ast,
+    content,
+    assert;
 
 emoji = require('..');
 gemoji = require('gemoji');
-AST = require('retext-ast');
+ast = require('retext-ast');
 content = require('retext-content');
 Retext = require('retext');
 assert = require('assert');
 
+/**
+ * Fixtures.
+ */
+
+var baseSentence,
+    fullStop;
+
 baseSentence = 'Lack of cross-device emoji support makes me ';
 fullStop = '.';
 
-encodeRetext = new Retext()
-    .use(AST)
+/**
+ * Retext.
+ */
+
+var encode,
+    decode;
+
+encode = new Retext()
+    .use(ast)
     .use(content)
     .use(emoji({
         'convert' : 'encode'
     }));
 
-decodeRetext = new Retext()
-    .use(AST)
+decode = new Retext()
+    .use(ast)
     .use(content)
     .use(emoji({
         'convert' : 'decode'
     }));
 
+/**
+ * Tests.
+ */
+
 describe('emoji()', function () {
-    it('should be of type `function`', function () {
+    it('should be a `function`', function () {
         assert(typeof emoji === 'function');
     });
 
-    it('should throw when invoked by Retext, rather than the user',
-        function () {
-            var throwingRetext = new Retext().use(emoji);
+    it('should pass an error when invoked by `Retext` instead of the user',
+        function (done) {
+            var retext;
 
-            assert.throws(function () {
-                assert(throwingRetext.parse());
-            }, /Illegal invocation/);
+            retext = new Retext().use(emoji);
+
+            retext.parse(null, function (err) {
+                assert.throws(function () {
+                    throw err;
+                }, /Illegal invocation/);
+
+                done();
+            });
         }
     );
 
-    it('should throw when options or no options.convert are omitted',
+    it('should throw when not given `options`', function () {
+        assert.throws(function () {
+            new Retext().use(emoji());
+        }, /undefined/);
+    });
+
+    it('should throw when not given `options.convert`', function () {
+        assert.throws(function () {
+            new Retext().use(emoji({
+                'test' : 'encode'
+            }));
+        }, /object Object/);
+    });
+
+    it('should throw when `convert` is neither `encode` nor `decode`',
         function () {
-            assert.throws(function () {
-                assert(new Retext().use(emoji()));
-            }, /'undefined'/);
-
-            assert.throws(function () {
-                assert(new Retext().use(emoji({
-                    'test' : 'encode'
-                })));
-            }, /'\[object Object\]'/);
-        }
-    );
-
-    it('should throw when `convert` is given, but the value is neither ' +
-        '`"encode"` nor `"decode"`', function () {
             assert.throws(function () {
                 assert(new Retext().use(emoji({
                     'convert' : false
                 })));
-            }, /'false'/);
+            }, /false/);
         }
     );
 
-    it('should classify gemoji (e.g., `:sob:`) as a single punctuation node',
-        function () {
-            var tree = decodeRetext.parse('This makes me feel :sob:.');
-
-            assert(tree.head.head.toAST() === JSON.stringify({
-                'type' : 'SentenceNode',
-                'children' : [
-                    {
-                        'type' : 'WordNode',
+    it('should classify gemoji (such as `:sob:`) as a `PunctuationNode`',
+        function (done) {
+            decode.parse(
+                'This makes me feel :sob:.',
+                function (err, tree) {
+                    assert(tree.head.head.toAST() === JSON.stringify({
+                        'type' : 'SentenceNode',
                         'children' : [
                             {
-                                'type' : 'TextNode',
-                                'value' : 'This'
-                            }
-                        ]
-                    },
-                    {
-                        'type' : 'WhiteSpaceNode',
-                        'children' : [
-                            {
-                                'type' : 'TextNode',
-                                'value' : ' '
-                            }
-                        ]
-                    },
-                    {
-                        'type' : 'WordNode',
-                        'children' : [
-                            {
-                                'type' : 'TextNode',
-                                'value' : 'makes'
-                            }
-                        ]
-                    },
-                    {
-                        'type' : 'WhiteSpaceNode',
-                        'children' : [
-                            {
-                                'type' : 'TextNode',
-                                'value' : ' '
-                            }
-                        ]
-                    },
-                    {
-                        'type' : 'WordNode',
-                        'children' : [
-                            {
-                                'type' : 'TextNode',
-                                'value' : 'me'
-                            }
-                        ]
-                    },
-                    {
-                        'type' : 'WhiteSpaceNode',
-                        'children' : [
-                            {
-                                'type' : 'TextNode',
-                                'value' : ' '
-                            }
-                        ]
-                    },
-                    {
-                        'type' : 'WordNode',
-                        'children' : [
-                            {
-                                'type' : 'TextNode',
-                                'value' : 'feel'
-                            }
-                        ]
-                    },
-                    {
-                        'type' : 'WhiteSpaceNode',
-                        'children' : [
-                            {
-                                'type' : 'TextNode',
-                                'value' : ' '
-                            }
-                        ]
-                    },
-                    {
-                        'type' : 'PunctuationNode',
-                        'children' : [
-                            {
-                                'type' : 'TextNode',
-                                'value' : ':'
+                                'type' : 'WordNode',
+                                'children' : [
+                                    {
+                                        'type' : 'TextNode',
+                                        'value' : 'This'
+                                    }
+                                ]
                             },
                             {
-                                'type' : 'TextNode',
-                                'value' : 'sob'
+                                'type' : 'WhiteSpaceNode',
+                                'children' : [
+                                    {
+                                        'type' : 'TextNode',
+                                        'value' : ' '
+                                    }
+                                ]
                             },
                             {
-                                'type' : 'TextNode',
-                                'value' : ':'
-                            }
-                        ]
-                    },
-                    {
-                        'type' : 'PunctuationNode',
-                        'children' : [
-                            {
-                                'type' : 'TextNode',
-                                'value' : '.'
-                            }
-                        ]
-                    }
-                ]
-            }));
-        }
-    );
-
-    it('should classify gemoji (e.g., `:sob:`) as a single punctuation ' +
-        'node, when inserted after the initial parse', function () {
-            var tree = decodeRetext.parse('This makes me feel');
-            tree.head.head.appendContent(' :sob:.');
-            assert(tree.head.head.toAST() === JSON.stringify({
-                'type' : 'SentenceNode',
-                'children' : [
-                    {
-                        'type' : 'WordNode',
-                        'children' : [
-                            {
-                                'type' : 'TextNode',
-                                'value' : 'This'
-                            }
-                        ]
-                    },
-                    {
-                        'type' : 'WhiteSpaceNode',
-                        'children' : [
-                            {
-                                'type' : 'TextNode',
-                                'value' : ' '
-                            }
-                        ]
-                    },
-                    {
-                        'type' : 'WordNode',
-                        'children' : [
-                            {
-                                'type' : 'TextNode',
-                                'value' : 'makes'
-                            }
-                        ]
-                    },
-                    {
-                        'type' : 'WhiteSpaceNode',
-                        'children' : [
-                            {
-                                'type' : 'TextNode',
-                                'value' : ' '
-                            }
-                        ]
-                    },
-                    {
-                        'type' : 'WordNode',
-                        'children' : [
-                            {
-                                'type' : 'TextNode',
-                                'value' : 'me'
-                            }
-                        ]
-                    },
-                    {
-                        'type' : 'WhiteSpaceNode',
-                        'children' : [
-                            {
-                                'type' : 'TextNode',
-                                'value' : ' '
-                            }
-                        ]
-                    },
-                    {
-                        'type' : 'WordNode',
-                        'children' : [
-                            {
-                                'type' : 'TextNode',
-                                'value' : 'feel'
-                            }
-                        ]
-                    },
-                    {
-                        'type' : 'WhiteSpaceNode',
-                        'children' : [
-                            {
-                                'type' : 'TextNode',
-                                'value' : ' '
-                            }
-                        ]
-                    },
-                    {
-                        'type' : 'PunctuationNode',
-                        'children' : [
-                            {
-                                'type' : 'TextNode',
-                                'value' : ':'
+                                'type' : 'WordNode',
+                                'children' : [
+                                    {
+                                        'type' : 'TextNode',
+                                        'value' : 'makes'
+                                    }
+                                ]
                             },
                             {
-                                'type' : 'TextNode',
-                                'value' : 'sob'
+                                'type' : 'WhiteSpaceNode',
+                                'children' : [
+                                    {
+                                        'type' : 'TextNode',
+                                        'value' : ' '
+                                    }
+                                ]
                             },
                             {
-                                'type' : 'TextNode',
-                                'value' : ':'
-                            }
-                        ]
-                    },
-                    {
-                        'type' : 'PunctuationNode',
-                        'children' : [
+                                'type' : 'WordNode',
+                                'children' : [
+                                    {
+                                        'type' : 'TextNode',
+                                        'value' : 'me'
+                                    }
+                                ]
+                            },
                             {
-                                'type' : 'TextNode',
-                                'value' : '.'
-                            }
-                        ]
-                    }
-                ]
-            }));
-        }
-    );
-
-    it('should NOT classify invalid gemoji-like sequences as gemoji ' +
-        '(e.g., `:trololol:`) as a single punctuation node', function () {
-            var tree = decodeRetext.parse('This makes me feel :trololol:.');
-            assert(tree.head.head.toAST() === JSON.stringify({
-                'type' : 'SentenceNode',
-                'children' : [
-                    {
-                        'type' : 'WordNode',
-                        'children' : [
+                                'type' : 'WhiteSpaceNode',
+                                'children' : [
+                                    {
+                                        'type' : 'TextNode',
+                                        'value' : ' '
+                                    }
+                                ]
+                            },
                             {
-                                'type' : 'TextNode',
-                                'value' : 'This'
-                            }
-                        ]
-                    },
-                    {
-                        'type' : 'WhiteSpaceNode',
-                        'children' : [
+                                'type' : 'WordNode',
+                                'children' : [
+                                    {
+                                        'type' : 'TextNode',
+                                        'value' : 'feel'
+                                    }
+                                ]
+                            },
                             {
-                                'type' : 'TextNode',
-                                'value' : ' '
-                            }
-                        ]
-                    },
-                    {
-                        'type' : 'WordNode',
-                        'children' : [
-                            {
-                                'type' : 'TextNode',
-                                'value' : 'makes'
-                            }
-                        ]
-                    },
-                    {
-                        'type' : 'WhiteSpaceNode',
-                        'children' : [
-                            {
-                                'type' : 'TextNode',
-                                'value' : ' '
-                            }
-                        ]
-                    },
-                    {
-                        'type' : 'WordNode',
-                        'children' : [
-                            {
-                                'type' : 'TextNode',
-                                'value' : 'me'
-                            }
-                        ]
-                    },
-                    {
-                        'type' : 'WhiteSpaceNode',
-                        'children' : [
-                            {
-                                'type' : 'TextNode',
-                                'value' : ' '
-                            }
-                        ]
-                    },
-                    {
-                        'type' : 'WordNode',
-                        'children' : [
-                            {
-                                'type' : 'TextNode',
-                                'value' : 'feel'
-                            }
-                        ]
-                    },
-                    {
-                        'type' : 'WhiteSpaceNode',
-                        'children' : [
-                            {
-                                'type' : 'TextNode',
-                                'value' : ' '
-                            }
-                        ]
-                    },
-                    {
-                        'type' : 'PunctuationNode',
-                        'children' : [
-                            {
-                                'type' : 'TextNode',
-                                'value' : ':'
-                            }
-                        ]
-                    },
-                    {
-                        'type' : 'WordNode',
-                        'children' : [
-                            {
-                                'type' : 'TextNode',
-                                'value' : 'trololol'
-                            }
-                        ]
-                    },
-                    {
-                        'type' : 'PunctuationNode',
-                        'children' : [
-                            {
-                                'type' : 'TextNode',
-                                'value' : ':'
-                            }
-                        ]
-                    },
-                    {
-                        'type' : 'PunctuationNode',
-                        'children' : [
-                            {
-                                'type' : 'TextNode',
-                                'value' : '.'
-                            }
-                        ]
-                    }
-                ]
-            }));
-
-            tree = decodeRetext.parse('Hello L.L. Smith:\n');
-
-            assert(tree.head.head.toAST() === JSON.stringify({
-                'type' : 'SentenceNode',
-                'children' : [
-                    {
-                        'type' : 'WordNode',
-                        'children' : [
-                            {
-                                'type' : 'TextNode',
-                                'value' : 'Hello'
-                            }
-                        ]
-                    },
-                    {
-                        'type' : 'WhiteSpaceNode',
-                        'children' : [
-                            {
-                                'type' : 'TextNode',
-                                'value' : ' '
-                            }
-                        ]
-                    },
-                    {
-                        'type' : 'WordNode',
-                        'children' : [
-                            {
-                                'type' : 'TextNode',
-                                'value' : 'L'
+                                'type' : 'WhiteSpaceNode',
+                                'children' : [
+                                    {
+                                        'type' : 'TextNode',
+                                        'value' : ' '
+                                    }
+                                ]
                             },
                             {
                                 'type' : 'PunctuationNode',
                                 'children' : [
                                     {
                                         'type' : 'TextNode',
-                                        'value' : '.'
+                                        'value' : ':'
+                                    },
+                                    {
+                                        'type' : 'TextNode',
+                                        'value' : 'sob'
+                                    },
+                                    {
+                                        'type' : 'TextNode',
+                                        'value' : ':'
                                     }
                                 ]
-                            },
-                            {
-                                'type' : 'TextNode',
-                                'value' : 'L'
                             },
                             {
                                 'type' : 'PunctuationNode',
@@ -456,492 +205,868 @@ describe('emoji()', function () {
                                 ]
                             }
                         ]
-                    },
-                    {
-                        'type' : 'WhiteSpaceNode',
-                        'children' : [
-                            {
-                                'type' : 'TextNode',
-                                'value' : ' '
-                            }
-                        ]
-                    },
-                    {
-                        'type' : 'WordNode',
-                        'children' : [
-                            {
-                                'type' : 'TextNode',
-                                'value' : 'Smith'
-                            }
-                        ]
-                    },
-                    {
-                        'type' : 'PunctuationNode',
-                        'children' : [
-                            {
-                                'type' : 'TextNode',
-                                'value' : ':'
-                            }
-                        ]
-                    }
-                ]
-            }));
+                    }));
+
+                    done(err);
+                }
+            );
         }
     );
 
-    it('should automatically convert gemoji (e.g., `:sob:`) to their ' +
-        'unicode equivalent, when `convert` is `encode`', function () {
-            var tree = encodeRetext.parse('This makes me feel :sob:.');
-            assert(tree.head.head.toAST() === JSON.stringify({
-                'type' : 'SentenceNode',
-                'children' : [
-                    {
-                        'type' : 'WordNode',
+    it('should classify gemoji (such as `:sob:`) as a `PunctuationNode`, ' +
+        'when inserted after the initial parse',
+        function (done) {
+            decode.parse(
+                'This makes me feel',
+                function (err, tree) {
+                    tree.head.head.appendContent(' :sob:.');
+
+                    assert(tree.head.head.toAST() === JSON.stringify({
+                        'type' : 'SentenceNode',
                         'children' : [
                             {
-                                'type' : 'TextNode',
-                                'value' : 'This'
-                            }
-                        ]
-                    },
-                    {
-                        'type' : 'WhiteSpaceNode',
-                        'children' : [
+                                'type' : 'WordNode',
+                                'children' : [
+                                    {
+                                        'type' : 'TextNode',
+                                        'value' : 'This'
+                                    }
+                                ]
+                            },
                             {
-                                'type' : 'TextNode',
-                                'value' : ' '
-                            }
-                        ]
-                    },
-                    {
-                        'type' : 'WordNode',
-                        'children' : [
+                                'type' : 'WhiteSpaceNode',
+                                'children' : [
+                                    {
+                                        'type' : 'TextNode',
+                                        'value' : ' '
+                                    }
+                                ]
+                            },
                             {
-                                'type' : 'TextNode',
-                                'value' : 'makes'
-                            }
-                        ]
-                    },
-                    {
-                        'type' : 'WhiteSpaceNode',
-                        'children' : [
+                                'type' : 'WordNode',
+                                'children' : [
+                                    {
+                                        'type' : 'TextNode',
+                                        'value' : 'makes'
+                                    }
+                                ]
+                            },
                             {
-                                'type' : 'TextNode',
-                                'value' : ' '
-                            }
-                        ]
-                    },
-                    {
-                        'type' : 'WordNode',
-                        'children' : [
+                                'type' : 'WhiteSpaceNode',
+                                'children' : [
+                                    {
+                                        'type' : 'TextNode',
+                                        'value' : ' '
+                                    }
+                                ]
+                            },
                             {
-                                'type' : 'TextNode',
-                                'value' : 'me'
-                            }
-                        ]
-                    },
-                    {
-                        'type' : 'WhiteSpaceNode',
-                        'children' : [
+                                'type' : 'WordNode',
+                                'children' : [
+                                    {
+                                        'type' : 'TextNode',
+                                        'value' : 'me'
+                                    }
+                                ]
+                            },
                             {
-                                'type' : 'TextNode',
-                                'value' : ' '
-                            }
-                        ]
-                    },
-                    {
-                        'type' : 'WordNode',
-                        'children' : [
+                                'type' : 'WhiteSpaceNode',
+                                'children' : [
+                                    {
+                                        'type' : 'TextNode',
+                                        'value' : ' '
+                                    }
+                                ]
+                            },
                             {
-                                'type' : 'TextNode',
-                                'value' : 'feel'
-                            }
-                        ]
-                    },
-                    {
-                        'type' : 'WhiteSpaceNode',
-                        'children' : [
+                                'type' : 'WordNode',
+                                'children' : [
+                                    {
+                                        'type' : 'TextNode',
+                                        'value' : 'feel'
+                                    }
+                                ]
+                            },
                             {
-                                'type' : 'TextNode',
-                                'value' : ' '
-                            }
-                        ]
-                    },
-                    {
-                        'type' : 'PunctuationNode',
-                        'children' : [
+                                'type' : 'WhiteSpaceNode',
+                                'children' : [
+                                    {
+                                        'type' : 'TextNode',
+                                        'value' : ' '
+                                    }
+                                ]
+                            },
                             {
-                                'type' : 'TextNode',
-                                'value' : '\uD83D\uDE2D'
-                            }
-                        ]
-                    },
-                    {
-                        'type' : 'PunctuationNode',
-                        'children' : [
+                                'type' : 'PunctuationNode',
+                                'children' : [
+                                    {
+                                        'type' : 'TextNode',
+                                        'value' : ':'
+                                    },
+                                    {
+                                        'type' : 'TextNode',
+                                        'value' : 'sob'
+                                    },
+                                    {
+                                        'type' : 'TextNode',
+                                        'value' : ':'
+                                    }
+                                ]
+                            },
                             {
-                                'type' : 'TextNode',
-                                'value' : '.'
+                                'type' : 'PunctuationNode',
+                                'children' : [
+                                    {
+                                        'type' : 'TextNode',
+                                        'value' : '.'
+                                    }
+                                ]
                             }
                         ]
-                    }
-                ]
-            }));
+                    }));
+
+                    done(err);
+                }
+            );
         }
     );
 
-    it('should automatically convert gemoji (e.g., `:sob:`) to their ' +
-        'unicode equivalent, when inserted after the initial parse and ' +
-        '`convert` is `encode`', function () {
-            var tree = encodeRetext.parse('This makes me feel');
-            tree.head.head.appendContent(' :sob:.');
-            assert(tree.head.head.toAST() === JSON.stringify({
-                'type' : 'SentenceNode',
-                'children' : [
-                    {
-                        'type' : 'WordNode',
+    it('should NOT classify gemoji-like sequences (such as `:trololol:`) ' +
+        'as `PunctuationNode`',
+        function (done) {
+            decode.parse(
+                'This makes me feel :trololol:.',
+                function (err, tree) {
+                    assert(tree.head.head.toAST() === JSON.stringify({
+                        'type' : 'SentenceNode',
                         'children' : [
                             {
-                                'type' : 'TextNode',
-                                'value' : 'This'
-                            }
-                        ]
-                    },
-                    {
-                        'type' : 'WhiteSpaceNode',
-                        'children' : [
+                                'type' : 'WordNode',
+                                'children' : [
+                                    {
+                                        'type' : 'TextNode',
+                                        'value' : 'This'
+                                    }
+                                ]
+                            },
                             {
-                                'type' : 'TextNode',
-                                'value' : ' '
-                            }
-                        ]
-                    },
-                    {
-                        'type' : 'WordNode',
-                        'children' : [
+                                'type' : 'WhiteSpaceNode',
+                                'children' : [
+                                    {
+                                        'type' : 'TextNode',
+                                        'value' : ' '
+                                    }
+                                ]
+                            },
                             {
-                                'type' : 'TextNode',
-                                'value' : 'makes'
-                            }
-                        ]
-                    },
-                    {
-                        'type' : 'WhiteSpaceNode',
-                        'children' : [
+                                'type' : 'WordNode',
+                                'children' : [
+                                    {
+                                        'type' : 'TextNode',
+                                        'value' : 'makes'
+                                    }
+                                ]
+                            },
                             {
-                                'type' : 'TextNode',
-                                'value' : ' '
-                            }
-                        ]
-                    },
-                    {
-                        'type' : 'WordNode',
-                        'children' : [
+                                'type' : 'WhiteSpaceNode',
+                                'children' : [
+                                    {
+                                        'type' : 'TextNode',
+                                        'value' : ' '
+                                    }
+                                ]
+                            },
                             {
-                                'type' : 'TextNode',
-                                'value' : 'me'
-                            }
-                        ]
-                    },
-                    {
-                        'type' : 'WhiteSpaceNode',
-                        'children' : [
+                                'type' : 'WordNode',
+                                'children' : [
+                                    {
+                                        'type' : 'TextNode',
+                                        'value' : 'me'
+                                    }
+                                ]
+                            },
                             {
-                                'type' : 'TextNode',
-                                'value' : ' '
-                            }
-                        ]
-                    },
-                    {
-                        'type' : 'WordNode',
-                        'children' : [
+                                'type' : 'WhiteSpaceNode',
+                                'children' : [
+                                    {
+                                        'type' : 'TextNode',
+                                        'value' : ' '
+                                    }
+                                ]
+                            },
                             {
-                                'type' : 'TextNode',
-                                'value' : 'feel'
-                            }
-                        ]
-                    },
-                    {
-                        'type' : 'WhiteSpaceNode',
-                        'children' : [
+                                'type' : 'WordNode',
+                                'children' : [
+                                    {
+                                        'type' : 'TextNode',
+                                        'value' : 'feel'
+                                    }
+                                ]
+                            },
                             {
-                                'type' : 'TextNode',
-                                'value' : ' '
-                            }
-                        ]
-                    },
-                    {
-                        'type' : 'PunctuationNode',
-                        'children' : [
+                                'type' : 'WhiteSpaceNode',
+                                'children' : [
+                                    {
+                                        'type' : 'TextNode',
+                                        'value' : ' '
+                                    }
+                                ]
+                            },
                             {
-                                'type' : 'TextNode',
-                                'value' : '\uD83D\uDE2D'
-                            }
-                        ]
-                    },
-                    {
-                        'type' : 'PunctuationNode',
-                        'children' : [
+                                'type' : 'PunctuationNode',
+                                'children' : [
+                                    {
+                                        'type' : 'TextNode',
+                                        'value' : ':'
+                                    }
+                                ]
+                            },
                             {
-                                'type' : 'TextNode',
-                                'value' : '.'
+                                'type' : 'WordNode',
+                                'children' : [
+                                    {
+                                        'type' : 'TextNode',
+                                        'value' : 'trololol'
+                                    }
+                                ]
+                            },
+                            {
+                                'type' : 'PunctuationNode',
+                                'children' : [
+                                    {
+                                        'type' : 'TextNode',
+                                        'value' : ':'
+                                    }
+                                ]
+                            },
+                            {
+                                'type' : 'PunctuationNode',
+                                'children' : [
+                                    {
+                                        'type' : 'TextNode',
+                                        'value' : '.'
+                                    }
+                                ]
                             }
                         ]
-                    }
-                ]
-            }));
+                    }));
+
+                    done(err);
+                }
+            );
         }
     );
 
-    it('should automatically convert emoji (e.g., `\uD83D\uDE2D`) to ' +
-        'their gemoji equivalent, when `convert` is `decode`', function () {
-            var tree = decodeRetext.parse('This makes me feel \uD83D\uDE2D.');
-            assert(tree.head.head.toAST() === JSON.stringify({
-                'type' : 'SentenceNode',
-                'children' : [
-                    {
-                        'type' : 'WordNode',
+    it('should NOT classify gemoji-like sequences (such as `L.L. Smith:`) ' +
+        'as `PunctuationNode`',
+        function (done) {
+            decode.parse(
+                'Hello L.L. Smith:\n',
+                function (err, tree) {
+                    assert(tree.head.head.toAST() === JSON.stringify({
+                        'type' : 'SentenceNode',
                         'children' : [
                             {
-                                'type' : 'TextNode',
-                                'value' : 'This'
-                            }
-                        ]
-                    },
-                    {
-                        'type' : 'WhiteSpaceNode',
-                        'children' : [
-                            {
-                                'type' : 'TextNode',
-                                'value' : ' '
-                            }
-                        ]
-                    },
-                    {
-                        'type' : 'WordNode',
-                        'children' : [
-                            {
-                                'type' : 'TextNode',
-                                'value' : 'makes'
-                            }
-                        ]
-                    },
-                    {
-                        'type' : 'WhiteSpaceNode',
-                        'children' : [
-                            {
-                                'type' : 'TextNode',
-                                'value' : ' '
-                            }
-                        ]
-                    },
-                    {
-                        'type' : 'WordNode',
-                        'children' : [
-                            {
-                                'type' : 'TextNode',
-                                'value' : 'me'
-                            }
-                        ]
-                    },
-                    {
-                        'type' : 'WhiteSpaceNode',
-                        'children' : [
-                            {
-                                'type' : 'TextNode',
-                                'value' : ' '
-                            }
-                        ]
-                    },
-                    {
-                        'type' : 'WordNode',
-                        'children' : [
-                            {
-                                'type' : 'TextNode',
-                                'value' : 'feel'
-                            }
-                        ]
-                    },
-                    {
-                        'type' : 'WhiteSpaceNode',
-                        'children' : [
-                            {
-                                'type' : 'TextNode',
-                                'value' : ' '
-                            }
-                        ]
-                    },
-                    {
-                        'type' : 'PunctuationNode',
-                        'children' : [
-                            {
-                                'type' : 'TextNode',
-                                'value' : ':'
+                                'type' : 'WordNode',
+                                'children' : [
+                                    {
+                                        'type' : 'TextNode',
+                                        'value' : 'Hello'
+                                    }
+                                ]
                             },
                             {
-                                'type' : 'TextNode',
-                                'value' : 'sob'
+                                'type' : 'WhiteSpaceNode',
+                                'children' : [
+                                    {
+                                        'type' : 'TextNode',
+                                        'value' : ' '
+                                    }
+                                ]
                             },
                             {
-                                'type' : 'TextNode',
-                                'value' : ':'
-                            }
-                        ]
-                    },
-                    {
-                        'type' : 'PunctuationNode',
-                        'children' : [
+                                'type' : 'WordNode',
+                                'children' : [
+                                    {
+                                        'type' : 'TextNode',
+                                        'value' : 'L'
+                                    },
+                                    {
+                                        'type' : 'PunctuationNode',
+                                        'children' : [
+                                            {
+                                                'type' : 'TextNode',
+                                                'value' : '.'
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        'type' : 'TextNode',
+                                        'value' : 'L'
+                                    },
+                                    {
+                                        'type' : 'PunctuationNode',
+                                        'children' : [
+                                            {
+                                                'type' : 'TextNode',
+                                                'value' : '.'
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
                             {
-                                'type' : 'TextNode',
-                                'value' : '.'
+                                'type' : 'WhiteSpaceNode',
+                                'children' : [
+                                    {
+                                        'type' : 'TextNode',
+                                        'value' : ' '
+                                    }
+                                ]
+                            },
+                            {
+                                'type' : 'WordNode',
+                                'children' : [
+                                    {
+                                        'type' : 'TextNode',
+                                        'value' : 'Smith'
+                                    }
+                                ]
+                            },
+                            {
+                                'type' : 'PunctuationNode',
+                                'children' : [
+                                    {
+                                        'type' : 'TextNode',
+                                        'value' : ':'
+                                    }
+                                ]
                             }
                         ]
-                    }
-                ]
-            }));
-        }
-    );
+                    }));
 
-    it('should automatically convert emoji (e.g., `\uD83D\uDE2D`) to ' +
-        'their gemoji equivalent, when inserted after the initial parse ' +
-        'and `convert` is `decode`', function () {
-            var tree = decodeRetext.parse('This makes me feel');
-            tree.head.head.appendContent(' \uD83D\uDE2D.');
-            assert(tree.head.head.toAST() === JSON.stringify({
-                'type' : 'SentenceNode',
-                'children' : [
-                    {
-                        'type' : 'WordNode',
-                        'children' : [
-                            {
-                                'type' : 'TextNode',
-                                'value' : 'This'
-                            }
-                        ]
-                    },
-                    {
-                        'type' : 'WhiteSpaceNode',
-                        'children' : [
-                            {
-                                'type' : 'TextNode',
-                                'value' : ' '
-                            }
-                        ]
-                    },
-                    {
-                        'type' : 'WordNode',
-                        'children' : [
-                            {
-                                'type' : 'TextNode',
-                                'value' : 'makes'
-                            }
-                        ]
-                    },
-                    {
-                        'type' : 'WhiteSpaceNode',
-                        'children' : [
-                            {
-                                'type' : 'TextNode',
-                                'value' : ' '
-                            }
-                        ]
-                    },
-                    {
-                        'type' : 'WordNode',
-                        'children' : [
-                            {
-                                'type' : 'TextNode',
-                                'value' : 'me'
-                            }
-                        ]
-                    },
-                    {
-                        'type' : 'WhiteSpaceNode',
-                        'children' : [
-                            {
-                                'type' : 'TextNode',
-                                'value' : ' '
-                            }
-                        ]
-                    },
-                    {
-                        'type' : 'WordNode',
-                        'children' : [
-                            {
-                                'type' : 'TextNode',
-                                'value' : 'feel'
-                            }
-                        ]
-                    },
-                    {
-                        'type' : 'WhiteSpaceNode',
-                        'children' : [
-                            {
-                                'type' : 'TextNode',
-                                'value' : ' '
-                            }
-                        ]
-                    },
-                    {
-                        'type' : 'PunctuationNode',
-                        'children' : [
-                            {
-                                'type' : 'TextNode',
-                                'value' : ':'
-                            },
-                            {
-                                'type' : 'TextNode',
-                                'value' : 'sob'
-                            },
-                            {
-                                'type' : 'TextNode',
-                                'value' : ':'
-                            }
-                        ]
-                    },
-                    {
-                        'type' : 'PunctuationNode',
-                        'children' : [
-                            {
-                                'type' : 'TextNode',
-                                'value' : '.'
-                            }
-                        ]
-                    }
-                ]
-            }));
+                    done(err);
+                }
+            );
         }
     );
 });
 
-function describeEmoji(name, unicode) {
-    describe('emoji `' + unicode + '`', function () {
-        it('should decode the emoticon (from `' + unicode + '` to `' +
-            name + '`)', function () {
-                var source = baseSentence + unicode + fullStop,
-                    tree = decodeRetext.parse(source),
-                    emoji = tree.head.head.tail.prev;
+describe('emoji({convert: "encode"})', function () {
+    it('should convert gemoji (such as `:sob:`) to their unicode ' +
+        'equivalent, when `convert` is `encode`',
+        function (done) {
+            encode.parse(
+                'This makes me feel :sob:.',
+                function (err, tree) {
+                    assert(tree.head.head.toAST() === JSON.stringify({
+                        'type' : 'SentenceNode',
+                        'children' : [
+                            {
+                                'type' : 'WordNode',
+                                'children' : [
+                                    {
+                                        'type' : 'TextNode',
+                                        'value' : 'This'
+                                    }
+                                ]
+                            },
+                            {
+                                'type' : 'WhiteSpaceNode',
+                                'children' : [
+                                    {
+                                        'type' : 'TextNode',
+                                        'value' : ' '
+                                    }
+                                ]
+                            },
+                            {
+                                'type' : 'WordNode',
+                                'children' : [
+                                    {
+                                        'type' : 'TextNode',
+                                        'value' : 'makes'
+                                    }
+                                ]
+                            },
+                            {
+                                'type' : 'WhiteSpaceNode',
+                                'children' : [
+                                    {
+                                        'type' : 'TextNode',
+                                        'value' : ' '
+                                    }
+                                ]
+                            },
+                            {
+                                'type' : 'WordNode',
+                                'children' : [
+                                    {
+                                        'type' : 'TextNode',
+                                        'value' : 'me'
+                                    }
+                                ]
+                            },
+                            {
+                                'type' : 'WhiteSpaceNode',
+                                'children' : [
+                                    {
+                                        'type' : 'TextNode',
+                                        'value' : ' '
+                                    }
+                                ]
+                            },
+                            {
+                                'type' : 'WordNode',
+                                'children' : [
+                                    {
+                                        'type' : 'TextNode',
+                                        'value' : 'feel'
+                                    }
+                                ]
+                            },
+                            {
+                                'type' : 'WhiteSpaceNode',
+                                'children' : [
+                                    {
+                                        'type' : 'TextNode',
+                                        'value' : ' '
+                                    }
+                                ]
+                            },
+                            {
+                                'type' : 'PunctuationNode',
+                                'children' : [
+                                    {
+                                        'type' : 'TextNode',
+                                        'value' : '\uD83D\uDE2D'
+                                    }
+                                ]
+                            },
+                            {
+                                'type' : 'PunctuationNode',
+                                'children' : [
+                                    {
+                                        'type' : 'TextNode',
+                                        'value' : '.'
+                                    }
+                                ]
+                            }
+                        ]
+                    }));
 
-                assert(tree.toString() === baseSentence + name + fullStop);
-                assert(emoji.toString() === name);
-                assert(emoji.type === emoji.PUNCTUATION_NODE);
-            }
-        );
+                    done(err);
+                }
+            );
+        }
+    );
 
-        it('should encode the emoticon (from `' + name + '` to `' + unicode +
-            '`)', function () {
-                var source = baseSentence + name + fullStop,
-                    tree = encodeRetext.parse(source),
-                    emoji = tree.head.head.tail.prev;
+    it('should convert gemoji (such as `:sob:`) to their unicode ' +
+        'equivalent, after the initial parse, when `convert` is `encode`',
+        function (done) {
+            encode.parse(
+                'This makes me feel',
+                function (err, tree) {
+                    tree.head.head.appendContent(' :sob:.');
 
-                assert(tree.toString() === baseSentence + unicode + fullStop);
-                assert(emoji.toString() === unicode);
-                assert(emoji.type === emoji.PUNCTUATION_NODE);
+                    assert(tree.head.head.toAST() === JSON.stringify({
+                        'type' : 'SentenceNode',
+                        'children' : [
+                            {
+                                'type' : 'WordNode',
+                                'children' : [
+                                    {
+                                        'type' : 'TextNode',
+                                        'value' : 'This'
+                                    }
+                                ]
+                            },
+                            {
+                                'type' : 'WhiteSpaceNode',
+                                'children' : [
+                                    {
+                                        'type' : 'TextNode',
+                                        'value' : ' '
+                                    }
+                                ]
+                            },
+                            {
+                                'type' : 'WordNode',
+                                'children' : [
+                                    {
+                                        'type' : 'TextNode',
+                                        'value' : 'makes'
+                                    }
+                                ]
+                            },
+                            {
+                                'type' : 'WhiteSpaceNode',
+                                'children' : [
+                                    {
+                                        'type' : 'TextNode',
+                                        'value' : ' '
+                                    }
+                                ]
+                            },
+                            {
+                                'type' : 'WordNode',
+                                'children' : [
+                                    {
+                                        'type' : 'TextNode',
+                                        'value' : 'me'
+                                    }
+                                ]
+                            },
+                            {
+                                'type' : 'WhiteSpaceNode',
+                                'children' : [
+                                    {
+                                        'type' : 'TextNode',
+                                        'value' : ' '
+                                    }
+                                ]
+                            },
+                            {
+                                'type' : 'WordNode',
+                                'children' : [
+                                    {
+                                        'type' : 'TextNode',
+                                        'value' : 'feel'
+                                    }
+                                ]
+                            },
+                            {
+                                'type' : 'WhiteSpaceNode',
+                                'children' : [
+                                    {
+                                        'type' : 'TextNode',
+                                        'value' : ' '
+                                    }
+                                ]
+                            },
+                            {
+                                'type' : 'PunctuationNode',
+                                'children' : [
+                                    {
+                                        'type' : 'TextNode',
+                                        'value' : '\uD83D\uDE2D'
+                                    }
+                                ]
+                            },
+                            {
+                                'type' : 'PunctuationNode',
+                                'children' : [
+                                    {
+                                        'type' : 'TextNode',
+                                        'value' : '.'
+                                    }
+                                ]
+                            }
+                        ]
+                    }));
+
+                    done(err);
+                }
+            );
+        }
+    );
+});
+
+describe('emoji({convert: "decode"})', function () {
+    it('should convert gemoji (such as `\uD83D\uDE2D`) to their named ' +
+        'equivalent, when `convert` is `decode`',
+        function (done) {
+            decode.parse(
+                'This makes me feel \uD83D\uDE2D.',
+                function (err, tree) {
+                    assert(tree.head.head.toAST() === JSON.stringify({
+                        'type' : 'SentenceNode',
+                        'children' : [
+                            {
+                                'type' : 'WordNode',
+                                'children' : [
+                                    {
+                                        'type' : 'TextNode',
+                                        'value' : 'This'
+                                    }
+                                ]
+                            },
+                            {
+                                'type' : 'WhiteSpaceNode',
+                                'children' : [
+                                    {
+                                        'type' : 'TextNode',
+                                        'value' : ' '
+                                    }
+                                ]
+                            },
+                            {
+                                'type' : 'WordNode',
+                                'children' : [
+                                    {
+                                        'type' : 'TextNode',
+                                        'value' : 'makes'
+                                    }
+                                ]
+                            },
+                            {
+                                'type' : 'WhiteSpaceNode',
+                                'children' : [
+                                    {
+                                        'type' : 'TextNode',
+                                        'value' : ' '
+                                    }
+                                ]
+                            },
+                            {
+                                'type' : 'WordNode',
+                                'children' : [
+                                    {
+                                        'type' : 'TextNode',
+                                        'value' : 'me'
+                                    }
+                                ]
+                            },
+                            {
+                                'type' : 'WhiteSpaceNode',
+                                'children' : [
+                                    {
+                                        'type' : 'TextNode',
+                                        'value' : ' '
+                                    }
+                                ]
+                            },
+                            {
+                                'type' : 'WordNode',
+                                'children' : [
+                                    {
+                                        'type' : 'TextNode',
+                                        'value' : 'feel'
+                                    }
+                                ]
+                            },
+                            {
+                                'type' : 'WhiteSpaceNode',
+                                'children' : [
+                                    {
+                                        'type' : 'TextNode',
+                                        'value' : ' '
+                                    }
+                                ]
+                            },
+                            {
+                                'type' : 'PunctuationNode',
+                                'children' : [
+                                    {
+                                        'type' : 'TextNode',
+                                        'value' : ':'
+                                    },
+                                    {
+                                        'type' : 'TextNode',
+                                        'value' : 'sob'
+                                    },
+                                    {
+                                        'type' : 'TextNode',
+                                        'value' : ':'
+                                    }
+                                ]
+                            },
+                            {
+                                'type' : 'PunctuationNode',
+                                'children' : [
+                                    {
+                                        'type' : 'TextNode',
+                                        'value' : '.'
+                                    }
+                                ]
+                            }
+                        ]
+                    }));
+
+                    done(err);
+                }
+            );
+        }
+    );
+
+    it('should convert gemoji (such as `\uD83D\uDE2D`) to their named ' +
+        'equivalent, after the initial parse, when `convert` is `decode`',
+        function (done) {
+            decode.parse(
+                'This makes me feel',
+                function (err, tree) {
+                    tree.head.head.appendContent(' \uD83D\uDE2D.');
+
+                    assert(tree.head.head.toAST() === JSON.stringify({
+                        'type' : 'SentenceNode',
+                        'children' : [
+                            {
+                                'type' : 'WordNode',
+                                'children' : [
+                                    {
+                                        'type' : 'TextNode',
+                                        'value' : 'This'
+                                    }
+                                ]
+                            },
+                            {
+                                'type' : 'WhiteSpaceNode',
+                                'children' : [
+                                    {
+                                        'type' : 'TextNode',
+                                        'value' : ' '
+                                    }
+                                ]
+                            },
+                            {
+                                'type' : 'WordNode',
+                                'children' : [
+                                    {
+                                        'type' : 'TextNode',
+                                        'value' : 'makes'
+                                    }
+                                ]
+                            },
+                            {
+                                'type' : 'WhiteSpaceNode',
+                                'children' : [
+                                    {
+                                        'type' : 'TextNode',
+                                        'value' : ' '
+                                    }
+                                ]
+                            },
+                            {
+                                'type' : 'WordNode',
+                                'children' : [
+                                    {
+                                        'type' : 'TextNode',
+                                        'value' : 'me'
+                                    }
+                                ]
+                            },
+                            {
+                                'type' : 'WhiteSpaceNode',
+                                'children' : [
+                                    {
+                                        'type' : 'TextNode',
+                                        'value' : ' '
+                                    }
+                                ]
+                            },
+                            {
+                                'type' : 'WordNode',
+                                'children' : [
+                                    {
+                                        'type' : 'TextNode',
+                                        'value' : 'feel'
+                                    }
+                                ]
+                            },
+                            {
+                                'type' : 'WhiteSpaceNode',
+                                'children' : [
+                                    {
+                                        'type' : 'TextNode',
+                                        'value' : ' '
+                                    }
+                                ]
+                            },
+                            {
+                                'type' : 'PunctuationNode',
+                                'children' : [
+                                    {
+                                        'type' : 'TextNode',
+                                        'value' : ':'
+                                    },
+                                    {
+                                        'type' : 'TextNode',
+                                        'value' : 'sob'
+                                    },
+                                    {
+                                        'type' : 'TextNode',
+                                        'value' : ':'
+                                    }
+                                ]
+                            },
+                            {
+                                'type' : 'PunctuationNode',
+                                'children' : [
+                                    {
+                                        'type' : 'TextNode',
+                                        'value' : '.'
+                                    }
+                                ]
+                            }
+                        ]
+                    }));
+
+                    done(err);
+                }
+            );
+        }
+    );
+});
+
+function describeEmoji(key, unicode) {
+    var shortcode;
+
+    shortcode = ':' + key + ':';
+
+    describe(unicode, function () {
+        if (gemoji.unicode[unicode] === key) {
+            it('should decode, from `' + unicode + '` to `' + shortcode + '`',
+                function (done) {
+                    var source;
+
+                    source = baseSentence + unicode + fullStop;
+
+                    decode.parse(source, function (err, tree) {
+                        var node;
+
+                        node = tree.head.head.tail.prev;
+
+                        assert(
+                            tree.toString() ===
+                            baseSentence + shortcode + fullStop
+                        );
+
+                        assert(node.toString() === shortcode);
+                        assert(node.type === node.PUNCTUATION_NODE);
+
+                        done(err);
+                    });
+                }
+            );
+        }
+
+        it('should encode, from `' + shortcode + '` to `' + unicode + '`',
+            function (done) {
+                var source;
+
+                source = baseSentence + shortcode + fullStop;
+
+                encode.parse(source, function (err, tree) {
+                    var node;
+
+                    node = tree.head.head.tail.prev;
+
+                    assert(
+                        tree.toString() === baseSentence + unicode + fullStop
+                    );
+
+                    assert(node.toString() === unicode);
+                    assert(node.type === node.PUNCTUATION_NODE);
+
+                    done(err);
+                });
             }
         );
     });
 }
 
-for (name in gemoji.name) {
-    describeEmoji(':' + name + ':', gemoji.name[name]);
+var key;
+
+for (key in gemoji.name) {
+    describeEmoji(key, gemoji.name[key]);
 }
