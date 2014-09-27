@@ -1,23 +1,23 @@
 {
   "name": "retext-emoji",
+  "main": "index.js",
   "description": "Retext implementation of gemojis",
-  "authors": [
-    "Titus Wormer <tituswormer@gmail.com>"
-  ],
+  "license": "MIT",
   "keywords": [
     "retext",
     "gemoji",
     "emoji"
   ],
+  "dependencies": {
+    "gemoji": "^0.1.1"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/wooorm/retext-emoji.git"
   },
-  "license": "MIT",
-  "dependencies": {
-    "gemoji": "^0.1.1"
-  },
-  "main": "index.js",
+  "authors": [
+    "Titus Wormer <tituswormer@gmail.com>"
+  ],
   "ignore": [
     ".*",
     "*.log",

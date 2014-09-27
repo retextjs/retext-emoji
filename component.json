@@ -1,8 +1,8 @@
 {
   "name": "retext-emoji",
-  "repository": "wooorm/retext-emoji",
-  "description": "Retext implementation of gemojis",
   "version": "0.1.1",
+  "description": "Retext implementation of gemojis",
+  "license": "MIT",
   "keywords": [
     "retext",
     "gemoji",
@@ -11,8 +11,8 @@
   "dependencies": {
     "wooorm/gemoji": "^0.1.1"
   },
+  "repository": "wooorm/retext-emoji",
   "scripts" : [
     "index.js"
-  ],
-  "license": "MIT"
+  ]
 }
