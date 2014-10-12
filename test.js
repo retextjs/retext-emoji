@@ -11,7 +11,7 @@ var emoji,
     content,
     assert;
 
-emoji = require('..');
+emoji = require('./');
 gemoji = require('gemoji');
 ast = require('retext-ast');
 content = require('retext-content');
