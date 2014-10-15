@@ -9,7 +9,7 @@
     "emoji"
   ],
   "dependencies": {
-    "gemoji": "^0.1.1"
+    "gemoji": "^0.1.2"
   },
   "repository": {
     "type": "git",

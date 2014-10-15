@@ -9,7 +9,7 @@
     "emoji"
   ],
   "dependencies": {
-    "wooorm/gemoji": "^0.1.1"
+    "wooorm/gemoji": "^0.1.2"
   },
   "repository": "wooorm/retext-emoji",
   "scripts" : [
