@@ -1,4 +1,11 @@
 
+n.n.n / 2014-10-15
+==================
+
+ * Update gemoji, retext, retext-ast
+ * Update .gitignore, .npmignore, bower ignore
+ * Move spec to test.js
+
 0.1.2 / 2014-09-27
 ==================
 
