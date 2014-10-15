@@ -1,5 +1,5 @@
 
-n.n.n / 2014-10-15
+0.1.3 / 2014-10-15
 ==================
 
  * Update gemoji, retext, retext-ast
