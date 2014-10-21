@@ -1,5 +1,5 @@
 
-n.n.n / 2014-10-21
+0.2.0 / 2014-10-21
 ==================
 
  * Update test for changes in retext
