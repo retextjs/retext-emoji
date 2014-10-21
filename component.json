@@ -9,10 +9,11 @@
     "emoji"
   ],
   "dependencies": {
-    "wooorm/gemoji": "^0.1.2"
+    "wooorm/gemoji": "^0.1.2",
+    "wooorm/nlcst-to-string": "~0.1.1"
   },
   "repository": "wooorm/retext-emoji",
-  "scripts" : [
+  "scripts": [
     "index.js"
   ]
 }

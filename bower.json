@@ -9,7 +9,8 @@
     "emoji"
   ],
   "dependencies": {
-    "gemoji": "^0.1.2"
+    "gemoji": "^0.1.2",
+    "nlcst-to-string": "~0.1.1"
   },
   "repository": {
     "type": "git",
