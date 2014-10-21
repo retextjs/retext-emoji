@@ -4,9 +4,11 @@
  * Dependencies.
  */
 
-var gemoji;
+var gemoji,
+    nlcstToString;
 
 gemoji = require('gemoji');
+nlcstToString = require('nlcst-to-string');
 
 /**
  * Constants.
@@ -51,11 +53,9 @@ function mergeEmojiExceptions(child, index, parent) {
     var siblings,
         children,
         siblingIndex,
-        childIndex,
         node,
         nodes,
-        value,
-        length;
+        value;
 
     siblings = parent.children;
     children = child.children;
@@ -69,11 +69,14 @@ function mergeEmojiExceptions(child, index, parent) {
 
         /**
          * Sometimes a unicode emoji is marked as a
-         * word. Replace it with a `PunctuationNode`.
+         * word. Replace it with a `SymbolNode`.
          */
 
         if (has.call(unicode, value)) {
-            siblings[index].type = 'PunctuationNode';
+            siblings[index] = {
+                'type' : 'SymbolNode',
+                'value' : nlcstToString(siblings[index])
+            };
 
             return;
         }
@@ -89,11 +92,14 @@ function mergeEmojiExceptions(child, index, parent) {
 
         if (
             node &&
-            node.type === 'PunctuationNode' &&
-            has.call(node.children, 0) &&
-            has.call(unicode, node.children[0].value + value)
+            (
+                node.type === 'PunctuationNode' ||
+                node.type === 'SymbolNode'
+            ) &&
+            has.call(unicode, nlcstToString(node) + value)
         ) {
-            node.children[0].value += value;
+            node.type = 'SymbolNode';
+            node.value = nlcstToString(node) + value;
 
             siblings.splice(index, 1);
 
@@ -102,9 +108,11 @@ function mergeEmojiExceptions(child, index, parent) {
     }
 
     if (
-        child.type !== 'PunctuationNode' ||
-        !has.call(children, 0) ||
-        children[0].value !== ':'
+        (
+            child.type !== 'PunctuationNode' &&
+            child.type !== 'SymbolNode'
+        ) ||
+        nlcstToString(child) !== ':'
     ) {
         return;
     }
@@ -113,11 +121,19 @@ function mergeEmojiExceptions(child, index, parent) {
 
     while (siblings[--siblingIndex]) {
         node = siblings[siblingIndex];
-        nodes = nodes.concat(node.children.reverse());
+
+        if (node.children) {
+            nodes = nodes.concat(node.children.reverse());
+        } else {
+            nodes.push(node);
+        }
 
         if (
-            node.type === 'PunctuationNode' &&
-            node.children[0].value === ':'
+            (
+                node.type === 'PunctuationNode' ||
+                node.type === 'SymbolNode'
+            ) &&
+            nlcstToString(node) === ':'
         ) {
             break;
         }
@@ -127,22 +143,20 @@ function mergeEmojiExceptions(child, index, parent) {
         return;
     }
 
-    nodes = nodes.reverse().concat(children);
+    nodes.reverse().push(child);
 
-    childIndex = -1;
-    length = nodes.length;
-    value = '';
-
-    while (++childIndex < length) {
-        value += nodes[childIndex].value;
-    }
+    value = nlcstToString({
+        'children' : nodes
+    });
 
     if (!has.call(shortcodes, value)) {
         return;
     }
 
     siblings.splice(siblingIndex, index - siblingIndex);
-    child.children = nodes;
+
+    child.type = 'SymbolNode';
+    child.value = value;
 
     return siblingIndex;
 }
@@ -150,7 +164,7 @@ function mergeEmojiExceptions(child, index, parent) {
 /**
  * Replace a short-code with a unicode emoji.
  *
- * @this {PunctuationNode}
+ * @this {SymbolNode}
  */
 
 function encode() {
@@ -161,18 +175,14 @@ function encode() {
     value = shortcodes[self.toString()];
 
     if (value) {
-        while (self.tail) {
-            self.tail.remove();
-        }
-
-        self.head.fromString(value);
+        self.fromString(value);
     }
 }
 
 /**
  * Replace a unicode emoji with a short-code.
  *
- * @this {PunctuationNode}
+ * @this {SymbolNode}
  */
 
 function decode() {
@@ -183,10 +193,7 @@ function decode() {
     value = unicode[self.toString()];
 
     if (value) {
-        self.head.fromString(value);
-
-        self.prepend(new self.TextOM.TextNode(':'));
-        self.append(new self.TextOM.TextNode(':'));
+        self.fromString(':' + value + ':');
     }
 }
 
@@ -211,15 +218,13 @@ function attachFactory(type) {
      */
 
     return function (retext) {
-        var PunctuationNode;
+        var SymbolNode;
 
-        PunctuationNode = retext.TextOM.PunctuationNode;
+        SymbolNode = retext.TextOM.SymbolNode;
 
         retext.parser.tokenizeSentenceModifiers.unshift(mergeEmojiExceptions);
 
-        PunctuationNode.on('changetextinside', onchange);
-        PunctuationNode.on('insertinside', onchange);
-        PunctuationNode.on('removeinside', onchange);
+        SymbolNode.on('changetext', onchange);
     };
 }
 
