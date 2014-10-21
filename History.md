@@ -1,4 +1,13 @@
 
+n.n.n / 2014-10-21
+==================
+
+ * Update test for changes in retext
+ * Update module for changes in retext
+ * Add nlcst-to-string to dependencies
+ * Refactor .jscs.json
+ * Update retext
+
 0.1.3 / 2014-10-15
 ==================
 
