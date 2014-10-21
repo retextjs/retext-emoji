@@ -98,7 +98,7 @@ describe('emoji()', function () {
         }
     );
 
-    it('should classify gemoji (such as `:sob:`) as a `PunctuationNode`',
+    it('should classify gemoji (such as `:sob:`) as a `SymbolNode`',
         function (done) {
             decode.parse(
                 'This makes me feel :sob:.',
@@ -117,12 +117,7 @@ describe('emoji()', function () {
                             },
                             {
                                 'type' : 'WhiteSpaceNode',
-                                'children' : [
-                                    {
-                                        'type' : 'TextNode',
-                                        'value' : ' '
-                                    }
-                                ]
+                                'value' : ' '
                             },
                             {
                                 'type' : 'WordNode',
@@ -135,12 +130,7 @@ describe('emoji()', function () {
                             },
                             {
                                 'type' : 'WhiteSpaceNode',
-                                'children' : [
-                                    {
-                                        'type' : 'TextNode',
-                                        'value' : ' '
-                                    }
-                                ]
+                                'value' : ' '
                             },
                             {
                                 'type' : 'WordNode',
@@ -153,12 +143,7 @@ describe('emoji()', function () {
                             },
                             {
                                 'type' : 'WhiteSpaceNode',
-                                'children' : [
-                                    {
-                                        'type' : 'TextNode',
-                                        'value' : ' '
-                                    }
-                                ]
+                                'value' : ' '
                             },
                             {
                                 'type' : 'WordNode',
@@ -171,38 +156,15 @@ describe('emoji()', function () {
                             },
                             {
                                 'type' : 'WhiteSpaceNode',
-                                'children' : [
-                                    {
-                                        'type' : 'TextNode',
-                                        'value' : ' '
-                                    }
-                                ]
+                                'value' : ' '
+                            },
+                            {
+                                'type' : 'SymbolNode',
+                                'value' : ':sob:'
                             },
                             {
                                 'type' : 'PunctuationNode',
-                                'children' : [
-                                    {
-                                        'type' : 'TextNode',
-                                        'value' : ':'
-                                    },
-                                    {
-                                        'type' : 'TextNode',
-                                        'value' : 'sob'
-                                    },
-                                    {
-                                        'type' : 'TextNode',
-                                        'value' : ':'
-                                    }
-                                ]
-                            },
-                            {
-                                'type' : 'PunctuationNode',
-                                'children' : [
-                                    {
-                                        'type' : 'TextNode',
-                                        'value' : '.'
-                                    }
-                                ]
+                                'value' : '.'
                             }
                         ]
                     }));
@@ -213,7 +175,7 @@ describe('emoji()', function () {
         }
     );
 
-    it('should classify gemoji (such as `:sob:`) as a `PunctuationNode`, ' +
+    it('should classify gemoji (such as `:sob:`) as a `SymbolNode`, ' +
         'when inserted after the initial parse',
         function (done) {
             decode.parse(
@@ -235,12 +197,7 @@ describe('emoji()', function () {
                             },
                             {
                                 'type' : 'WhiteSpaceNode',
-                                'children' : [
-                                    {
-                                        'type' : 'TextNode',
-                                        'value' : ' '
-                                    }
-                                ]
+                                'value' : ' '
                             },
                             {
                                 'type' : 'WordNode',
@@ -253,12 +210,7 @@ describe('emoji()', function () {
                             },
                             {
                                 'type' : 'WhiteSpaceNode',
-                                'children' : [
-                                    {
-                                        'type' : 'TextNode',
-                                        'value' : ' '
-                                    }
-                                ]
+                                'value' : ' '
                             },
                             {
                                 'type' : 'WordNode',
@@ -271,12 +223,7 @@ describe('emoji()', function () {
                             },
                             {
                                 'type' : 'WhiteSpaceNode',
-                                'children' : [
-                                    {
-                                        'type' : 'TextNode',
-                                        'value' : ' '
-                                    }
-                                ]
+                                'value' : ' '
                             },
                             {
                                 'type' : 'WordNode',
@@ -289,38 +236,15 @@ describe('emoji()', function () {
                             },
                             {
                                 'type' : 'WhiteSpaceNode',
-                                'children' : [
-                                    {
-                                        'type' : 'TextNode',
-                                        'value' : ' '
-                                    }
-                                ]
+                                'value' : ' '
+                            },
+                            {
+                                'type' : 'SymbolNode',
+                                'value' : ':sob:'
                             },
                             {
                                 'type' : 'PunctuationNode',
-                                'children' : [
-                                    {
-                                        'type' : 'TextNode',
-                                        'value' : ':'
-                                    },
-                                    {
-                                        'type' : 'TextNode',
-                                        'value' : 'sob'
-                                    },
-                                    {
-                                        'type' : 'TextNode',
-                                        'value' : ':'
-                                    }
-                                ]
-                            },
-                            {
-                                'type' : 'PunctuationNode',
-                                'children' : [
-                                    {
-                                        'type' : 'TextNode',
-                                        'value' : '.'
-                                    }
-                                ]
+                                'value' : '.'
                             }
                         ]
                     }));
@@ -332,7 +256,7 @@ describe('emoji()', function () {
     );
 
     it('should NOT classify gemoji-like sequences (such as `:trololol:`) ' +
-        'as `PunctuationNode`',
+        'as `SymbolNode`',
         function (done) {
             decode.parse(
                 'This makes me feel :trololol:.',
@@ -351,12 +275,7 @@ describe('emoji()', function () {
                             },
                             {
                                 'type' : 'WhiteSpaceNode',
-                                'children' : [
-                                    {
-                                        'type' : 'TextNode',
-                                        'value' : ' '
-                                    }
-                                ]
+                                'value' : ' '
                             },
                             {
                                 'type' : 'WordNode',
@@ -369,12 +288,7 @@ describe('emoji()', function () {
                             },
                             {
                                 'type' : 'WhiteSpaceNode',
-                                'children' : [
-                                    {
-                                        'type' : 'TextNode',
-                                        'value' : ' '
-                                    }
-                                ]
+                                'value' : ' '
                             },
                             {
                                 'type' : 'WordNode',
@@ -387,12 +301,7 @@ describe('emoji()', function () {
                             },
                             {
                                 'type' : 'WhiteSpaceNode',
-                                'children' : [
-                                    {
-                                        'type' : 'TextNode',
-                                        'value' : ' '
-                                    }
-                                ]
+                                'value' : ' '
                             },
                             {
                                 'type' : 'WordNode',
@@ -405,21 +314,11 @@ describe('emoji()', function () {
                             },
                             {
                                 'type' : 'WhiteSpaceNode',
-                                'children' : [
-                                    {
-                                        'type' : 'TextNode',
-                                        'value' : ' '
-                                    }
-                                ]
+                                'value' : ' '
                             },
                             {
                                 'type' : 'PunctuationNode',
-                                'children' : [
-                                    {
-                                        'type' : 'TextNode',
-                                        'value' : ':'
-                                    }
-                                ]
+                                'value' : ':'
                             },
                             {
                                 'type' : 'WordNode',
@@ -432,21 +331,11 @@ describe('emoji()', function () {
                             },
                             {
                                 'type' : 'PunctuationNode',
-                                'children' : [
-                                    {
-                                        'type' : 'TextNode',
-                                        'value' : ':'
-                                    }
-                                ]
+                                'value' : ':'
                             },
                             {
                                 'type' : 'PunctuationNode',
-                                'children' : [
-                                    {
-                                        'type' : 'TextNode',
-                                        'value' : '.'
-                                    }
-                                ]
+                                'value' : '.'
                             }
                         ]
                     }));
@@ -477,12 +366,7 @@ describe('emoji()', function () {
                             },
                             {
                                 'type' : 'WhiteSpaceNode',
-                                'children' : [
-                                    {
-                                        'type' : 'TextNode',
-                                        'value' : ' '
-                                    }
-                                ]
+                                'value' : ' '
                             },
                             {
                                 'type' : 'WordNode',
@@ -493,12 +377,7 @@ describe('emoji()', function () {
                                     },
                                     {
                                         'type' : 'PunctuationNode',
-                                        'children' : [
-                                            {
-                                                'type' : 'TextNode',
-                                                'value' : '.'
-                                            }
-                                        ]
+                                        'value' : '.'
                                     },
                                     {
                                         'type' : 'TextNode',
@@ -506,23 +385,13 @@ describe('emoji()', function () {
                                     },
                                     {
                                         'type' : 'PunctuationNode',
-                                        'children' : [
-                                            {
-                                                'type' : 'TextNode',
-                                                'value' : '.'
-                                            }
-                                        ]
+                                        'value' : '.'
                                     }
                                 ]
                             },
                             {
                                 'type' : 'WhiteSpaceNode',
-                                'children' : [
-                                    {
-                                        'type' : 'TextNode',
-                                        'value' : ' '
-                                    }
-                                ]
+                                'value' : ' '
                             },
                             {
                                 'type' : 'WordNode',
@@ -535,12 +404,7 @@ describe('emoji()', function () {
                             },
                             {
                                 'type' : 'PunctuationNode',
-                                'children' : [
-                                    {
-                                        'type' : 'TextNode',
-                                        'value' : ':'
-                                    }
-                                ]
+                                'value' : ':'
                             }
                         ]
                     }));
@@ -573,12 +437,7 @@ describe('emoji({convert: "encode"})', function () {
                             },
                             {
                                 'type' : 'WhiteSpaceNode',
-                                'children' : [
-                                    {
-                                        'type' : 'TextNode',
-                                        'value' : ' '
-                                    }
-                                ]
+                                'value' : ' '
                             },
                             {
                                 'type' : 'WordNode',
@@ -591,12 +450,7 @@ describe('emoji({convert: "encode"})', function () {
                             },
                             {
                                 'type' : 'WhiteSpaceNode',
-                                'children' : [
-                                    {
-                                        'type' : 'TextNode',
-                                        'value' : ' '
-                                    }
-                                ]
+                                'value' : ' '
                             },
                             {
                                 'type' : 'WordNode',
@@ -609,12 +463,7 @@ describe('emoji({convert: "encode"})', function () {
                             },
                             {
                                 'type' : 'WhiteSpaceNode',
-                                'children' : [
-                                    {
-                                        'type' : 'TextNode',
-                                        'value' : ' '
-                                    }
-                                ]
+                                'value' : ' '
                             },
                             {
                                 'type' : 'WordNode',
@@ -627,30 +476,15 @@ describe('emoji({convert: "encode"})', function () {
                             },
                             {
                                 'type' : 'WhiteSpaceNode',
-                                'children' : [
-                                    {
-                                        'type' : 'TextNode',
-                                        'value' : ' '
-                                    }
-                                ]
+                                'value' : ' '
+                            },
+                            {
+                                'type' : 'SymbolNode',
+                                'value' : '\uD83D\uDE2D'
                             },
                             {
                                 'type' : 'PunctuationNode',
-                                'children' : [
-                                    {
-                                        'type' : 'TextNode',
-                                        'value' : '\uD83D\uDE2D'
-                                    }
-                                ]
-                            },
-                            {
-                                'type' : 'PunctuationNode',
-                                'children' : [
-                                    {
-                                        'type' : 'TextNode',
-                                        'value' : '.'
-                                    }
-                                ]
+                                'value' : '.'
                             }
                         ]
                     }));
@@ -683,12 +517,7 @@ describe('emoji({convert: "encode"})', function () {
                             },
                             {
                                 'type' : 'WhiteSpaceNode',
-                                'children' : [
-                                    {
-                                        'type' : 'TextNode',
-                                        'value' : ' '
-                                    }
-                                ]
+                                'value' : ' '
                             },
                             {
                                 'type' : 'WordNode',
@@ -701,12 +530,7 @@ describe('emoji({convert: "encode"})', function () {
                             },
                             {
                                 'type' : 'WhiteSpaceNode',
-                                'children' : [
-                                    {
-                                        'type' : 'TextNode',
-                                        'value' : ' '
-                                    }
-                                ]
+                                'value' : ' '
                             },
                             {
                                 'type' : 'WordNode',
@@ -719,12 +543,7 @@ describe('emoji({convert: "encode"})', function () {
                             },
                             {
                                 'type' : 'WhiteSpaceNode',
-                                'children' : [
-                                    {
-                                        'type' : 'TextNode',
-                                        'value' : ' '
-                                    }
-                                ]
+                                'value' : ' '
                             },
                             {
                                 'type' : 'WordNode',
@@ -737,30 +556,15 @@ describe('emoji({convert: "encode"})', function () {
                             },
                             {
                                 'type' : 'WhiteSpaceNode',
-                                'children' : [
-                                    {
-                                        'type' : 'TextNode',
-                                        'value' : ' '
-                                    }
-                                ]
+                                'value' : ' '
+                            },
+                            {
+                                'type' : 'SymbolNode',
+                                'value' : '\uD83D\uDE2D'
                             },
                             {
                                 'type' : 'PunctuationNode',
-                                'children' : [
-                                    {
-                                        'type' : 'TextNode',
-                                        'value' : '\uD83D\uDE2D'
-                                    }
-                                ]
-                            },
-                            {
-                                'type' : 'PunctuationNode',
-                                'children' : [
-                                    {
-                                        'type' : 'TextNode',
-                                        'value' : '.'
-                                    }
-                                ]
+                                'value' : '.'
                             }
                         ]
                     }));
@@ -793,12 +597,7 @@ describe('emoji({convert: "decode"})', function () {
                             },
                             {
                                 'type' : 'WhiteSpaceNode',
-                                'children' : [
-                                    {
-                                        'type' : 'TextNode',
-                                        'value' : ' '
-                                    }
-                                ]
+                                'value' : ' '
                             },
                             {
                                 'type' : 'WordNode',
@@ -811,12 +610,7 @@ describe('emoji({convert: "decode"})', function () {
                             },
                             {
                                 'type' : 'WhiteSpaceNode',
-                                'children' : [
-                                    {
-                                        'type' : 'TextNode',
-                                        'value' : ' '
-                                    }
-                                ]
+                                'value' : ' '
                             },
                             {
                                 'type' : 'WordNode',
@@ -829,12 +623,7 @@ describe('emoji({convert: "decode"})', function () {
                             },
                             {
                                 'type' : 'WhiteSpaceNode',
-                                'children' : [
-                                    {
-                                        'type' : 'TextNode',
-                                        'value' : ' '
-                                    }
-                                ]
+                                'value' : ' '
                             },
                             {
                                 'type' : 'WordNode',
@@ -847,38 +636,15 @@ describe('emoji({convert: "decode"})', function () {
                             },
                             {
                                 'type' : 'WhiteSpaceNode',
-                                'children' : [
-                                    {
-                                        'type' : 'TextNode',
-                                        'value' : ' '
-                                    }
-                                ]
+                                'value' : ' '
+                            },
+                            {
+                                'type' : 'SymbolNode',
+                                'value' : ':sob:'
                             },
                             {
                                 'type' : 'PunctuationNode',
-                                'children' : [
-                                    {
-                                        'type' : 'TextNode',
-                                        'value' : ':'
-                                    },
-                                    {
-                                        'type' : 'TextNode',
-                                        'value' : 'sob'
-                                    },
-                                    {
-                                        'type' : 'TextNode',
-                                        'value' : ':'
-                                    }
-                                ]
-                            },
-                            {
-                                'type' : 'PunctuationNode',
-                                'children' : [
-                                    {
-                                        'type' : 'TextNode',
-                                        'value' : '.'
-                                    }
-                                ]
+                                'value' : '.'
                             }
                         ]
                     }));
@@ -911,12 +677,7 @@ describe('emoji({convert: "decode"})', function () {
                             },
                             {
                                 'type' : 'WhiteSpaceNode',
-                                'children' : [
-                                    {
-                                        'type' : 'TextNode',
-                                        'value' : ' '
-                                    }
-                                ]
+                                'value' : ' '
                             },
                             {
                                 'type' : 'WordNode',
@@ -929,12 +690,7 @@ describe('emoji({convert: "decode"})', function () {
                             },
                             {
                                 'type' : 'WhiteSpaceNode',
-                                'children' : [
-                                    {
-                                        'type' : 'TextNode',
-                                        'value' : ' '
-                                    }
-                                ]
+                                'value' : ' '
                             },
                             {
                                 'type' : 'WordNode',
@@ -947,12 +703,7 @@ describe('emoji({convert: "decode"})', function () {
                             },
                             {
                                 'type' : 'WhiteSpaceNode',
-                                'children' : [
-                                    {
-                                        'type' : 'TextNode',
-                                        'value' : ' '
-                                    }
-                                ]
+                                'value' : ' '
                             },
                             {
                                 'type' : 'WordNode',
@@ -965,38 +716,15 @@ describe('emoji({convert: "decode"})', function () {
                             },
                             {
                                 'type' : 'WhiteSpaceNode',
-                                'children' : [
-                                    {
-                                        'type' : 'TextNode',
-                                        'value' : ' '
-                                    }
-                                ]
+                                'value' : ' '
+                            },
+                            {
+                                'type' : 'SymbolNode',
+                                'value' : ':sob:'
                             },
                             {
                                 'type' : 'PunctuationNode',
-                                'children' : [
-                                    {
-                                        'type' : 'TextNode',
-                                        'value' : ':'
-                                    },
-                                    {
-                                        'type' : 'TextNode',
-                                        'value' : 'sob'
-                                    },
-                                    {
-                                        'type' : 'TextNode',
-                                        'value' : ':'
-                                    }
-                                ]
-                            },
-                            {
-                                'type' : 'PunctuationNode',
-                                'children' : [
-                                    {
-                                        'type' : 'TextNode',
-                                        'value' : '.'
-                                    }
-                                ]
+                                'value' : '.'
                             }
                         ]
                     }));
@@ -1032,7 +760,7 @@ function describeEmoji(key, unicode) {
                         );
 
                         assert(node.toString() === shortcode);
-                        assert(node.type === node.PUNCTUATION_NODE);
+                        assert(node.type === node.SYMBOL_NODE);
 
                         done(err);
                     });
@@ -1056,7 +784,7 @@ function describeEmoji(key, unicode) {
                     );
 
                     assert(node.toString() === unicode);
-                    assert(node.type === node.PUNCTUATION_NODE);
+                    assert(node.type === node.SYMBOL_NODE);
 
                     done(err);
                 });
