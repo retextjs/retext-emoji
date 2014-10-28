@@ -38,16 +38,16 @@ var encode,
 encode = new Retext()
     .use(ast)
     .use(content)
-    .use(emoji({
-        'convert' : 'encode'
-    }));
+    .use(emoji, {
+        'convert': 'encode'
+    });
 
 decode = new Retext()
     .use(ast)
     .use(content)
-    .use(emoji({
+    .use(emoji, {
         'convert' : 'decode'
-    }));
+    });
 
 /**
  * Tests.
@@ -58,42 +58,38 @@ describe('emoji()', function () {
         assert(typeof emoji === 'function');
     });
 
-    it('should pass an error when invoked by `Retext` instead of the user',
-        function (done) {
-            var retext;
+    it('should throw when invoked by the user', function () {
+        assert.throws(function () {
+            emoji();
+        }, /Illegal invocation/);
 
-            retext = new Retext().use(emoji);
-
-            retext.parse(null, function (err) {
-                assert.throws(function () {
-                    throw err;
-                }, /Illegal invocation/);
-
-                done();
+        assert.throws(function () {
+            emoji({
+                'convert': 'encode'
             });
-        }
-    );
+        }, /Illegal invocation/);
+    });
 
     it('should throw when not given `options`', function () {
         assert.throws(function () {
-            new Retext().use(emoji());
+            new Retext().use(emoji);
         }, /undefined/);
     });
 
     it('should throw when not given `options.convert`', function () {
         assert.throws(function () {
-            new Retext().use(emoji({
+            new Retext().use(emoji, {
                 'test' : 'encode'
-            }));
+            });
         }, /undefined/);
     });
 
     it('should throw when `convert` is neither `encode` nor `decode`',
         function () {
             assert.throws(function () {
-                assert(new Retext().use(emoji({
+                assert(new Retext().use(emoji, {
                     'convert' : false
-                })));
+                }));
             }, /false/);
         }
     );
@@ -416,7 +412,7 @@ describe('emoji()', function () {
     );
 });
 
-describe('emoji({convert: "encode"})', function () {
+describe('use(emoji, {convert: "encode"})', function () {
     it('should convert gemoji (such as `:sob:`) to their unicode ' +
         'equivalent, when `convert` is `encode`',
         function (done) {
@@ -576,7 +572,7 @@ describe('emoji({convert: "encode"})', function () {
     );
 });
 
-describe('emoji({convert: "decode"})', function () {
+describe('use(emoji, {convert: "decode"})', function () {
     it('should convert gemoji (such as `\uD83D\uDE2D`) to their named ' +
         'equivalent, when `convert` is `decode`',
         function (done) {

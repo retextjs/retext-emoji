@@ -198,56 +198,20 @@ function decode() {
 }
 
 /**
- * Define `attachFactory`.
- *
- * @param {string} type - either `encode` or `decode`.
- * @return {function}
- */
-
-function attachFactory(type) {
-    var onchange;
-
-    if (type === 'encode') {
-        onchange = encode;
-    } else {
-        onchange = decode;
-    }
-
-    /**
-     * @param {Retext} retext
-     */
-
-    return function (retext) {
-        var SymbolNode;
-
-        SymbolNode = retext.TextOM.SymbolNode;
-
-        retext.parser.tokenizeSentenceModifiers.unshift(mergeEmojiExceptions);
-
-        SymbolNode.on('changetext', onchange);
-    };
-}
-
-/**
  * Define `emojiFactory`.
  */
 
-function emojiFactory(options) {
-    var convert;
+function emoji(retext, options) {
+    var convert,
+        onchange;
 
-    if (arguments.length > 1) {
+    if (arguments.length < 2) {
         throw new TypeError(
             'Illegal invocation: `emoji` was ' +
-            'invoked by `Retext`, but should be ' +
-            'invoked by the user'
-        );
-    }
-
-    if (!options) {
-        throw new TypeError(
-            'Illegal invocation: `' + options + '` ' +
-            'is not a valid value for `options` in ' +
-            '`emoji(options)`'
+            'invoked by the user. This is no longer valid. ' +
+            'This breaking change occurred in ' +
+            'retext-emoji@0.3.0. See GitHub for more ' +
+            'information'
         );
     }
 
@@ -263,19 +227,23 @@ function emojiFactory(options) {
         throw new TypeError(
             'Illegal invocation: `' + convert +
             '` is not a valid value for ' +
-            '`options.convert` in `emoji(options)`'
+            '`options.convert` in `retext#use(emoji, options)`'
         );
     }
 
-    function emoji () {}
+    if (convert === 'encode') {
+        onchange = encode;
+    } else {
+        onchange = decode;
+    }
 
-    emoji.attach = attachFactory(convert);
+    retext.parser.tokenizeSentenceModifiers.unshift(mergeEmojiExceptions);
 
-    return emoji;
+    retext.TextOM.SymbolNode.on('changetext', onchange);
 }
 
 /**
  * Expose `emojiFactory`.
  */
 
-module.exports = emojiFactory;
+module.exports = emoji;

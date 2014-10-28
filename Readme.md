@@ -21,21 +21,23 @@ $ bower install retext-emoji
 
 ## Usage & API
 
-### emoji(options)
+### emoji
 
 ```js
 var Retext = require('retext'),
     emoji = require('retext-emoji'),
     retext;
 
-retext = new Retext().use(emoji({
+retext = new Retext().use(emoji, {
     'convert' : 'encode'
-}));
+});
 
 retext.parse('It’s raining :cat:s and :dog:s!', function (err, tree) {
     tree.toString(); // 'It’s raining 🐱s and 🐶s!'
 });
 ```
+
+You **must** provide an `options` object as the second argument to `Retext#use`:
 
 - `options` (`Object`)
 - `options.convert` (`"encode"` or `"decode"`):
