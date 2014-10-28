@@ -74,8 +74,8 @@ function mergeEmojiExceptions(child, index, parent) {
 
         if (has.call(unicode, value)) {
             siblings[index] = {
-                'type' : 'SymbolNode',
-                'value' : nlcstToString(siblings[index])
+                'type': 'SymbolNode',
+                'value': nlcstToString(siblings[index])
             };
 
             return;
@@ -146,7 +146,7 @@ function mergeEmojiExceptions(child, index, parent) {
     nodes.reverse().push(child);
 
     value = nlcstToString({
-        'children' : nodes
+        'children': nodes
     });
 
     if (!has.call(shortcodes, value)) {

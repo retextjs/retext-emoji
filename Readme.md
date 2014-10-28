@@ -29,7 +29,7 @@ var Retext = require('retext'),
     retext;
 
 retext = new Retext().use(emoji, {
-    'convert' : 'encode'
+    'convert': 'encode'
 });
 
 retext.parse('It’s raining :cat:s and :dog:s!', function (err, tree) {
