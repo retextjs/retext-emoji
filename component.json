@@ -9,8 +9,8 @@
     "emoji"
   ],
   "dependencies": {
-    "wooorm/gemoji": "^0.1.2",
-    "wooorm/nlcst-to-string": "^0.1.1"
+    "wooorm/gemoji": "^0.2.0",
+    "wooorm/nlcst-to-string": "^0.1.0"
   },
   "repository": "wooorm/retext-emoji",
   "scripts": [
