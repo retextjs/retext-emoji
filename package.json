@@ -10,6 +10,7 @@
   ],
   "dependencies": {
     "gemoji": "^0.2.0",
+    "nlcst-emoji-modifier": "^0.0.1",
     "nlcst-to-string": "^0.1.0"
   },
   "repository": {
