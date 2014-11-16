@@ -1,4 +1,4 @@
-# retext-emoji [![Build Status](https://travis-ci.org/wooorm/retext-emoji.svg?branch=master)](https://travis-ci.org/wooorm/retext-emoji) [![Coverage Status](https://img.shields.io/coveralls/wooorm/retext-emoji.svg)](https://coveralls.io/r/wooorm/retext-emoji?branch=master)
+# retext-emoji [![Build Status](https://img.shields.io/travis/wooorm/retext-emoji.svg?style=flat)](https://travis-ci.org/wooorm/retext-emoji) [![Coverage Status](https://img.shields.io/coveralls/wooorm/retext-emoji.svg?style=flat)](https://coveralls.io/r/wooorm/retext-emoji?branch=master)
 
 **[retext](https://github.com/wooorm/retext "Retext")** encoding of gemoji short-codes to unicode, and decoding from unicode to short-code.
 
