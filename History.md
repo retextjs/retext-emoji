@@ -1,4 +1,15 @@
 
+n.n.n / 2014-11-16
+==================
+
+ * Add flat badges to `Readme.md`
+ * Add `EmoticonNode` to module
+ * Add retext-inspect to dependencies
+ * Remove nlcst-to-string from dependencies
+ * Add nlcst-emoji-modifier as a dependency
+ * Update retext, gemoji
+ * Remove execute rights from `test.js`
+
 0.3.0 / 2014-10-28
 ==================
 
