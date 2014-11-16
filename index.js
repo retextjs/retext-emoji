@@ -4,170 +4,35 @@
  * Dependencies.
  */
 
-var gemoji,
-    nlcstToString;
+var unicodes,
+    key,
+    names,
+    shortcodes,
+    shortcode,
+    gemoji,
+    modifier;
 
 gemoji = require('gemoji');
-nlcstToString = require('nlcst-to-string');
+modifier = require('nlcst-emoji-modifier');
 
-/**
- * Constants.
- */
-
-var key,
-    shortcodes,
-    names,
-    unicode,
-    has;
-
+unicodes = gemoji.unicode;
 names = gemoji.name;
-unicode = gemoji.unicode;
 
 shortcodes = {};
 
-has = Object.prototype.hasOwnProperty;
-
-/**
- * Quick access to short-codes.
- */
-
 for (key in names) {
-    /* istanbul ignore else */
-    if (has.call(names, key)) {
-        shortcodes[':' + key + ':'] = names[key];
-    }
-}
-
-/**
- * Merge gemoji, punctuation marks and words, into a
- * punctuation node.
- *
- * @param {CSTNode} child
- * @param {number} index
- * @param {CSTNode} parent
- * @return {undefined|number} - Either void, or the
- *   next index to iterate over.
- */
-
-function mergeEmojiExceptions(child, index, parent) {
-    var siblings,
-        children,
-        siblingIndex,
-        node,
-        nodes,
-        value;
-
-    siblings = parent.children;
-    children = child.children;
-    siblingIndex = index;
-
-    if (
-        child.type === 'WordNode' &&
-        has.call(children, 0)
-    ) {
-        value = children[0].value;
-
-        /**
-         * Sometimes a unicode emoji is marked as a
-         * word. Replace it with a `SymbolNode`.
-         */
-
-        if (has.call(unicode, value)) {
-            siblings[index] = {
-                'type': 'SymbolNode',
-                'value': nlcstToString(siblings[index])
-            };
-
-            return;
-        }
-
-        /**
-         * Sometimes a unicode emoji is split in two
-         * and marked as a first a `PunctuationNode`,
-         * followed by `WordNode`. Remove the last
-         * and add its value to the first.
-         */
-
-        node = siblings[index - 1];
-
-        if (
-            node &&
-            (
-                node.type === 'PunctuationNode' ||
-                node.type === 'SymbolNode'
-            ) &&
-            has.call(unicode, nlcstToString(node) + value)
-        ) {
-            node.type = 'SymbolNode';
-            node.value = nlcstToString(node) + value;
-
-            siblings.splice(index, 1);
-
-            return index - 1;
-        }
-    }
-
-    if (
-        (
-            child.type !== 'PunctuationNode' &&
-            child.type !== 'SymbolNode'
-        ) ||
-        nlcstToString(child) !== ':'
-    ) {
-        return;
-    }
-
-    nodes = [];
-
-    while (siblings[--siblingIndex]) {
-        node = siblings[siblingIndex];
-
-        if (node.children) {
-            nodes = nodes.concat(node.children.reverse());
-        } else {
-            nodes.push(node);
-        }
-
-        if (
-            (
-                node.type === 'PunctuationNode' ||
-                node.type === 'SymbolNode'
-            ) &&
-            nlcstToString(node) === ':'
-        ) {
-            break;
-        }
-    }
-
-    if (siblingIndex === -1) {
-        return;
-    }
-
-    nodes.reverse().push(child);
-
-    value = nlcstToString({
-        'children': nodes
-    });
-
-    if (!has.call(shortcodes, value)) {
-        return;
-    }
-
-    siblings.splice(siblingIndex, index - siblingIndex);
-
-    child.type = 'SymbolNode';
-    child.value = value;
-
-    return siblingIndex;
+    shortcode = ':' + key + ':';
+    shortcodes[shortcode] = names[key];
+    shortcodes[shortcode].shortcode = shortcode;
 }
 
 /**
  * Replace a short-code with a unicode emoji.
  *
- * @this {SymbolNode}
+ * @this {EmoticonNode}
  */
 
-function encode() {
+function toEmoji() {
     var self,
         value;
 
@@ -175,34 +40,89 @@ function encode() {
     value = shortcodes[self.toString()];
 
     if (value) {
-        self.fromString(value);
+        self.fromString(value.emoji);
     }
 }
 
 /**
  * Replace a unicode emoji with a short-code.
  *
- * @this {SymbolNode}
+ * @this {EmoticonNode}
  */
 
-function decode() {
+function toGemoji() {
     var self,
         value;
 
     self = this;
-    value = unicode[self.toString()];
+    value = unicodes[self.toString()];
 
     if (value) {
-        self.fromString(':' + value + ':');
+        self.fromString(value.shortcode);
     }
 }
 
 /**
- * Define `emojiFactory`.
+ * Change factory. Constructs a `changetext` listener.
+ *
+ * @param {string} onchange - which function to invoke
+ *   when the internal value changes.
+ * @return {function(this:EmoticonNode)}
+ */
+
+function changeFactory(onchange) {
+   /**
+    * Invoked when the internal value changes. If the
+    * emoji is still valid, updates its data.
+    *
+    * @this {EmoticonNode}
+    */
+
+    return function () {
+        var self,
+            value,
+            data,
+            information;
+
+        self = this;
+        value = self.toString();
+
+        information = unicodes[value] || shortcodes[value];
+
+        data = self.data;
+
+        if (information) {
+            data.names = information.names.concat();
+            data.description = information.description;
+            data.tags = information.tags.concat();
+        } else {
+            data.names = [];
+            data.description = null;
+            data.tags = [];
+        }
+
+        if (onchange) {
+            self[onchange]();
+        }
+    };
+}
+
+/**
+ * Define `EMOTICON_NODE`.
+ */
+
+var EMOTICON_NODE;
+
+EMOTICON_NODE = 'EmoticonNode';
+
+/**
+ * Define `emoji`.
  */
 
 function emoji(retext, options) {
-    var convert,
+    var TextOM,
+        SymbolNode,
+        convert,
         onchange;
 
     if (arguments.length < 2) {
@@ -215,14 +135,86 @@ function emoji(retext, options) {
         );
     }
 
+    /**
+     * Construct an `EmoticonNode`.
+     */
+
+    TextOM = retext.TextOM;
+
+    SymbolNode = TextOM.SymbolNode;
+
+    /**
+     * Define `PunctuationNode`.
+     *
+     * @constructor
+     */
+
+    function EmoticonNode() {
+        SymbolNode.apply(this, arguments);
+    }
+
+    /**
+     * The type of an instance of `EmoticonNode`.
+     *
+     * @readonly
+     * @static
+     */
+
+    EmoticonNode.prototype.type = EMOTICON_NODE;
+
+    /**
+     * Transform a gemoji into an emoji.
+     *
+     * @this {EmoticonNode}
+     */
+
+    EmoticonNode.prototype.toEmoji = toEmoji;
+
+   /**
+    * Transform an emoji into a gemoji.
+    *
+    * @this {EmoticonNode}
+    */
+
+   EmoticonNode.prototype.toGemoji = toGemoji;
+
+    /**
+     * Inherit from `SymbolNode.prototype`.
+     */
+
+    SymbolNode.isImplementedBy(EmoticonNode);
+
+    /**
+     * Expose `EmoticonNode` on `TextOM`.
+     */
+
+    TextOM.EmoticonNode = EmoticonNode;
+
+    /**
+     * Expose `EmoticonNode`s type on `TextOM`
+     * and `Node.prototype`.
+     */
+
+    TextOM.EMOTICON_NODE = EMOTICON_NODE;
+    TextOM.Node.prototype.EMOTICON_NODE = EMOTICON_NODE;
+
+    /**
+     * Enable `SentenceNode` to accept `EmoticonNode`s.
+     */
+
+    TextOM.SentenceNode.prototype.allowedChildTypes.push(EMOTICON_NODE);
+
+    /**
+     * Add automatic emoji de- and encoding.
+     */
+
     convert = options.convert;
 
     if (
-        !convert ||
-        (
-            convert !== 'decode' &&
-            convert !== 'encode'
-        )
+        convert !== 'decode' &&
+        convert !== 'encode' &&
+        convert !== null &&
+        convert !== undefined
     ) {
         throw new TypeError(
             'Illegal invocation: `' + convert +
@@ -232,18 +224,22 @@ function emoji(retext, options) {
     }
 
     if (convert === 'encode') {
-        onchange = encode;
-    } else {
-        onchange = decode;
+        onchange = 'toEmoji';
+    } else if (convert === 'decode') {
+        onchange = 'toGemoji';
     }
 
-    retext.parser.tokenizeSentenceModifiers.unshift(mergeEmojiExceptions);
+    EmoticonNode.on('changetext', changeFactory(onchange));
 
-    retext.TextOM.SymbolNode.on('changetext', onchange);
+    /**
+     * Add the NLCST plugin.
+     */
+
+    modifier(retext.parser);
 }
 
 /**
- * Expose `emojiFactory`.
+ * Expose `emoji`.
  */
 
 module.exports = emoji;
