@@ -22,7 +22,10 @@ function onchange(event) {
 
     value = value.value;
 
-    retext = new Retext().use(emoji({'convert' : value}));
+    retext = new Retext().use(emoji, {
+        'convert' : value
+    });
+
     makeSmarter();
 }
 
