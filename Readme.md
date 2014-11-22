@@ -24,12 +24,11 @@ $ bower install retext-emoji
 ### emoji
 
 ```js
-var Retext = require('retext'),
-    inspect = require('retext-inspect'),
-    emoji = require('retext-emoji'),
-    retext;
+var Retext = require('retext');
+var inspect = require('retext-inspect');
+var emoji = require('retext-emoji'),
 
-retext = new Retext().use(inspect).use(emoji, {
+var retext = new Retext().use(inspect).use(emoji, {
     'convert': 'encode'
 });
 
@@ -54,21 +53,12 @@ retext.parse('I’m going to bed. :zzz:', function (err, tree) {
      *   │  └─ TextNode: 'bed'
      *   ├─ PunctuationNode: '.'
      *   ├─ WhiteSpaceNode: ' '
-     *   └─ EmoticonNode: '💤'
-     */
-
-    console.log(tree.head.head.tail.data);
-    /**
-     * {
-     *   names: [ 'zzz' ],
-     *   description: 'sleeping symbol',
-     *   tags: [ 'sleeping' ]
-     * }
+     *   └─ EmoticonNode: '💤' [data={"names":["zzz"],"description":"sleeping symbol","tags":["sleeping"]}]
      */
 });
 ```
 
-You **may** provide an `options` object as the second argument to `Retext#use`:
+Parameters:
 
 - `options` (`Object`)
 - `options.convert` (`"encode"` or `"decode"`, or `null`):
@@ -78,7 +68,7 @@ You **may** provide an `options` object as the second argument to `Retext#use`:
 
 ### EmoticonNode
 
-All emoticons, whether emoji (:pig:) or gemoji (`:pig:`), are classified as `EmoticonNode`s. `EmoticonNode` subclasses `SymbolNode`.
+All emoticons, whether emoji (`🐷`) or gemoji (`:pig:`), are classified as `EmoticonNode`s. `EmoticonNode` subclasses `SymbolNode`.
 
 #### EmoticonNode#toEmoji()
 
