@@ -23,7 +23,7 @@
     "jscs": "^1.0.0",
     "mocha": "^2.0.0",
     "retext": "^0.4.0",
-    "retext-ast": "^0.2.2",
+    "retext-cst": "^0.3.0",
     "retext-content": "^0.2.5",
     "retext-inspect": "^0.4.0"
   },

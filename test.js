@@ -7,14 +7,14 @@
 var emoji,
     gemoji,
     Retext,
-    ast,
+    cst,
     content,
     inspect,
     assert;
 
 emoji = require('./');
 gemoji = require('gemoji');
-ast = require('retext-ast');
+cst = require('retext-cst');
 content = require('retext-content');
 inspect = require('retext-inspect');
 Retext = require('retext');
@@ -40,7 +40,7 @@ var encode,
     TextOM;
 
 encode = new Retext()
-    .use(ast)
+    .use(cst)
     .use(content)
     .use(inspect)
     .use(emoji, {
@@ -48,7 +48,7 @@ encode = new Retext()
     });
 
 decode = new Retext()
-    .use(ast)
+    .use(cst)
     .use(content)
     .use(inspect)
     .use(emoji, {
@@ -56,7 +56,7 @@ decode = new Retext()
     });
 
 retext = new Retext()
-    .use(ast)
+    .use(cst)
     .use(content)
     .use(inspect)
     .use(emoji);
@@ -114,7 +114,7 @@ describe('emoji()', function () {
             decode.parse(
                 'This makes me feel :sob:.',
                 function (err, tree) {
-                    assert(tree.head.head.toAST() === JSON.stringify({
+                    assert(tree.head.head.toCST() === JSON.stringify({
                         'type': 'SentenceNode',
                         'children': [
                             {
@@ -205,7 +205,7 @@ describe('emoji()', function () {
                 function (err, tree) {
                     tree.head.head.appendContent(' :sob:.');
 
-                    assert(tree.head.head.toAST() === JSON.stringify({
+                    assert(tree.head.head.toCST() === JSON.stringify({
                         'type': 'SentenceNode',
                         'children': [
                             {
@@ -294,7 +294,7 @@ describe('emoji()', function () {
             decode.parse(
                 'This makes me feel :trololol:.',
                 function (err, tree) {
-                    assert(tree.head.head.toAST() === JSON.stringify({
+                    assert(tree.head.head.toCST() === JSON.stringify({
                         'type': 'SentenceNode',
                         'children': [
                             {
@@ -385,7 +385,7 @@ describe('emoji()', function () {
             decode.parse(
                 'Hello L.L. Smith:\n',
                 function (err, tree) {
-                    assert(tree.head.head.toAST() === JSON.stringify({
+                    assert(tree.head.head.toCST() === JSON.stringify({
                         'type': 'SentenceNode',
                         'children': [
                             {
@@ -547,7 +547,7 @@ describe('use(emoji)', function () {
             retext.parse(
                 'This makes me feel :sob:.',
                 function (err, tree) {
-                    assert(tree.head.head.toAST() === JSON.stringify({
+                    assert(tree.head.head.toCST() === JSON.stringify({
                         'type': 'SentenceNode',
                         'children': [
                             {
@@ -638,7 +638,7 @@ describe('use(emoji)', function () {
                 function (err, tree) {
                     tree.head.head.appendContent(' :sob:.');
 
-                    assert(tree.head.head.toAST() === JSON.stringify({
+                    assert(tree.head.head.toCST() === JSON.stringify({
                         'type': 'SentenceNode',
                         'children': [
                             {
@@ -727,7 +727,7 @@ describe('use(emoji)', function () {
             retext.parse(
                 'This makes me feel \uD83D\uDE2D.',
                 function (err, tree) {
-                    assert(tree.head.head.toAST() === JSON.stringify({
+                    assert(tree.head.head.toCST() === JSON.stringify({
                         'type': 'SentenceNode',
                         'children': [
                             {
@@ -818,7 +818,7 @@ describe('use(emoji)', function () {
                 function (err, tree) {
                     tree.head.head.appendContent(' \uD83D\uDE2D.');
 
-                    assert(tree.head.head.toAST() === JSON.stringify({
+                    assert(tree.head.head.toCST() === JSON.stringify({
                         'type': 'SentenceNode',
                         'children': [
                             {
@@ -909,7 +909,7 @@ describe('use(emoji, {convert: "encode"})', function () {
             encode.parse(
                 'This makes me feel :sob:.',
                 function (err, tree) {
-                    assert(tree.head.head.toAST() === JSON.stringify({
+                    assert(tree.head.head.toCST() === JSON.stringify({
                         'type': 'SentenceNode',
                         'children': [
                             {
@@ -1000,7 +1000,7 @@ describe('use(emoji, {convert: "encode"})', function () {
                 function (err, tree) {
                     tree.head.head.appendContent(' :sob:.');
 
-                    assert(tree.head.head.toAST() === JSON.stringify({
+                    assert(tree.head.head.toCST() === JSON.stringify({
                         'type': 'SentenceNode',
                         'children': [
                             {
@@ -1091,7 +1091,7 @@ describe('use(emoji, {convert: "decode"})', function () {
             decode.parse(
                 'This makes me feel \uD83D\uDE2D.',
                 function (err, tree) {
-                    assert(tree.head.head.toAST() === JSON.stringify({
+                    assert(tree.head.head.toCST() === JSON.stringify({
                         'type': 'SentenceNode',
                         'children': [
                             {
@@ -1182,7 +1182,7 @@ describe('use(emoji, {convert: "decode"})', function () {
                 function (err, tree) {
                     tree.head.head.appendContent(' \uD83D\uDE2D.');
 
-                    assert(tree.head.head.toAST() === JSON.stringify({
+                    assert(tree.head.head.toCST() === JSON.stringify({
                         'type': 'SentenceNode',
                         'children': [
                             {
