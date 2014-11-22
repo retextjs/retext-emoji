@@ -1,4 +1,12 @@
 
+n.n.n / 2014-11-22
+==================
+
+ * Refactor `Readme.md`
+ * Refactor npm script targets in `package.json`
+ * Add retext-cst, remove retext-cst
+ * Update retext, retext-inspect
+
 0.4.0 / 2014-11-19
 ==================
 
