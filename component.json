@@ -10,7 +10,8 @@
   ],
   "dependencies": {
     "wooorm/gemoji": "^0.2.0",
-    "wooorm/nlcst-emoji-modifier": "^0.1.0"
+    "wooorm/nlcst-emoji-modifier": "^0.1.0",
+    "wooorm/nlcst-emoticon-modifier": "^0.1.1"
   },
   "repository": "wooorm/retext-emoji",
   "scripts": [

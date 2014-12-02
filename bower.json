@@ -10,7 +10,8 @@
   ],
   "dependencies": {
     "gemoji": "^0.2.0",
-    "nlcst-emoji-modifier": "^0.1.0"
+    "nlcst-emoji-modifier": "^0.1.0",
+    "nlcst-emoticon-modifier": "^0.1.1"
   },
   "repository": {
     "type": "git",

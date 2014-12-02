@@ -10,7 +10,8 @@
   ],
   "dependencies": {
     "gemoji": "^0.2.0",
-    "nlcst-emoji-modifier": "^0.1.0"
+    "nlcst-emoji-modifier": "^0.1.0",
+    "nlcst-emoticon-modifier": "^0.1.1"
   },
   "repository": {
     "type": "git",
@@ -18,13 +19,14 @@
   },
   "author": "Titus Wormer <tituswormer@gmail.com>",
   "devDependencies": {
+    "emoticon": "0.0.1",
     "eslint": "^0.9.0",
     "istanbul": "^0.3.0",
     "jscs": "^1.0.0",
     "mocha": "^2.0.0",
     "retext": "^0.4.0",
-    "retext-cst": "^0.3.0",
     "retext-content": "^0.2.5",
+    "retext-cst": "^0.3.0",
     "retext-inspect": "^0.4.0"
   },
   "scripts": {

@@ -10,10 +10,12 @@ var unicodes,
     shortcodes,
     shortcode,
     gemoji,
-    modifier;
+    emojiModifier,
+    emoticonModifier;
 
 gemoji = require('gemoji');
-modifier = require('nlcst-emoji-modifier');
+emojiModifier = require('nlcst-emoji-modifier');
+emoticonModifier = require('nlcst-emoticon-modifier');
 
 unicodes = gemoji.unicode;
 names = gemoji.name;
@@ -235,7 +237,8 @@ function emoji(retext, options) {
      * Add the NLCST plugin.
      */
 
-    modifier(retext.parser);
+    emoticonModifier(retext.parser);
+    emojiModifier(retext.parser);
 }
 
 /**
