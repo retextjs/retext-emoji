@@ -1,5 +1,5 @@
 
-n.n.n / 2014-12-02
+0.5.1 / 2014-12-02
 ==================
 
  * Remove duplicate emoticon dependency from dev-dependencies
