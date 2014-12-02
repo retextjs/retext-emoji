@@ -6,6 +6,7 @@
 
 var emoji,
     gemoji,
+    emoticons,
     Retext,
     cst,
     content,
@@ -14,6 +15,7 @@ var emoji,
 
 emoji = require('./');
 gemoji = require('gemoji');
+emoticons = require('emoticon');
 cst = require('retext-cst');
 content = require('retext-content');
 inspect = require('retext-inspect');
@@ -27,7 +29,7 @@ assert = require('assert');
 var baseSentence,
     fullStop;
 
-baseSentence = 'Lack of cross-device emoji support makes me ';
+baseSentence = 'Lack of cross-device emoticon support makes me ';
 fullStop = '.';
 
 /**
@@ -64,7 +66,7 @@ retext = new Retext()
 TextOM = retext.TextOM;
 
 /**
- * Tests.
+ * Tests for parsing.
  */
 
 describe('emoji()', function () {
@@ -106,6 +108,187 @@ describe('emoji()', function () {
                     'convert': false
                 }));
             }, /false/);
+        }
+    );
+
+    it('should classify emoticons (such as `:)`) as an `EmoticonNode`',
+        function (done) {
+            retext.parse(
+                'This makes me feel :).',
+                function (err, tree) {
+                    assert(tree.head.head.toCST() === JSON.stringify({
+                        'type': 'SentenceNode',
+                        'children': [
+                            {
+                                'type': 'WordNode',
+                                'children': [
+                                    {
+                                        'type': 'TextNode',
+                                        'value': 'This'
+                                    }
+                                ]
+                            },
+                            {
+                                'type': 'WhiteSpaceNode',
+                                'value': ' '
+                            },
+                            {
+                                'type': 'WordNode',
+                                'children': [
+                                    {
+                                        'type': 'TextNode',
+                                        'value': 'makes'
+                                    }
+                                ]
+                            },
+                            {
+                                'type': 'WhiteSpaceNode',
+                                'value': ' '
+                            },
+                            {
+                                'type': 'WordNode',
+                                'children': [
+                                    {
+                                        'type': 'TextNode',
+                                        'value': 'me'
+                                    }
+                                ]
+                            },
+                            {
+                                'type': 'WhiteSpaceNode',
+                                'value': ' '
+                            },
+                            {
+                                'type': 'WordNode',
+                                'children': [
+                                    {
+                                        'type': 'TextNode',
+                                        'value': 'feel'
+                                    }
+                                ]
+                            },
+                            {
+                                'type': 'WhiteSpaceNode',
+                                'value': ' '
+                            },
+                            {
+                                'type': 'EmoticonNode',
+                                'value': ':)',
+                                'data': {
+                                    'names': [
+                                        'smiley'
+                                    ],
+                                    'description': 'smiling face ' +
+                                        'with open mouth',
+                                    'tags': [
+                                        'happy',
+                                        'joy',
+                                        'haha'
+                                    ]
+                                }
+                            },
+                            {
+                                'type': 'PunctuationNode',
+                                'value': '.'
+                            }
+                        ]
+                    }));
+
+                    done(err);
+                }
+            );
+        }
+    );
+
+    it('should classify emoticons (such as `:)`) as a `EmoticonNode`, ' +
+        'when inserted after the initial parse',
+        function (done) {
+            retext.parse(
+                'This makes me feel',
+                function (err, tree) {
+                    tree.head.head.appendContent(' :).');
+
+                    assert(tree.head.head.toCST() === JSON.stringify({
+                        'type': 'SentenceNode',
+                        'children': [
+                            {
+                                'type': 'WordNode',
+                                'children': [
+                                    {
+                                        'type': 'TextNode',
+                                        'value': 'This'
+                                    }
+                                ]
+                            },
+                            {
+                                'type': 'WhiteSpaceNode',
+                                'value': ' '
+                            },
+                            {
+                                'type': 'WordNode',
+                                'children': [
+                                    {
+                                        'type': 'TextNode',
+                                        'value': 'makes'
+                                    }
+                                ]
+                            },
+                            {
+                                'type': 'WhiteSpaceNode',
+                                'value': ' '
+                            },
+                            {
+                                'type': 'WordNode',
+                                'children': [
+                                    {
+                                        'type': 'TextNode',
+                                        'value': 'me'
+                                    }
+                                ]
+                            },
+                            {
+                                'type': 'WhiteSpaceNode',
+                                'value': ' '
+                            },
+                            {
+                                'type': 'WordNode',
+                                'children': [
+                                    {
+                                        'type': 'TextNode',
+                                        'value': 'feel'
+                                    }
+                                ]
+                            },
+                            {
+                                'type': 'WhiteSpaceNode',
+                                'value': ' '
+                            },
+                            {
+                                'type': 'EmoticonNode',
+                                'value': ':)',
+                                'data': {
+                                    'names': [
+                                        'smiley'
+                                    ],
+                                    'description': 'smiling face ' +
+                                        'with open mouth',
+                                    'tags': [
+                                        'happy',
+                                        'joy',
+                                        'haha'
+                                    ]
+                                }
+                            },
+                            {
+                                'type': 'PunctuationNode',
+                                'value': '.'
+                            }
+                        ]
+                    }));
+
+                    done(err);
+                }
+            );
         }
     );
 
@@ -449,6 +632,10 @@ describe('emoji()', function () {
     );
 });
 
+/**
+ * Tests for `EmoticonNode`.
+ */
+
 describe('TextOM.EmoticonNode', function () {
     it('should add a `names` array to `EmoticonNode`s data', function () {
         var emoticon;
@@ -469,14 +656,14 @@ describe('TextOM.EmoticonNode', function () {
     it('should add a `tags` array to `EmoticonNode`s data', function () {
         var emoticon;
 
-        emoticon = new TextOM.EmoticonNode(':relaxed:');
+        emoticon = new TextOM.EmoticonNode(':)');
 
         assert(Array.isArray(emoticon.data.tags));
 
         emoticon.data.tags.forEach(function (tag) {
             assert(typeof tag === 'string');
 
-            assert(gemoji.name.relaxed.tags.indexOf(tag) !== -1);
+            assert(gemoji.name.smiley.tags.indexOf(tag) !== -1);
         });
     });
 
@@ -510,7 +697,7 @@ describe('TextOM.EmoticonNode', function () {
         assert(emoticon.toString() === ':thumbsdown:');
     });
 
-    it('should update data when a new (g)emoji is given', function () {
+    it('should update data when a new emoticon is given', function () {
         var emoticon,
             description;
 
@@ -523,7 +710,8 @@ describe('TextOM.EmoticonNode', function () {
         assert(description !== emoticon.data.description);
     });
 
-    it('should set empty data attributes when an incorrect emoji is given',
+    it('should set empty data attributes when an incorrect emoticon is ' +
+        'given',
         function () {
             var emoticon;
 
@@ -540,7 +728,163 @@ describe('TextOM.EmoticonNode', function () {
     );
 });
 
+/**
+ * Tests for plugin.
+ */
+
 describe('use(emoji)', function () {
+    it('should NOT convert emoticons (such as `:,(`) to their unicode ' +
+        'equivalent, when `convert` is not given',
+        function (done) {
+            retext.parse(
+                'This makes me :,(.',
+                function (err, tree) {
+                    assert(tree.head.head.toCST() === JSON.stringify({
+                        'type': 'SentenceNode',
+                        'children': [
+                            {
+                                'type': 'WordNode',
+                                'children': [
+                                    {
+                                        'type': 'TextNode',
+                                        'value': 'This'
+                                    }
+                                ]
+                            },
+                            {
+                                'type': 'WhiteSpaceNode',
+                                'value': ' '
+                            },
+                            {
+                                'type': 'WordNode',
+                                'children': [
+                                    {
+                                        'type': 'TextNode',
+                                        'value': 'makes'
+                                    }
+                                ]
+                            },
+                            {
+                                'type': 'WhiteSpaceNode',
+                                'value': ' '
+                            },
+                            {
+                                'type': 'WordNode',
+                                'children': [
+                                    {
+                                        'type': 'TextNode',
+                                        'value': 'me'
+                                    }
+                                ]
+                            },
+                            {
+                                'type': 'WhiteSpaceNode',
+                                'value': ' '
+                            },
+                            {
+                                'type': 'EmoticonNode',
+                                'value': ':,(',
+                                'data': {
+                                    'names': [
+                                        'cry'
+                                    ],
+                                    'description': 'crying face',
+                                    'tags': [
+                                        'sad',
+                                        'tear'
+                                    ]
+                                }
+                            },
+                            {
+                                'type': 'PunctuationNode',
+                                'value': '.'
+                            }
+                        ]
+                    }));
+
+                    done(err);
+                }
+            );
+        }
+    );
+
+    it('should NOT convert emoticons (such as `:,(`) to their unicode ' +
+        'equivalent, after the initial parse, when `convert` is not given',
+        function (done) {
+            retext.parse(
+                'This makes me ',
+                function (err, tree) {
+                    tree.head.head.appendContent(' :,(.');
+
+                    assert(tree.head.head.toCST() === JSON.stringify({
+                        'type': 'SentenceNode',
+                        'children': [
+                            {
+                                'type': 'WordNode',
+                                'children': [
+                                    {
+                                        'type': 'TextNode',
+                                        'value': 'This'
+                                    }
+                                ]
+                            },
+                            {
+                                'type': 'WhiteSpaceNode',
+                                'value': ' '
+                            },
+                            {
+                                'type': 'WordNode',
+                                'children': [
+                                    {
+                                        'type': 'TextNode',
+                                        'value': 'makes'
+                                    }
+                                ]
+                            },
+                            {
+                                'type': 'WhiteSpaceNode',
+                                'value': ' '
+                            },
+                            {
+                                'type': 'WordNode',
+                                'children': [
+                                    {
+                                        'type': 'TextNode',
+                                        'value': 'me'
+                                    }
+                                ]
+                            },
+                            {
+                                'type': 'WhiteSpaceNode',
+                                'value': ' '
+                            },
+                            {
+                                'type': 'EmoticonNode',
+                                'value': ':,(',
+                                'data': {
+                                    'names': [
+                                        'cry'
+                                    ],
+                                    'description': 'crying face',
+                                    'tags': [
+                                        'sad',
+                                        'tear'
+                                    ]
+                                }
+                            },
+                            {
+                                'type': 'PunctuationNode',
+                                'value': '.'
+                            }
+                        ]
+                    }));
+
+                    done(err);
+                }
+            );
+        }
+    );
+
     it('should NOT convert gemoji (such as `:sob:`) to their unicode ' +
         'equivalent, when `convert` is not given',
         function (done) {
@@ -902,7 +1246,191 @@ describe('use(emoji)', function () {
     );
 });
 
+/**
+ * Tests for automatic encoding to unicode.
+ */
+
 describe('use(emoji, {convert: "encode"})', function () {
+    it('should convert emoticons (such as `:\',(`) to their unicode ' +
+        'equivalent, when `convert` is `encode`',
+        function (done) {
+            encode.parse(
+                'This makes me feel :\',(.',
+                function (err, tree) {
+                    assert(tree.head.head.toCST() === JSON.stringify({
+                        'type': 'SentenceNode',
+                        'children': [
+                            {
+                                'type': 'WordNode',
+                                'children': [
+                                    {
+                                        'type': 'TextNode',
+                                        'value': 'This'
+                                    }
+                                ]
+                            },
+                            {
+                                'type': 'WhiteSpaceNode',
+                                'value': ' '
+                            },
+                            {
+                                'type': 'WordNode',
+                                'children': [
+                                    {
+                                        'type': 'TextNode',
+                                        'value': 'makes'
+                                    }
+                                ]
+                            },
+                            {
+                                'type': 'WhiteSpaceNode',
+                                'value': ' '
+                            },
+                            {
+                                'type': 'WordNode',
+                                'children': [
+                                    {
+                                        'type': 'TextNode',
+                                        'value': 'me'
+                                    }
+                                ]
+                            },
+                            {
+                                'type': 'WhiteSpaceNode',
+                                'value': ' '
+                            },
+                            {
+                                'type': 'WordNode',
+                                'children': [
+                                    {
+                                        'type': 'TextNode',
+                                        'value': 'feel'
+                                    }
+                                ]
+                            },
+                            {
+                                'type': 'WhiteSpaceNode',
+                                'value': ' '
+                            },
+                            {
+                                'type': 'EmoticonNode',
+                                'value': '\uD83D\uDE2D',
+                                'data': {
+                                    'names': [
+                                        'sob'
+                                    ],
+                                    'description': 'loudly crying face',
+                                    'tags': [
+                                        'sad',
+                                        'cry',
+                                        'bawling'
+                                    ]
+                                }
+                            },
+                            {
+                                'type': 'PunctuationNode',
+                                'value': '.'
+                            }
+                        ]
+                    }));
+
+                    done(err);
+                }
+            );
+        }
+    );
+
+    it('should convert emoticons (such as `:\',(`) to their unicode ' +
+        'equivalent, after the initial parse, when `convert` is `encode`',
+        function (done) {
+            encode.parse(
+                'This makes me feel',
+                function (err, tree) {
+                    tree.head.head.appendContent(' :\',(.');
+
+                    assert(tree.head.head.toCST() === JSON.stringify({
+                        'type': 'SentenceNode',
+                        'children': [
+                            {
+                                'type': 'WordNode',
+                                'children': [
+                                    {
+                                        'type': 'TextNode',
+                                        'value': 'This'
+                                    }
+                                ]
+                            },
+                            {
+                                'type': 'WhiteSpaceNode',
+                                'value': ' '
+                            },
+                            {
+                                'type': 'WordNode',
+                                'children': [
+                                    {
+                                        'type': 'TextNode',
+                                        'value': 'makes'
+                                    }
+                                ]
+                            },
+                            {
+                                'type': 'WhiteSpaceNode',
+                                'value': ' '
+                            },
+                            {
+                                'type': 'WordNode',
+                                'children': [
+                                    {
+                                        'type': 'TextNode',
+                                        'value': 'me'
+                                    }
+                                ]
+                            },
+                            {
+                                'type': 'WhiteSpaceNode',
+                                'value': ' '
+                            },
+                            {
+                                'type': 'WordNode',
+                                'children': [
+                                    {
+                                        'type': 'TextNode',
+                                        'value': 'feel'
+                                    }
+                                ]
+                            },
+                            {
+                                'type': 'WhiteSpaceNode',
+                                'value': ' '
+                            },
+                            {
+                                'type': 'EmoticonNode',
+                                'value': '\uD83D\uDE2D',
+                                'data': {
+                                    'names': [
+                                        'sob'
+                                    ],
+                                    'description': 'loudly crying face',
+                                    'tags': [
+                                        'sad',
+                                        'cry',
+                                        'bawling'
+                                    ]
+                                }
+                            },
+                            {
+                                'type': 'PunctuationNode',
+                                'value': '.'
+                            }
+                        ]
+                    }));
+
+                    done(err);
+                }
+            );
+        }
+    );
+
     it('should convert gemoji (such as `:sob:`) to their unicode ' +
         'equivalent, when `convert` is `encode`',
         function (done) {
@@ -1084,7 +1612,191 @@ describe('use(emoji, {convert: "encode"})', function () {
     );
 });
 
+/**
+ * Tests for automatic decoding to gemoji.
+ */
+
 describe('use(emoji, {convert: "decode"})', function () {
+    it('should convert emoticons (such as `:,\'(`) to their named ' +
+        'equivalent, when `convert` is `decode`',
+        function (done) {
+            decode.parse(
+                'This makes me feel :,\'(.',
+                function (err, tree) {
+                    assert(tree.head.head.toCST() === JSON.stringify({
+                        'type': 'SentenceNode',
+                        'children': [
+                            {
+                                'type': 'WordNode',
+                                'children': [
+                                    {
+                                        'type': 'TextNode',
+                                        'value': 'This'
+                                    }
+                                ]
+                            },
+                            {
+                                'type': 'WhiteSpaceNode',
+                                'value': ' '
+                            },
+                            {
+                                'type': 'WordNode',
+                                'children': [
+                                    {
+                                        'type': 'TextNode',
+                                        'value': 'makes'
+                                    }
+                                ]
+                            },
+                            {
+                                'type': 'WhiteSpaceNode',
+                                'value': ' '
+                            },
+                            {
+                                'type': 'WordNode',
+                                'children': [
+                                    {
+                                        'type': 'TextNode',
+                                        'value': 'me'
+                                    }
+                                ]
+                            },
+                            {
+                                'type': 'WhiteSpaceNode',
+                                'value': ' '
+                            },
+                            {
+                                'type': 'WordNode',
+                                'children': [
+                                    {
+                                        'type': 'TextNode',
+                                        'value': 'feel'
+                                    }
+                                ]
+                            },
+                            {
+                                'type': 'WhiteSpaceNode',
+                                'value': ' '
+                            },
+                            {
+                                'type': 'EmoticonNode',
+                                'value': ':sob:',
+                                'data': {
+                                    'names': [
+                                        'sob'
+                                    ],
+                                    'description': 'loudly crying face',
+                                    'tags': [
+                                        'sad',
+                                        'cry',
+                                        'bawling'
+                                    ]
+                                }
+                            },
+                            {
+                                'type': 'PunctuationNode',
+                                'value': '.'
+                            }
+                        ]
+                    }));
+
+                    done(err);
+                }
+            );
+        }
+    );
+
+    it('should convert emoticons (such as `:,\'(`) to their named ' +
+        'equivalent, after the initial parse, when `convert` is `decode`',
+        function (done) {
+            decode.parse(
+                'This makes me feel',
+                function (err, tree) {
+                    tree.head.head.appendContent(' :,\'(.');
+
+                    assert(tree.head.head.toCST() === JSON.stringify({
+                        'type': 'SentenceNode',
+                        'children': [
+                            {
+                                'type': 'WordNode',
+                                'children': [
+                                    {
+                                        'type': 'TextNode',
+                                        'value': 'This'
+                                    }
+                                ]
+                            },
+                            {
+                                'type': 'WhiteSpaceNode',
+                                'value': ' '
+                            },
+                            {
+                                'type': 'WordNode',
+                                'children': [
+                                    {
+                                        'type': 'TextNode',
+                                        'value': 'makes'
+                                    }
+                                ]
+                            },
+                            {
+                                'type': 'WhiteSpaceNode',
+                                'value': ' '
+                            },
+                            {
+                                'type': 'WordNode',
+                                'children': [
+                                    {
+                                        'type': 'TextNode',
+                                        'value': 'me'
+                                    }
+                                ]
+                            },
+                            {
+                                'type': 'WhiteSpaceNode',
+                                'value': ' '
+                            },
+                            {
+                                'type': 'WordNode',
+                                'children': [
+                                    {
+                                        'type': 'TextNode',
+                                        'value': 'feel'
+                                    }
+                                ]
+                            },
+                            {
+                                'type': 'WhiteSpaceNode',
+                                'value': ' '
+                            },
+                            {
+                                'type': 'EmoticonNode',
+                                'value': ':sob:',
+                                'data': {
+                                    'names': [
+                                        'sob'
+                                    ],
+                                    'description': 'loudly crying face',
+                                    'tags': [
+                                        'sad',
+                                        'cry',
+                                        'bawling'
+                                    ]
+                                }
+                            },
+                            {
+                                'type': 'PunctuationNode',
+                                'value': '.'
+                            }
+                        ]
+                    }));
+
+                    done(err);
+                }
+            );
+        }
+    );
+
     it('should convert gemoji (such as `\uD83D\uDE2D`) to their named ' +
         'equivalent, when `convert` is `decode`',
         function (done) {
@@ -1266,6 +1978,10 @@ describe('use(emoji, {convert: "decode"})', function () {
     );
 });
 
+/**
+ * Tests for all emoji supported by GitHub.
+ */
+
 function describeEmoji(key, information) {
     var shortcode,
         unicode;
@@ -1328,3 +2044,91 @@ function describeEmoji(key, information) {
 Object.keys(gemoji.name).forEach(function (name) {
     describeEmoji(name, gemoji.name[name]);
 });
+
+/**
+ * Tests for plain-text emoticons.
+ */
+
+function describeEmoticon(emoticon) {
+    describe(emoticon, function () {
+        var information,
+            shortcode,
+            unicode;
+
+        information = emoticons.emoticon[emoticon];
+        shortcode = information.shortcode;
+        unicode = information.emoji;
+
+        it('should parse `' + emoticon + '`', function (done) {
+            var source;
+
+            source = baseSentence + emoticon + fullStop;
+
+            retext.parse(source, function (err, tree) {
+                var node;
+
+                node = tree.head.head.tail.prev;
+
+                assert(
+                    tree.toString() ===
+                    baseSentence + emoticon + fullStop
+                );
+
+                assert(node.toString() === emoticon);
+                assert(node.type === node.EMOTICON_NODE);
+
+                done(err);
+            });
+        });
+
+        it('should decode, from `' + emoticon + '` to `' + shortcode + '`',
+            function (done) {
+                var source;
+
+                source = baseSentence + emoticon + fullStop;
+
+                decode.parse(source, function (err, tree) {
+                    var node;
+
+                    node = tree.head.head.tail.prev;
+
+                    assert(
+                        tree.toString() ===
+                        baseSentence + shortcode + fullStop
+                    );
+
+                    assert(node.toString() === shortcode);
+                    assert(node.type === node.EMOTICON_NODE);
+
+                    done(err);
+                });
+            }
+        );
+
+        it('should encode, from `' + emoticon + '` to `' + unicode + '`',
+            function (done) {
+                var source;
+
+                source = baseSentence + emoticon + fullStop;
+
+                encode.parse(source, function (err, tree) {
+                    var node;
+
+                    node = tree.head.head.tail.prev;
+
+                    assert(
+                        tree.toString() ===
+                        baseSentence + unicode + fullStop
+                    );
+
+                    assert(node.toString() === unicode);
+                    assert(node.type === node.EMOTICON_NODE);
+
+                    done(err);
+                });
+            }
+        );
+    });
+}
+
+Object.keys(emoticons.emoticon).forEach(describeEmoticon);
