@@ -26,7 +26,7 @@ $ bower install retext-emoji
 ```js
 var Retext = require('retext');
 var inspect = require('retext-inspect');
-var emoji = require('retext-emoji'),
+var emoji = require('retext-emoji');
 
 var retext = new Retext().use(inspect).use(emoji, {
     'convert': 'encode'
@@ -62,45 +62,50 @@ Parameters:
 
 - `options` (`Object`)
 - `options.convert` (`"encode"` or `"decode"`, or `null`):
-  - When `encode`, converts short-codes into their unicode equivalent (e.g., `:pig:` to `🐷`);
-  - When `decode`, converts unicode emoji into their short-code equivalent (e.g., `🐷` to `:pig:`);
+  - When `encode`, converts short-codes into their unicode equivalent (e.g., `:heart:` and `<3` to `❤️`);
+  - When `decode`, converts unicode emoji into their short-code equivalent (e.g., `❤️` and `<3` to `:heart:`);
   - When `null`, applies no conversion.
 
 ### EmoticonNode
 
-All emoticons, whether emoji (`🐷`) or gemoji (`:pig:`), are classified as `EmoticonNode`s. `EmoticonNode` subclasses `SymbolNode`.
+All emoticons, whether emoji (`❤️`), emoticons (`<3`), or gemoji (`:heart:`), are classified as `EmoticonNode`s. `EmoticonNode` subclasses `SymbolNode`.
 
 #### EmoticonNode#toEmoji()
 
 > **Note that this method has no effect if you’ve specified a `convert` option.**
 
 ```js
-var node = new TextOM.EmoticonNode(':pig:');
-console.log(node); // EmoticonNode: ':pig:'
+var node = new TextOM.EmoticonNode(':heart:');
+console.log(node); // EmoticonNode: ':heart:'
 
 node.toEmoji();
-console.log(node); // EmoticonNode: '🐷'
+console.log(node); // EmoticonNode: '❤️'
+
+node.fromString('<3).toEmoji(); // EmoticonNode: '❤️'
 ```
 
-Transforms an emoticon into an emoji.
+Transforms a gemoji/emoticon into an emoji.
 
 #### EmoticonNode#toGemoji()
 
 > **Note that this method has no effect if you’ve specified a `convert` option.**
 
 ```js
-var node = new TextOM.EmoticonNode('🐷');
-console.log(node); // EmoticonNode: '🐷'
+var node = new TextOM.EmoticonNode('❤️');
+console.log(node); // EmoticonNode: '❤️'
 
 node.toGemoji();
-console.log(node); // EmoticonNode: ':pig:'
+console.log(node); // EmoticonNode: ':heart:'
+
+node.fromString('<3).toGemoji();
+console.log(node); // EmoticonNode: ':heart:'
 ```
 
-Transforms an emoticon into a gemoji.
+Transforms an emoji/emoticon into a gemoji.
 
 ## Supported Gemoji
 
-**retext-emoji** supports every  [wooorm/gemoji](https://github.com/wooorm/gemoji). There’s a whole list of supported gemoji at [gemoji’s repo](https://github.com/wooorm/gemoji/#supported-gemoji).
+**retext-emoji** supports every  [wooorm/gemoji](https://github.com/wooorm/gemoji/#supported-gemoji) and every  [wooorm/emoticon](https://github.com/wooorm/emoticon/#supported-emoticons). 
 
 ## License
 
