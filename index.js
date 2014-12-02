@@ -10,13 +10,16 @@ var unicodes,
     shortcodes,
     shortcode,
     gemoji,
+    emoticons,
     emojiModifier,
     emoticonModifier;
 
+emoticons = require('emoticon');
 gemoji = require('gemoji');
 emojiModifier = require('nlcst-emoji-modifier');
 emoticonModifier = require('nlcst-emoticon-modifier');
 
+emoticons = emoticons.emoticon;
 unicodes = gemoji.unicode;
 names = gemoji.name;
 
@@ -26,6 +29,11 @@ for (key in names) {
     shortcode = ':' + key + ':';
     shortcodes[shortcode] = names[key];
     shortcodes[shortcode].shortcode = shortcode;
+}
+
+for (key in emoticons) {
+    emoticons[key].names = names[emoticons[key].name].names;
+    emoticons[key].shortcode = names[emoticons[key].name].shortcode;
 }
 
 /**
@@ -39,7 +47,8 @@ function toEmoji() {
         value;
 
     self = this;
-    value = shortcodes[self.toString()];
+    value = self.toString();
+    value = shortcodes[value] || emoticons[value];
 
     if (value) {
         self.fromString(value.emoji);
@@ -57,7 +66,8 @@ function toGemoji() {
         value;
 
     self = this;
-    value = unicodes[self.toString()];
+    value = self.toString();
+    value = unicodes[value] || emoticons[value];
 
     if (value) {
         self.fromString(value.shortcode);
@@ -89,7 +99,8 @@ function changeFactory(onchange) {
         self = this;
         value = self.toString();
 
-        information = unicodes[value] || shortcodes[value];
+        information = unicodes[value] || shortcodes[value] ||
+            emoticons[value];
 
         data = self.data;
 
