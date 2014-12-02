@@ -1,4 +1,13 @@
 
+n.n.n / 2014-12-02
+==================
+
+ * Update `Readme.md` with new emoticon support
+ * Add tests for emoticons
+ * Add support for encoding and decoding emoticons
+ * Add emoticon as a dependency
+ * Add nlcst-emoticon-modifier as a dependency
+
 0.4.1 / 2014-11-22
 ==================
 
