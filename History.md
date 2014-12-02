@@ -1,4 +1,10 @@
 
+n.n.n / 2014-12-02
+==================
+
+ * Remove duplicate emoticon dependency from dev-dependencies
+ * Fix missing comma in `component.json`
+
 0.5.0 / 2014-12-02
 ==================
 
