@@ -1,5 +1,5 @@
 
-n.n.n / 2014-12-02
+0.5.0 / 2014-12-02
 ==================
 
  * Update `Readme.md` with new emoticon support
