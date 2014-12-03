@@ -88,7 +88,7 @@
  */
 
 var Retext = require('wooorm/retext@0.4.0');
-var emoji = require('wooorm/retext-emoji@0.5.1');
+var emoji = require('wooorm/retext-emoji@0.5.2');
 
 /**
  * Retext.
@@ -150,7 +150,7 @@ $input.addEventListener('input', emojify);
 
 onconvertchange();
 
-}, {"wooorm/retext@0.4.0":2,"wooorm/retext-emoji@0.5.1":3}],
+}, {"wooorm/retext@0.4.0":2,"wooorm/retext-emoji@0.5.2":3}],
 2: [function(require, module, exports) {
 'use strict';
 
@@ -4193,11 +4193,11 @@ module.exports = modifier(makeFinalWhiteSpaceSiblings);
  */
 
 var nlcstToString,
-    plugin,
+    modifier,
     expressions;
 
 nlcstToString = require('nlcst-to-string');
-plugin = require('../plugin');
+modifier = require('../modifier');
 expressions = require('../expressions');
 
 /**
@@ -4252,6 +4252,8 @@ function breakImplicitSentences(child, index, parent) {
             'type': 'SentenceNode',
             'children': children.slice(position + 1)
         });
+
+        return index + 1;
     }
 }
 
@@ -4259,9 +4261,9 @@ function breakImplicitSentences(child, index, parent) {
  * Expose `breakImplicitSentences` as a plugin.
  */
 
-module.exports = plugin(breakImplicitSentences);
+module.exports = modifier(breakImplicitSentences);
 
-}, {"nlcst-to-string":28,"../plugin":11,"../expressions":10}],
+}, {"nlcst-to-string":28,"../modifier":12,"../expressions":10}],
 26: [function(require, module, exports) {
 'use strict';
 
@@ -4806,12 +4808,14 @@ var unicodes,
     gemoji,
     emoticons,
     emojiModifier,
-    emoticonModifier;
+    emoticonModifier,
+    affixEmoticonModifier;
 
 emoticons = require('emoticon');
 gemoji = require('gemoji');
 emojiModifier = require('nlcst-emoji-modifier');
 emoticonModifier = require('nlcst-emoticon-modifier');
+affixEmoticonModifier = require('nlcst-affix-emoticon-modifier');
 
 emoticons = emoticons.emoticon;
 unicodes = gemoji.unicode;
@@ -5044,6 +5048,7 @@ function emoji(retext, options) {
 
     emoticonModifier(retext.parser);
     emojiModifier(retext.parser);
+    affixEmoticonModifier(retext.parser);
 }
 
 /**
@@ -5052,7 +5057,7 @@ function emoji(retext, options) {
 
 module.exports = emoji;
 
-}, {"emoticon":32,"gemoji":33,"nlcst-emoji-modifier":34,"nlcst-emoticon-modifier":35}],
+}, {"emoticon":32,"gemoji":33,"nlcst-emoji-modifier":34,"nlcst-emoticon-modifier":35,"nlcst-affix-emoticon-modifier":36}],
 32: [function(require, module, exports) {
 'use strict';
 
@@ -5132,8 +5137,8 @@ exports.emoticon = text;
 
 exports.unicode = emoji;
 
-}, {"./data/emoticons.json":36}],
-36: [function(require, module, exports) {
+}, {"./data/emoticons.json":37}],
+37: [function(require, module, exports) {
 module.exports = {
   "angry": {
     "name": "angry",
@@ -5854,8 +5859,8 @@ exports.unicode = gemoji;
 
 exports.name = named;
 
-}, {"./data/gemoji.json":37}],
-37: [function(require, module, exports) {
+}, {"./data/gemoji.json":38}],
+38: [function(require, module, exports) {
 module.exports = {
   "😄": {
     "description": "smiling face with open mouth and smiling eyes",
@@ -12796,57 +12801,7 @@ function mergeEmoji(child, index, parent) {
     }
 }
 
-/**
- * Move emoticons following a terminal marker (thus in
- * the next sentence) to the previous sentence.
- *
- * @param {NLCSTNode} child
- * @param {number} index
- * @param {NLCSTParagraphNode} parent
- * @return {undefined|number}
- */
-
-function mergeAffixEmoji(child, index, parent) {
-    var children,
-        prev,
-        position,
-        node;
-
-    children = child.children;
-
-    if (
-        children &&
-        children.length &&
-        index !== 0
-    ) {
-        position = -1;
-
-        while (children[++position]) {
-            node = children[position];
-
-            if (node.type === EMOTICON_NODE) {
-                prev = parent.children[index - 1];
-
-                prev.children = prev.children.concat(
-                    children.slice(0, position + 1)
-                );
-
-                child.children = children.slice(position + 1);
-
-                /**
-                 * Next, iterate over the node again.
-                 */
-
-                return index;
-            } else if (node.type !== 'WhiteSpaceNode') {
-                break;
-            }
-        }
-    }
-}
-
-var emojiModifier,
-    affixEmojiModifier;
+var emojiModifier;
 
 function attach(parser) {
     if (!parser || !parser.parse) {
@@ -12858,16 +12813,14 @@ function attach(parser) {
     }
 
     /**
-     * Make sure to not re-attach the modifiers.
+     * Make sure to not re-attach the modifier.
      */
 
     if (!emojiModifier) {
         emojiModifier = parser.constructor.modifier(mergeEmoji);
-        affixEmojiModifier = parser.constructor.modifier(mergeAffixEmoji);
     }
 
     parser.useFirst('tokenizeSentence', emojiModifier);
-    parser.useFirst('tokenizeParagraph', affixEmojiModifier);
 }
 
 /**
@@ -12876,8 +12829,8 @@ function attach(parser) {
 
 module.exports = attach;
 
-}, {"./data/emoji.json":38,"nlcst-to-string":28}],
-38: [function(require, module, exports) {
+}, {"./data/emoji.json":39,"nlcst-to-string":28}],
+39: [function(require, module, exports) {
 module.exports = {
   "unicode": [
     "😄",
@@ -14749,8 +14702,8 @@ function attach(parser) {
 
 module.exports = attach;
 
-}, {"./data/emoticon.json":39,"nlcst-to-string":28}],
-39: [function(require, module, exports) {
+}, {"./data/emoticon.json":40,"nlcst-to-string":28}],
+40: [function(require, module, exports) {
 module.exports = {
   "emoticons": [
     ">=-[",
@@ -15119,4 +15072,97 @@ module.exports = {
   ]
 }
 ;
+}, {}],
+36: [function(require, module, exports) {
+'use strict';
+
+/**
+ * Constant: node types.
+ */
+
+var EMOTICON_NODE;
+
+EMOTICON_NODE = 'EmoticonNode';
+
+/**
+ * Move emoticons following a terminal marker (thus in
+ * the next sentence) to the previous sentence.
+ *
+ * @param {NLCSTNode} child
+ * @param {number} index
+ * @param {NLCSTParagraphNode} parent
+ * @return {undefined|number}
+ */
+
+function mergeAffixEmoji(child, index, parent) {
+    var children,
+        prev,
+        position,
+        node;
+
+    children = child.children;
+
+    if (
+        children &&
+        children.length &&
+        index !== 0
+    ) {
+        position = -1;
+
+        while (children[++position]) {
+            node = children[position];
+
+            if (node.type === EMOTICON_NODE) {
+                prev = parent.children[index - 1];
+
+                prev.children = prev.children.concat(
+                    children.slice(0, position + 1)
+                );
+
+                child.children = children.slice(position + 1);
+
+                /**
+                 * Next, iterate over the node again.
+                 */
+
+                return index;
+            } else if (node.type !== 'WhiteSpaceNode') {
+                break;
+            }
+        }
+    }
+}
+
+/**
+ * Attach.
+ */
+
+var affixEmojiModifier;
+
+function attach(parser) {
+    if (!parser || !parser.parse) {
+        throw new Error(
+            '`parser` is not a valid parser for ' +
+            '`attach(parser)`. Make sure something ' +
+            'like `parse-latin` is passed.'
+        );
+    }
+
+    /**
+     * Make sure to not re-attach the modifier.
+     */
+
+    if (!affixEmojiModifier) {
+        affixEmojiModifier = parser.constructor.modifier(mergeAffixEmoji);
+    }
+
+    parser.useFirst('tokenizeParagraph', affixEmojiModifier);
+}
+
+/**
+ * Expose `attach`.
+ */
+
+module.exports = attach;
+
 }, {}]}, {}, {"1":""})

@@ -3,7 +3,7 @@
  */
 
 var Retext = require('wooorm/retext@0.4.0');
-var emoji = require('wooorm/retext-emoji@0.5.1');
+var emoji = require('wooorm/retext-emoji@0.5.2');
 
 /**
  * Retext.
