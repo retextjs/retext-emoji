@@ -1,4 +1,11 @@
 
+n.n.n / 2014-12-03
+==================
+
+ * Add nlcst-affix-emoticon-modifier to dependencies
+ * Update eslint, nlcst-emoji-modifier
+ * Fix typo in `Readme.md`
+
 0.5.1 / 2014-12-02
 ==================
 
