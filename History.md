@@ -1,5 +1,5 @@
 
-n.n.n / 2014-12-03
+0.5.2 / 2014-12-03
 ==================
 
  * Add nlcst-affix-emoticon-modifier to dependencies
