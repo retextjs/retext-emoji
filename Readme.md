@@ -81,7 +81,7 @@ console.log(node); // EmoticonNode: ':heart:'
 node.toEmoji();
 console.log(node); // EmoticonNode: '❤️'
 
-node.fromString('<3).toEmoji(); // EmoticonNode: '❤️'
+node.fromString('<3').toEmoji(); // EmoticonNode: '❤️'
 ```
 
 Transforms a gemoji/emoticon into an emoji.
@@ -97,7 +97,7 @@ console.log(node); // EmoticonNode: '❤️'
 node.toGemoji();
 console.log(node); // EmoticonNode: ':heart:'
 
-node.fromString('<3).toGemoji();
+node.fromString('<3').toGemoji();
 console.log(node); // EmoticonNode: ':heart:'
 ```
 
