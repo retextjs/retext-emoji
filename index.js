@@ -12,12 +12,14 @@ var unicodes,
     gemoji,
     emoticons,
     emojiModifier,
-    emoticonModifier;
+    emoticonModifier,
+    affixEmoticonModifier;
 
 emoticons = require('emoticon');
 gemoji = require('gemoji');
 emojiModifier = require('nlcst-emoji-modifier');
 emoticonModifier = require('nlcst-emoticon-modifier');
+affixEmoticonModifier = require('nlcst-affix-emoticon-modifier');
 
 emoticons = emoticons.emoticon;
 unicodes = gemoji.unicode;
@@ -250,6 +252,7 @@ function emoji(retext, options) {
 
     emoticonModifier(retext.parser);
     emojiModifier(retext.parser);
+    affixEmoticonModifier(retext.parser);
 }
 
 /**

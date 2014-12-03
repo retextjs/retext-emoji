@@ -11,6 +11,7 @@
   "dependencies": {
     "wooorm/emoticon": "^0.0.1",
     "wooorm/gemoji": "^0.2.0",
+    "wooorm/nlcst-affix-emoticon-modifier": "^0.1.0",
     "wooorm/nlcst-emoji-modifier": "^0.2.0",
     "wooorm/nlcst-emoticon-modifier": "^0.1.1"
   },
