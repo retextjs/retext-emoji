@@ -107,6 +107,20 @@ Transforms an emoji/emoticon into a gemoji.
 
 **retext-emoji** supports every  [wooorm/gemoji](https://github.com/wooorm/gemoji/#supported-gemoji) and every  [wooorm/emoticon](https://github.com/wooorm/emoticon/#supported-emoticons). 
 
+## Performance
+
+On a MacBook Air. **retext** works just as fast on content with emoji/gemoji/emoticons, and 2% slower on content without them, when using **retext-emoji**.
+
+```
+           retext w/o retext-emoji
+  184 op/s » A paragraph (5 sentences, 100 words, 10 emojis)
+  238 op/s » A paragraph (5 sentences, 100 words, no emojis)
+
+           retext w/ retext-emoji
+  183 op/s » A paragraph (5 sentences, 100 words, 10 emojis)
+  232 op/s » A paragraph (5 sentences, 100 words, no emojis)
+```
+
 ## License
 
 MIT © [Titus Wormer](http://wooorm.com)
