@@ -2,8 +2,8 @@
  * Dependencies.
  */
 
-var Retext = require('wooorm/retext@0.4.0');
-var emoji = require('wooorm/retext-emoji@0.5.2');
+var Retext = require('wooorm/retext@0.5.0-rc.1');
+var emoji = require('wooorm/retext-emoji@0.5.3');
 
 /**
  * Retext.
