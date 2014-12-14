@@ -1,6 +1,6 @@
 # retext-emoji [![Build Status](https://img.shields.io/travis/wooorm/retext-emoji.svg?style=flat)](https://travis-ci.org/wooorm/retext-emoji) [![Coverage Status](https://img.shields.io/coveralls/wooorm/retext-emoji.svg?style=flat)](https://coveralls.io/r/wooorm/retext-emoji?branch=master)
 
-**[retext](https://github.com/wooorm/retext "Retext")** encoding of gemoji short-codes to unicode, and decoding from unicode to short-code.
+Emoji and emoticons for **[retext](https://github.com/wooorm/retext)**.
 
 ## Installation
 
@@ -60,7 +60,7 @@ retext.parse('I’m going to bed. :zzz:', function (err, tree) {
 
 Parameters:
 
-- `options` (`Object`)
+- `options` (`Object` or `null`)
 - `options.convert` (`"encode"` or `"decode"`, or `null`):
   - When `encode`, converts short-codes into their unicode equivalent (e.g., `:heart:` and `<3` to `❤️`);
   - When `decode`, converts unicode emoji into their short-code equivalent (e.g., `❤️` and `<3` to `:heart:`);
@@ -70,7 +70,7 @@ Parameters:
 
 All emoticons, whether emoji (`❤️`), emoticons (`<3`), or gemoji (`:heart:`), are classified as `EmoticonNode`s. `EmoticonNode` subclasses `SymbolNode`.
 
-#### EmoticonNode#toEmoji()
+#### [EmoticonNode](https://github.com/wooorm/retext-emoji#emoticonnode)#toEmoji()
 
 > **Note that this method has no effect if you’ve specified a `convert` option.**
 
@@ -86,7 +86,7 @@ node.fromString('<3').toEmoji(); // EmoticonNode: '❤️'
 
 Transforms a gemoji/emoticon into an emoji.
 
-#### EmoticonNode#toGemoji()
+#### [EmoticonNode](https://github.com/wooorm/retext-emoji#emoticonnode)#toGemoji()
 
 > **Note that this method has no effect if you’ve specified a `convert` option.**
 
