@@ -1,4 +1,12 @@
 
+n.n.n / 2014-12-14
+==================
+
+ * Add benchmark
+ * Fix wording in `Readme.md`
+ * Add link to personal website to copyright in `Readme.md`
+ * Update emoticon, retext
+
 0.5.2 / 2014-12-03
 ==================
 
