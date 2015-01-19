@@ -39,7 +39,7 @@ retext.parse('I’m going to bed. :zzz:', function (err, tree) {
     console.log(tree.toString()); // 'I’m going to bed. 💤'
 
     console.log(tree.head.head);
-    /**
+    /*
      * SentenceNode[10]
      *   ├─ WordNode[3]
      *   │  ├─ TextNode: 'I'
@@ -73,7 +73,7 @@ Parameters:
 
 All emoticons, whether emoji (`❤️`), emoticons (`<3`), or gemoji (`:heart:`), are classified as `EmoticonNode`s. `EmoticonNode` subclasses `SymbolNode`.
 
-#### [EmoticonNode](https://github.com/wooorm/retext-emoji#emoticonnode)#toEmoji()
+#### [EmoticonNode](#emoticonnode)#toEmoji()
 
 > **Note that this method has no effect if you’ve specified a `convert` option.**
 
@@ -89,7 +89,7 @@ node.fromString('<3').toEmoji(); // EmoticonNode: '❤️'
 
 Transforms a gemoji/emoticon into an emoji.
 
-#### [EmoticonNode](https://github.com/wooorm/retext-emoji#emoticonnode)#toGemoji()
+#### [EmoticonNode](#emoticonnode)#toGemoji()
 
 > **Note that this method has no effect if you’ve specified a `convert` option.**
 
@@ -108,7 +108,7 @@ Transforms an emoji/emoticon into a gemoji.
 
 ## Supported Gemoji
 
-**retext-emoji** supports every  [wooorm/gemoji](https://github.com/wooorm/gemoji/#supported-gemoji) and every  [wooorm/emoticon](https://github.com/wooorm/emoticon/#supported-emoticons). 
+**retext-emoji** supports every  [wooorm/gemoji](https://github.com/wooorm/gemoji/#supported-gemoji) and every [wooorm/emoticon](https://github.com/wooorm/emoticon/#supported-emoticons).
 
 ## Performance
 
