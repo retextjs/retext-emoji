@@ -4,7 +4,7 @@ var Retext,
     emoji,
     gemoji;
 
-/**
+/*
  * Dependencies.
  */
 
@@ -12,7 +12,7 @@ Retext = require('retext');
 gemoji = require('gemoji');
 emoji = require('./');
 
-/**
+/*
  * Dependencies.
  */
 
@@ -22,7 +22,7 @@ var retext,
 retext = new Retext();
 retextWithEmoji = new Retext().use(emoji);
 
-/**
+/*
  * Fixtures.
  *
  * Source:
@@ -32,7 +32,7 @@ retextWithEmoji = new Retext().use(emoji);
 var paragraph,
     emojiParagraph;
 
-/**
+/*
  * A paragraph, 5 sentences, filled with 10 emojis.
  */
 
@@ -56,7 +56,7 @@ emojiParagraph = 'Thou art a churlish knight to so ' +
     'and she was gone since ' + gemoji.name.man + ' ' +
     'does not choose to assume my quarrel.';
 
-/**
+/*
  * A paragraph, 5 sentences, without emojis.
  */
 
@@ -80,7 +80,7 @@ paragraph = 'Thou art a churlish knight to so affront ' +
     'gone since Sir Kay does not choose to assume my ' +
     'quarrel.';
 
-/**
+/*
  * Benchmark.
  */
 

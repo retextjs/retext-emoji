@@ -1,6 +1,6 @@
 'use strict';
 
-/**
+/*
  * Dependencies.
  */
 
@@ -43,7 +43,6 @@ for (key in emoticons) {
  *
  * @this {EmoticonNode}
  */
-
 function toEmoji() {
     var self,
         value;
@@ -62,7 +61,6 @@ function toEmoji() {
  *
  * @this {EmoticonNode}
  */
-
 function toGemoji() {
     var self,
         value;
@@ -83,9 +81,8 @@ function toGemoji() {
  *   when the internal value changes.
  * @return {function(this:EmoticonNode)}
  */
-
 function changeFactory(onchange) {
-   /**
+   /*
     * Invoked when the internal value changes. If the
     * emoji is still valid, updates its data.
     *
@@ -122,7 +119,7 @@ function changeFactory(onchange) {
     };
 }
 
-/**
+/*
  * Define `EMOTICON_NODE`.
  */
 
@@ -132,8 +129,10 @@ EMOTICON_NODE = 'EmoticonNode';
 
 /**
  * Define `emoji`.
+ *
+ * @param {Retext} retext
+ * @param {Object} options
  */
-
 function emoji(retext, options) {
     var TextOM,
         SymbolNode,
@@ -150,7 +149,7 @@ function emoji(retext, options) {
         );
     }
 
-    /**
+    /*
      * Construct an `EmoticonNode`.
      */
 
@@ -161,14 +160,13 @@ function emoji(retext, options) {
     /**
      * Define `PunctuationNode`.
      *
-     * @constructor
+     * @constructor {EmoticonNode}
      */
-
     function EmoticonNode() {
         SymbolNode.apply(this, arguments);
     }
 
-    /**
+    /*
      * The type of an instance of `EmoticonNode`.
      *
      * @readonly
@@ -177,7 +175,7 @@ function emoji(retext, options) {
 
     EmoticonNode.prototype.type = EMOTICON_NODE;
 
-    /**
+    /*
      * Transform a gemoji into an emoji.
      *
      * @this {EmoticonNode}
@@ -185,7 +183,7 @@ function emoji(retext, options) {
 
     EmoticonNode.prototype.toEmoji = toEmoji;
 
-   /**
+   /*
     * Transform an emoji into a gemoji.
     *
     * @this {EmoticonNode}
@@ -193,19 +191,19 @@ function emoji(retext, options) {
 
    EmoticonNode.prototype.toGemoji = toGemoji;
 
-    /**
+    /*
      * Inherit from `SymbolNode.prototype`.
      */
 
     SymbolNode.isImplementedBy(EmoticonNode);
 
-    /**
+    /*
      * Expose `EmoticonNode` on `TextOM`.
      */
 
     TextOM.EmoticonNode = EmoticonNode;
 
-    /**
+    /*
      * Expose `EmoticonNode`s type on `TextOM`
      * and `Node.prototype`.
      */
@@ -213,13 +211,13 @@ function emoji(retext, options) {
     TextOM.EMOTICON_NODE = EMOTICON_NODE;
     TextOM.Node.prototype.EMOTICON_NODE = EMOTICON_NODE;
 
-    /**
+    /*
      * Enable `SentenceNode` to accept `EmoticonNode`s.
      */
 
     TextOM.SentenceNode.prototype.allowedChildTypes.push(EMOTICON_NODE);
 
-    /**
+    /*
      * Add automatic emoji de- and encoding.
      */
 
@@ -246,7 +244,7 @@ function emoji(retext, options) {
 
     EmoticonNode.on('changetext', changeFactory(onchange));
 
-    /**
+    /*
      * Add the NLCST plugin.
      */
 
@@ -255,7 +253,7 @@ function emoji(retext, options) {
     affixEmoticonModifier(retext.parser);
 }
 
-/**
+/*
  * Expose `emoji`.
  */
 

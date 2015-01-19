@@ -1,6 +1,6 @@
 'use strict';
 
-/**
+/*
  * Dependencies.
  */
 
@@ -22,7 +22,7 @@ inspect = require('retext-inspect');
 Retext = require('retext');
 assert = require('assert');
 
-/**
+/*
  * Fixtures.
  */
 
@@ -32,7 +32,7 @@ var baseSentence,
 baseSentence = 'Lack of cross-device emoticon support makes me ';
 fullStop = '.';
 
-/**
+/*
  * Retext.
  */
 
@@ -65,7 +65,7 @@ retext = new Retext()
 
 TextOM = retext.TextOM;
 
-/**
+/*
  * Tests for parsing.
  */
 
@@ -632,7 +632,7 @@ describe('emoji()', function () {
     );
 });
 
-/**
+/*
  * Tests for `EmoticonNode`.
  */
 
@@ -728,7 +728,7 @@ describe('TextOM.EmoticonNode', function () {
     );
 });
 
-/**
+/*
  * Tests for plugin.
  */
 
@@ -1246,7 +1246,7 @@ describe('use(emoji)', function () {
     );
 });
 
-/**
+/*
  * Tests for automatic encoding to unicode.
  */
 
@@ -1612,7 +1612,7 @@ describe('use(emoji, {convert: "encode"})', function () {
     );
 });
 
-/**
+/*
  * Tests for automatic decoding to gemoji.
  */
 
@@ -1980,8 +1980,10 @@ describe('use(emoji, {convert: "decode"})', function () {
 
 /**
  * Tests for all emoji supported by GitHub.
+ *
+ * @param {string} key
+ * @param {Object} information
  */
-
 function describeEmoji(key, information) {
     var shortcode,
         unicode;
@@ -2047,8 +2049,9 @@ Object.keys(gemoji.name).forEach(function (name) {
 
 /**
  * Tests for plain-text emoticons.
+ *
+ * @param {Object} emoticon
  */
-
 function describeEmoticon(emoticon) {
     describe(emoticon, function () {
         var information,
