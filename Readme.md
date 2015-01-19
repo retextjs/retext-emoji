@@ -132,4 +132,4 @@ On a MacBook Air. **retext** works just as fast on content with emoji/gemoji/emo
 
 ## License
 
-MIT © [Titus Wormer](http://wooorm.com)
+[MIT](LICENSE) © [Titus Wormer](http://wooorm.com)
