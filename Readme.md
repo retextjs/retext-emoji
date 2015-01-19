@@ -5,17 +5,20 @@ Emoji and emoticons for **[retext](https://github.com/wooorm/retext)**.
 ## Installation
 
 npm:
-```sh
+
+```bash
 $ npm install retext-emoji
 ```
 
 Component:
-```sh
+
+```bash
 $ component install wooorm/retext-emoji
 ```
 
 Bower:
-```sh
+
+```bash
 $ bower install retext-emoji
 ```
 
@@ -23,7 +26,7 @@ $ bower install retext-emoji
 
 ### emoji
 
-```js
+```javascript
 var Retext = require('retext');
 var inspect = require('retext-inspect');
 var emoji = require('retext-emoji');
@@ -74,7 +77,7 @@ All emoticons, whether emoji (`❤️`), emoticons (`<3`), or gemoji (`:heart:`)
 
 > **Note that this method has no effect if you’ve specified a `convert` option.**
 
-```js
+```javascript
 var node = new TextOM.EmoticonNode(':heart:');
 console.log(node); // EmoticonNode: ':heart:'
 
@@ -90,7 +93,7 @@ Transforms a gemoji/emoticon into an emoji.
 
 > **Note that this method has no effect if you’ve specified a `convert` option.**
 
-```js
+```javascript
 var node = new TextOM.EmoticonNode('❤️');
 console.log(node); // EmoticonNode: '❤️'
 
@@ -111,7 +114,7 @@ Transforms an emoji/emoticon into a gemoji.
 
 On a MacBook Air. **retext** works just as fast on content with emoji/gemoji/emoticons, and 2% slower on content without them, when using **retext-emoji**.
 
-```
+```text
            retext w/o retext-emoji
   184 op/s » A paragraph (5 sentences, 100 words, 10 emojis)
   238 op/s » A paragraph (5 sentences, 100 words, no emojis)
