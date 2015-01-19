@@ -4,19 +4,19 @@ Emoji and emoticons for **[retext](https://github.com/wooorm/retext)**.
 
 ## Installation
 
-npm:
+[npm](https://docs.npmjs.com/cli/install):
 
 ```bash
 $ npm install retext-emoji
 ```
 
-Component:
+[Component.js](https://github.com/componentjs/component):
 
 ```bash
 $ component install wooorm/retext-emoji
 ```
 
-Bower:
+[Bower](http://bower.io/#install-packages):
 
 ```bash
 $ bower install retext-emoji
