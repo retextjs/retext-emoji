@@ -22,6 +22,12 @@ $ component install wooorm/retext-emoji
 $ bower install retext-emoji
 ```
 
+[Duo](http://duojs.org/#getting-started):
+
+```javascript
+var emoji = require('wooorm/retext-emoji');
+```
+
 ## Usage & API
 
 ### emoji
