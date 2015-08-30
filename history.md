@@ -4,6 +4,11 @@
 
 <!--lint disable maximum-line-length-->
 
+1.0.0 / 2015-08-30
+==================
+
+*   Update module for retext@1.0.0 ([864cfe6](https://github.com/wooorm/retext-emoji/commit/864cfe6))
+
 0.5.4 / 2015-01-19
 ==================
 
