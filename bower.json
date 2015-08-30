@@ -1,20 +1,14 @@
 {
   "name": "retext-emoji",
-  "main": "index.js",
-  "description": "Retext implementation of gemojis",
+  "main": "retext-emoji.js",
+  "description": "Retext support for emoji, gemoji, and emoticon",
   "license": "MIT",
   "keywords": [
     "retext",
     "gemoji",
+    "emoticon",
     "emoji"
   ],
-  "dependencies": {
-    "emoticon": "^0.1.0",
-    "gemoji": "^0.2.0",
-    "nlcst-affix-emoticon-modifier": "^0.1.0",
-    "nlcst-emoji-modifier": "^0.2.0",
-    "nlcst-emoticon-modifier": "^0.1.1"
-  },
   "repository": {
     "type": "git",
     "url": "https://github.com/wooorm/retext-emoji.git"
@@ -30,9 +24,9 @@
     "components/",
     "coverage/",
     "node_modules/",
+    "test/",
     "component.json",
     "package.json",
-    "benchmark.js",
-    "test.js"
+    "index.js"
   ]
 }

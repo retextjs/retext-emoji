@@ -1,0 +1,6 @@
+build/
+components/
+coverage/
+build.js
+retext-emoji.js
+retext-emoji.min.js

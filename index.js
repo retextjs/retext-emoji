@@ -1,260 +1,160 @@
+/**
+ * @author Titus Wormer
+ * @copyright 2014-2015 Titus Wormer
+ * @license MIT
+ * @module retext:emoji
+ * @fileoverview Retext support for emoji, gemoji, and emoticon.
+ */
+
 'use strict';
+
+/* eslint-env commonjs */
 
 /*
  * Dependencies.
  */
 
-var unicodes,
-    key,
-    names,
-    shortcodes,
-    shortcode,
-    gemoji,
-    emoticons,
-    emojiModifier,
-    emoticonModifier,
-    affixEmoticonModifier;
+var affixEmoticonModifier = require('nlcst-affix-emoticon-modifier');
+var emoticonModifier = require('nlcst-emoticon-modifier');
+var emojiModifier = require('nlcst-emoji-modifier');
+var emoticons = require('emoticon');
+var toString = require('nlcst-to-string');
+var gemoji = require('gemoji');
+var visit = require('unist-util-visit');
 
-emoticons = require('emoticon');
-gemoji = require('gemoji');
-emojiModifier = require('nlcst-emoji-modifier');
-emoticonModifier = require('nlcst-emoticon-modifier');
-affixEmoticonModifier = require('nlcst-affix-emoticon-modifier');
+/*
+ * Constants.
+ */
+
+var EMOTICON_NODE = 'EmoticonNode';
+
+/*
+ * Easy access.
+ */
+
+var unicodes = gemoji.unicode;
+var names = gemoji.name;
 
 emoticons = emoticons.emoticon;
-unicodes = gemoji.unicode;
-names = gemoji.name;
 
-shortcodes = {};
+var shortcodes = {};
 
-for (key in names) {
-    shortcode = ':' + key + ':';
-    shortcodes[shortcode] = names[key];
-    shortcodes[shortcode].shortcode = shortcode;
-}
+(function () {
+    var key;
+    var shortcode;
 
-for (key in emoticons) {
-    emoticons[key].names = names[emoticons[key].name].names;
-    emoticons[key].shortcode = names[emoticons[key].name].shortcode;
-}
+    for (key in names) {
+        shortcode = ':' + key + ':';
+        shortcodes[shortcode] = names[key];
+        shortcodes[shortcode].shortcode = shortcode;
+    }
+
+    for (key in emoticons) {
+        emoticons[key].names = names[emoticons[key].name].names;
+        emoticons[key].shortcode = names[emoticons[key].name].shortcode;
+    }
+})();
 
 /**
  * Replace a short-code with a unicode emoji.
  *
- * @this {EmoticonNode}
+ * @param {EmoticonNode} node - Emoticon node.
  */
-function toEmoji() {
-    var self,
-        value;
+function toEmoji(node) {
+    var value = toString(node);
+    var info = (shortcodes[value] || emoticons[value] || {}).emoji;
 
-    self = this;
-    value = self.toString();
-    value = shortcodes[value] || emoticons[value];
-
-    if (value) {
-        self.fromString(value.emoji);
+    if (info) {
+        node.value = info;
     }
 }
 
 /**
  * Replace a unicode emoji with a short-code.
  *
- * @this {EmoticonNode}
+ * @param {EmoticonNode} node - Emoticon node.
  */
-function toGemoji() {
-    var self,
-        value;
+function toGemoji(node) {
+    var value = toString(node);
+    var info = (unicodes[value] || emoticons[value] || {}).shortcode;
 
-    self = this;
-    value = self.toString();
-    value = unicodes[value] || emoticons[value];
+    if (info) {
+        node.value = info;
+    }
+}
 
-    if (value) {
-        self.fromString(value.shortcode);
+/*
+ * Map of visitors.
+ */
+
+var fns = {
+    'encode': toEmoji,
+    'decode': toGemoji
+}
+
+/**
+ * Partially applied visit factory.
+ *
+ * @param {Function?} transformer - EmoticonNode-visitor.
+ * @return {Function?}
+ */
+function visitFactory(transformer) {
+    return function (node) {
+        visit(node, EMOTICON_NODE, function (node) {
+            var data = node.data;
+            var value = toString(node);
+            var info;
+
+            if (transformer) {
+                transformer(node);
+            }
+
+            info = unicodes[value] || shortcodes[value] || emoticons[value];
+
+            if (!data) {
+                data = node.data = {};
+            }
+
+            data.names = info.names.concat();
+            data.description = info.description;
+            data.tags = info.tags.concat();
+        });
     }
 }
 
 /**
- * Change factory. Constructs a `changetext` listener.
+ * Attacher.
  *
- * @param {string} onchange - which function to invoke
- *   when the internal value changes.
- * @return {function(this:EmoticonNode)}
+ * @param {Retext} processor - Instance.
+ * @param {Object?} [options] - Configuration.
+ * @return {Function} Transformer.
  */
-function changeFactory(onchange) {
-   /*
-    * Invoked when the internal value changes. If the
-    * emoji is still valid, updates its data.
-    *
-    * @this {EmoticonNode}
-    */
+function emoji(processor, options) {
+    var proto = processor.Parser.prototype;
+    var convert = (options || {}).convert;
+    var fn;
 
-    return function () {
-        var self,
-            value,
-            data,
-            information;
+    proto.useFirst('tokenizeSentence', emoticonModifier);
+    proto.useFirst('tokenizeSentence', emojiModifier);
+    proto.useFirst('tokenizeParagraph', affixEmoticonModifier);
 
-        self = this;
-        value = self.toString();
+    if (convert !== null && convert !== undefined) {
+        fn = fns[convert];
 
-        information = unicodes[value] || shortcodes[value] ||
-            emoticons[value];
-
-        data = self.data;
-
-        if (information) {
-            data.names = information.names.concat();
-            data.description = information.description;
-            data.tags = information.tags.concat();
-        } else {
-            data.names = [];
-            data.description = null;
-            data.tags = [];
+        if (!fn) {
+            throw new TypeError(
+                'Illegal invocation: `' + convert +
+                '` is not a valid value for ' +
+                '`options.convert` in `retext#use(emoji, options)`'
+            );
         }
+    }
 
-        if (onchange) {
-            self[onchange]();
-        }
-    };
+    return visitFactory(fn);
 }
 
 /*
- * Define `EMOTICON_NODE`.
- */
-
-var EMOTICON_NODE;
-
-EMOTICON_NODE = 'EmoticonNode';
-
-/**
- * Define `emoji`.
- *
- * @param {Retext} retext
- * @param {Object} options
- */
-function emoji(retext, options) {
-    var TextOM,
-        SymbolNode,
-        convert,
-        onchange;
-
-    if (arguments.length < 2) {
-        throw new TypeError(
-            'Illegal invocation: `emoji` was ' +
-            'invoked by the user. This is no longer valid. ' +
-            'This breaking change occurred in ' +
-            'retext-emoji@0.3.0. See GitHub for more ' +
-            'information'
-        );
-    }
-
-    /*
-     * Construct an `EmoticonNode`.
-     */
-
-    TextOM = retext.TextOM;
-
-    SymbolNode = TextOM.SymbolNode;
-
-    /**
-     * Define `PunctuationNode`.
-     *
-     * @constructor {EmoticonNode}
-     */
-    function EmoticonNode() {
-        SymbolNode.apply(this, arguments);
-    }
-
-    /*
-     * The type of an instance of `EmoticonNode`.
-     *
-     * @readonly
-     * @static
-     */
-
-    EmoticonNode.prototype.type = EMOTICON_NODE;
-
-    /*
-     * Transform a gemoji into an emoji.
-     *
-     * @this {EmoticonNode}
-     */
-
-    EmoticonNode.prototype.toEmoji = toEmoji;
-
-   /*
-    * Transform an emoji into a gemoji.
-    *
-    * @this {EmoticonNode}
-    */
-
-   EmoticonNode.prototype.toGemoji = toGemoji;
-
-    /*
-     * Inherit from `SymbolNode.prototype`.
-     */
-
-    SymbolNode.isImplementedBy(EmoticonNode);
-
-    /*
-     * Expose `EmoticonNode` on `TextOM`.
-     */
-
-    TextOM.EmoticonNode = EmoticonNode;
-
-    /*
-     * Expose `EmoticonNode`s type on `TextOM`
-     * and `Node.prototype`.
-     */
-
-    TextOM.EMOTICON_NODE = EMOTICON_NODE;
-    TextOM.Node.prototype.EMOTICON_NODE = EMOTICON_NODE;
-
-    /*
-     * Enable `SentenceNode` to accept `EmoticonNode`s.
-     */
-
-    TextOM.SentenceNode.prototype.allowedChildTypes.push(EMOTICON_NODE);
-
-    /*
-     * Add automatic emoji de- and encoding.
-     */
-
-    convert = options.convert;
-
-    if (
-        convert !== 'decode' &&
-        convert !== 'encode' &&
-        convert !== null &&
-        convert !== undefined
-    ) {
-        throw new TypeError(
-            'Illegal invocation: `' + convert +
-            '` is not a valid value for ' +
-            '`options.convert` in `retext#use(emoji, options)`'
-        );
-    }
-
-    if (convert === 'encode') {
-        onchange = 'toEmoji';
-    } else if (convert === 'decode') {
-        onchange = 'toGemoji';
-    }
-
-    EmoticonNode.on('changetext', changeFactory(onchange));
-
-    /*
-     * Add the NLCST plugin.
-     */
-
-    emoticonModifier(retext.parser);
-    emojiModifier(retext.parser);
-    affixEmoticonModifier(retext.parser);
-}
-
-/*
- * Expose `emoji`.
+ * Expose.
  */
 
 module.exports = emoji;

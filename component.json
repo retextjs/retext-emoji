@@ -1,19 +1,22 @@
 {
   "name": "retext-emoji",
   "version": "0.5.4",
-  "description": "Retext implementation of gemojis",
+  "description": "Retext support for emoji, gemoji, and emoticon",
   "license": "MIT",
   "keywords": [
     "retext",
     "gemoji",
+    "emoticon",
     "emoji"
   ],
   "dependencies": {
-    "wooorm/emoticon": "^0.1.0",
-    "wooorm/gemoji": "^0.2.0",
-    "wooorm/nlcst-affix-emoticon-modifier": "^0.1.0",
-    "wooorm/nlcst-emoji-modifier": "^0.2.0",
-    "wooorm/nlcst-emoticon-modifier": "^0.1.1"
+    "wooorm/emoticon": "^1.0.0",
+    "wooorm/gemoji": "^1.0.0",
+    "wooorm/nlcst-affix-emoticon-modifier": "^1.0.0",
+    "wooorm/nlcst-emoji-modifier": "^1.0.0",
+    "wooorm/nlcst-emoticon-modifier": "^1.0.0",
+    "wooorm/nlcst-to-string": "~0.1.5",
+    "wooorm/unist-util-visit": "^1.0.0"
   },
   "repository": "wooorm/retext-emoji",
   "scripts": [
