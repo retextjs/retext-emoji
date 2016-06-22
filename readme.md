@@ -52,10 +52,6 @@ Emoji, gemoji, and emoticons in [**retext**][retext].
     converts unicode emoji and emoticons to their short-code equivalent
     (`❤️` and `<3` to `:heart:`).
 
-###### Returns
-
-`string`.
-
 ### `EmoticonNode`
 
 **retext-emoji** adds a new node to [NLCST][]: `Emoticon` ([Symbol][]).
