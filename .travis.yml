@@ -1,9 +1,27 @@
 language: node_js
-script: npm run-script test-travis
 node_js:
-- '0.10'
 - '0.11'
 - '0.12'
-- iojs
+- '4.0'
+- '5.0'
+- '6.0'
 sudo: false
-after_script: npm install codecov.io && cat ./coverage/lcov.info | codecov
+after_success:
+- bash <(curl -s https://codecov.io/bash)
+deploy:
+  - provider: npm
+    email: tituswormer@gmail.com
+    api_key:
+      secure: V53jr9VQv2689wNscG7rb2Hk+I5dKTDBlxUvdyRel0aEOeJXcgjfkqLeZMQcQs4/WF8yJa3ZWnTeBy7JHbsZxPH9cRFq1mkqVzqVwYDMFMJd5IKO3nCJ7C6LT+IAMRVvpytQ/a6aujr5owwLIU3s+DxSIj7TbgD5rnLv4yAf6Og=
+    on:
+      tags: true
+      node: '5.0'
+  - provider: releases
+    api_key:
+      secure: Bp50SC4K6ea+ID5uyqKTkP2yHW+KI0B0+H5ZSl26ZTtZrTZfP6jktP8VB5iPlGqu/6Sp49vxtHUL2UteiuIQdwirIzuzDH3FM0z/+mhstAopNUkrVLDw717Xu/QzQyDUCOQ+Mpw2heZCyQrRvwwMEnr/qvN8IxJprmkeG91u6eI=
+    file:
+      - "retext-emoji.js"
+      - "retext-emoji.min.js"
+    on:
+      tags: true
+      node: '6.0'

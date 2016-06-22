@@ -1,19 +1,16 @@
 /**
  * @author Titus Wormer
- * @copyright 2014-2015 Titus Wormer
+ * @copyright 2014 Titus Wormer
  * @license MIT
- * @module retext:emoji
- * @fileoverview Retext support for emoji, gemoji, and emoticon.
+ * @module retext-emoji
+ * @fileoverview Emoji, gemoji, and emoticons with retext.
  */
 
 'use strict';
 
 /* eslint-env commonjs */
 
-/*
- * Dependencies.
- */
-
+/* Dependencies. */
 var affixEmoticonModifier = require('nlcst-affix-emoticon-modifier');
 var emoticonModifier = require('nlcst-emoticon-modifier');
 var emojiModifier = require('nlcst-emoji-modifier');
@@ -22,22 +19,22 @@ var toString = require('nlcst-to-string');
 var gemoji = require('gemoji');
 var visit = require('unist-util-visit');
 
-/*
- * Constants.
- */
-
+/* Constants. */
 var EMOTICON_NODE = 'EmoticonNode';
 
-/*
- * Easy access.
- */
+/* Map of visitors. */
+var fns = {
+    encode: toEmoji,
+    decode: toGemoji
+}
 
+/* Easy access. */
 var unicodes = gemoji.unicode;
 var names = gemoji.name;
 
-emoticons = emoticons.emoticon;
-
 var shortcodes = {};
+
+emoticons = emoticons.emoticon;
 
 (function () {
     var key;
@@ -83,20 +80,11 @@ function toGemoji(node) {
     }
 }
 
-/*
- * Map of visitors.
- */
-
-var fns = {
-    'encode': toEmoji,
-    'decode': toGemoji
-}
-
 /**
  * Partially applied visit factory.
  *
  * @param {Function?} transformer - EmoticonNode-visitor.
- * @return {Function?}
+ * @return {Function?} - Vititor.
  */
 function visitFactory(transformer) {
     return function (node) {
@@ -153,8 +141,5 @@ function emoji(processor, options) {
     return visitFactory(fn);
 }
 
-/*
- * Expose.
- */
-
+/* Expose. */
 module.exports = emoji;

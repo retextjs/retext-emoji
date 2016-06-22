@@ -1,144 +1,129 @@
 /**
  * @author Titus Wormer
- * @copyright 2014-2015 Titus Wormer
+ * @copyright 2014 Titus Wormer
  * @license MIT
- * @module retext:emoji
- * @fileoverview Test suite for retext-emoji.
+ * @module nlcst:to-string
+ * @fileoverview Test suite for `retext-emoji`.
  */
 
 'use strict';
 
-/* eslint-env node, mocha */
+/* eslint-env node */
+/* jscs:disable jsDoc */
+/* jscs:disable maximumLineLength */
 
-/*
- * Dependencies.
- */
-
-var assert = require('assert');
-var visit = require('unist-util-visit');
+/* Dependencies. */
+var test = require('tape');
 var retext = require('retext');
+var visit = require('unist-util-visit');
 var emoji = require('..');
 
-/*
- * Methods.
- */
+/* Fixtures. */
+var emoticon = require('./fixture/emoticon');
+var emojis = require('./fixture/emoji');
+var gemoji = require('./fixture/gemoji');
 
-var dequal = assert.deepEqual;
-var equal = assert.strictEqual;
-var throws = assert.throws;
-
-/*
- * Retext.
- */
-
-var encode = retext().use(emoji, {
-    'convert': 'encode'
-});
-
-var decode = retext().use(emoji, {
-    'convert': 'decode'
-});
-
-var neutral = retext().use(emoji);
-
-/*
- * Helpers.
- */
-
-/**
- * Helper to access CST after processing.
- */
-function process(doc, processor) {
-    var cst;
-
-    processor.process(doc, function (err, file) {
-        assert.ifError(err);
-
-        cst = file.namespace('retext').cst;
-    });
-
-    visit(cst, 'EmoticonNode', function (node) {
-        assert('data' in node);
-        equal(typeof node.data.description, 'string');
-
-        ['names', 'tags'].forEach(function (type) {
-            var value = node.data[type];
-            assert(Array.isArray(value));
-
-            value.forEach(function (subvalue) {
-                equal(typeof subvalue, 'string');
-            })
-        });
-    });
-
-    return cst;
-}
-
-/*
- * Tests.
- */
-
-describe('retext-emoji', function () {
-    it('should throw when given invalid `convert`', function () {
-        throws(function () {
-            retext.use(emoji, {
-                'convert': false
+/* Tests. */
+test('toString()', function (t) {
+    t.test('should throw when given invalid `convert`', function (st) {
+        st.throws(function () {
+            retext().use(emoji, {
+                convert: false
             });
         }, /Illegal invocation: `false` is not a valid value/);
+
+        st.end();
     });
 
-    it('should classify emoticons', function () {
-        var node = process('This makes me feel :).', neutral);
+    t.test('should classify emoticons', function (st) {
+        var processor = retext().use(emoji);
+        var tree = processor.parse('This makes me feel :).')
 
-        dequal(node, require('./fixture/emoticon'));
+        processor.run(tree);
+
+        st.deepEqual(tree, emoticon);
+
+        st.end();
     });
 
-    it('should classify gemoji', function () {
-        var node = process('This makes me feel :sob:.', neutral);
+    t.test('should classify gemoji', function (st) {
+        var processor = retext().use(emoji);
+        var tree = processor.parse('This makes me feel :sob:.')
 
-        dequal(node, require('./fixture/gemoji'));
+        processor.run(tree);
+
+        st.deepEqual(tree, gemoji);
+
+        st.end();
     });
 
-    it('should classify emoji', function () {
-        var node = process('It’s raining 🐱s and 🐶s.', neutral);
+    t.test('should classify emoji', function (st) {
+        var processor = retext().use(emoji);
+        var tree = processor.parse('It’s raining 🐱s and 🐶s.');
 
-        dequal(node, require('./fixture/emoji'));
+        processor.run(tree);
+
+        st.deepEqual(tree, emojis);
+
+        st.end();
     });
 
-    it('should not transform without `convert`', function () {
-        equal(neutral.process(
-            'It’s raining 🐱s and :dog:s. Now :3.'
-        ), 'It’s raining 🐱s and :dog:s. Now :3.');
+    t.test('should not transform without `convert`', function (st) {
+        var processor = retext().use(emoji);
+        var input = 'It’s raining 🐱s and :dog:s. Now :3.';
+        var output = processor.process(input).toString();
+
+        st.equal(output, input);
+
+        st.end();
     });
 
-    it('should encode', function () {
-        equal(encode.process(
-            'It’s raining 🐱s and :dog:s. Now :3.'
-        ), 'It’s raining 🐱s and 🐶s. Now 👨.');
+    t.test('should encode', function (st) {
+        var processor = retext().use(emoji, {convert: 'encode'});
+
+        st.equal(
+            processor.process(
+                'It’s raining 🐱s and :dog:s. Now :3.'
+            ).toString(),
+            'It’s raining 🐱s and 🐶s. Now 👨.'
+        );
+
+        st.end();
     });
 
-    it('should decode', function () {
-        equal(decode.process(
-            'It’s raining 🐱s and :dog:s. Now :3.'
-        ), 'It’s raining :cat:s and :dog:s. Now :man:.');
+    t.test('should decode', function (st) {
+        var processor = retext().use(emoji, {convert: 'decode'});
+
+        st.equal(
+            processor.process(
+                'It’s raining 🐱s and :dog:s. Now :3.'
+            ).toString(),
+            'It’s raining :cat:s and :dog:s. Now :man:.'
+        );
+
+        st.end();
     });
 
-    /*
-     * Note that this is a coverage test.
-     */
+    t.test('should not overwrite existing data', function (st) {
+        var processor = retext()
+            .use(function () {
+                return function (node) {
+                    visit(node, function (child) {
+                        child.data = {};
+                    });
+                };
+            })
+            .use(emoji);
 
-    it('should not overwrite existing data', function () {
-        var processor = retext().use(function () {
-            return function (node) {
-                visit(node, function (child) {
-                    child.data = {};
-                });
-            };
-        }).use(emoji);
-
-        equal(
-            processor.process('It’s raining 🐱s and :dog:s. Now :3.'),
+        st.equal(
+            processor.process(
+                'It’s raining 🐱s and :dog:s. Now :3.'
+            ).toString(),
             'It’s raining 🐱s and :dog:s. Now :3.'
         );
+
+        st.end();
     });
+
+    t.end();
 });

@@ -1,85 +1,70 @@
-# retext-emoji [![Build Status](https://img.shields.io/travis/wooorm/retext-emoji.svg)](https://travis-ci.org/wooorm/retext-emoji) [![Coverage Status](https://img.shields.io/codecov/c/github/wooorm/retext-emoji.svg)](https://codecov.io/github/wooorm/retext-emoji)
+# retext-emoji [![Build Status][travis-badge]][travis] [![Coverage Status][codecov-badge]][codecov]
 
-Emoji, gemoji, and emoticons in [**retext**](https://github.com/wooorm/retext).
+<!--lint disable heading-increment list-item-spacing-->
+
+Emoji, gemoji, and emoticons in [**retext**][retext].
 
 ## Installation
 
-[npm](https://docs.npmjs.com/cli/install):
+[npm][npm-install]:
 
 ```bash
 npm install retext-emoji
 ```
 
-**retext-emoji** is also available for [bower](http://bower.io/#install-packages),
-and [duo](http://duojs.org/#getting-started), and as an AMD, CommonJS, and
-globals module, [uncompressed](retext-emoji.js) and [compressed](retext-emoji.min.js).
+**retext-emoji** is also available as an AMD, CommonJS, and
+globals module, [uncompressed and compressed][releases].
 
 ## Usage
 
-```js
+Dependencies:
+
+```javascript
 var retext = require('retext');
 var emoji = require('retext-emoji');
-var inspect = require('unist-util-inspect');
+```
 
-retext().use(emoji).use(function () {
-    return function (node) {
-        console.log(inspect(node));
-    }
-}).process('I’m going to bed. :zzz:');
+Process:
+
+```javascript
+var file = retext()
+    .use(emoji, {convert: 'encode'})
+    .process('I’m going to bed. :zzz:');
 ```
 
 Yields:
 
 ```text
-RootNode[1]
-└─ ParagraphNode[1]
-   └─ SentenceNode[10]
-      ├─ WordNode[3]
-      │  ├─ TextNode: 'I'
-      │  ├─ PunctuationNode: '’'
-      │  └─ TextNode: 'm'
-      ├─ WhiteSpaceNode: ' '
-      ├─ WordNode[1]
-      │  └─ TextNode: 'going'
-      ├─ WhiteSpaceNode: ' '
-      ├─ WordNode[1]
-      │  └─ TextNode: 'to'
-      ├─ WhiteSpaceNode: ' '
-      ├─ WordNode[1]
-      │  └─ TextNode: 'bed'
-      ├─ PunctuationNode: '.'
-      ├─ WhiteSpaceNode: ' '
-      └─ EmoticonNode: ':zzz:' [data={"names":["zzz"],"description":"sleeping symbol","tags":["sleeping"]}]
+I’m going to bed. 💤
 ```
 
 ## API
 
-### [retext](https://github.com/wooorm/retext/tree/feature/stable#api).[use](https://github.com/wooorm/retext/tree/feature/stable#retextuseplugin-options)(emoji\[, options\])
+### `retext().use(emoji[, options])`
 
-Emoji, gemoji, and emoticons in [**retext**](https://github.com/wooorm/retext).
+Emoji, gemoji, and emoticons in [**retext**][retext].
 
-**Parameters**
+###### `options`
 
-*   `emoji` — This plug-in;
+*   `convert` (`'encode'` or `'decode'`, optional)
+    — When `encode`, converts short-codes and emoticons to their
+    unicode equivalent (`:heart:` and `<3` to `❤️`);  When `decode`,
+    converts unicode emoji and emoticons to their short-code equivalent
+    (`❤️` and `<3` to `:heart:`).
 
-*   `options` (`Object`, optional):
+###### Returns
 
-    *   `convert` (`"encode"` or `"decode"`, optional)
-        — When `encode`, converts short-codes into their unicode equivalent
-        (e.g., `:heart:` and `<3` to `❤️`); When `decode`, converts unicode
-        emoji into their short-code equivalent (e.g., `❤️` and `<3` to
-        `:heart:`).
+`string`.
 
-### EmoticonNode
+### `EmoticonNode`
 
-**retext-emoji** adds a new node to [NLCST](https://github.com/wooorm/nlcst),
-namely, the `EmoticonNode` ([SymbolNode](https://github.com/wooorm/nlcst#symbolnode)).
+**retext-emoji** adds a new node to [NLCST][]: `Emoticon` ([Symbol][]).
 
-Whether emoji (`❤️`), emoticon (`<3`), or gemoji (`:heart:`), all are classified
-as this `EmoticonNode`.
+Whether emoji (`❤️`), emoticon (`<3`), or gemoji (`:heart:`), all are
+classified as `EmoticonNode`s.
 
 ```idl
-interface EmoticonNode < SymbolNode {
+interface Emoticon < Symbol {
     type: "EmoticonNode";
     data: EmoticonData;
 }
@@ -93,9 +78,37 @@ interface EmoticonData {
 
 ## Support
 
-**retext-emoji** supports every  [wooorm/gemoji](https://github.com/wooorm/gemoji/#supported-gemoji)
-and every [wooorm/emoticon](https://github.com/wooorm/emoticon/#supported-emoticon).
+**retext-emoji** supports every [`wooorm/gemoji`][gemoji] and every
+[`wooorm/emoticon`][emoticon].
 
 ## License
 
-[MIT](LICENSE) © [Titus Wormer](http://wooorm.com)
+[MIT][license] © [Titus Wormer][author]
+
+<!-- Definitions -->
+
+[travis-badge]: https://img.shields.io/travis/wooorm/retext-emoji.svg
+
+[travis]: https://travis-ci.org/wooorm/retext-emoji
+
+[codecov-badge]: https://img.shields.io/codecov/c/github/wooorm/retext-emoji.svg
+
+[codecov]: https://codecov.io/github/wooorm/retext-emoji
+
+[npm-install]: https://docs.npmjs.com/cli/install
+
+[releases]: https://github.com/wooorm/retext-emoji/releases
+
+[license]: LICENSE
+
+[author]: http://wooorm.com
+
+[retext]: https://github.com/wooorm/retext
+
+[nlcst]: https://github.com/wooorm/nlcst
+
+[symbol]: https://github.com/wooorm/nlcst#symbol
+
+[gemoji]: https://github.com/wooorm/gemoji/#supported-gemoji
+
+[emoticon]: https://github.com/wooorm/emoticon/#supported-emoticon
