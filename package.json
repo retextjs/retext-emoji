@@ -9,21 +9,18 @@
     "emoticon",
     "emoji"
   ],
-  "files": [
-    "index.js"
-  ],
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/wooorm/retext-emoji.git"
-  },
+  "repository": "https://github.com/wooorm/retext-emoji",
   "bugs": "https://github.com/wooorm/retext-emoji/issues",
   "author": "Titus Wormer <tituswormer@gmail.com> (http://wooorm.com)",
   "contributors": [
     "Titus Wormer <tituswormer@gmail.com> (http://wooorm.com)"
   ],
+  "files": [
+    "index.js"
+  ],
   "dependencies": {
-    "emoticon": "^1.0.0",
-    "gemoji": "^1.0.0",
+    "emoticon": "^2.0.0",
+    "gemoji": "^2.0.1",
     "nlcst-affix-emoticon-modifier": "^1.0.0",
     "nlcst-emoji-modifier": "^1.0.0",
     "nlcst-emoticon-modifier": "^1.0.0",
@@ -32,30 +29,40 @@
   },
   "devDependencies": {
     "browserify": "^13.0.1",
-    "eslint": "^2.0.0",
     "esmangle": "^1.0.1",
-    "istanbul": "^0.4.0",
-    "jscs": "^3.0.0",
-    "jscs-jsdoc": "^2.0.0",
-    "remark-cli": "^1.0.0",
-    "remark-comment-config": "^4.0.0",
-    "remark-github": "^5.0.0",
-    "remark-lint": "^4.0.0",
-    "remark-usage": "^4.0.0",
-    "remark-validate-links": "^4.0.0",
-    "retext": "^3.0.0",
-    "tape": "^4.0.0"
+    "nyc": "^10.0.0",
+    "remark-cli": "^2.1.0",
+    "remark-preset-wooorm": "^1.0.0",
+    "retext": "^4.0.0",
+    "tape": "^4.0.0",
+    "xo": "^0.17.1"
   },
   "scripts": {
-    "build-md": "remark . --quiet --frail",
+    "build-md": "remark . -qfo",
     "build-bundle": "browserify index.js --bare -s retextEmoji > retext-emoji.js",
     "build-mangle": "esmangle retext-emoji.js > retext-emoji.min.js",
     "build": "npm run build-md && npm run build-bundle && npm run build-mangle",
-    "lint-api": "eslint .",
-    "lint-style": "jscs --reporter inline .",
-    "lint": "npm run lint-api && npm run lint-style",
-    "test-api": "node test/index.js",
-    "test-coverage": "istanbul cover test/index.js",
+    "lint": "xo",
+    "test-api": "node test",
+    "test-coverage": "nyc --reporter lcov tape test/index.js",
     "test": "npm run build && npm run lint && npm run test-coverage"
+  },
+  "nyc": {
+    "check-coverage": true,
+    "lines": 100,
+    "functions": 100,
+    "branches": 100
+  },
+  "xo": {
+    "space": true,
+    "rules": {
+      "guard-for-in": "off"
+    },
+    "ignores": [
+      "retext-emoji.js"
+    ]
+  },
+  "remarkConfig": {
+    "presets": "wooorm"
   }
 }
