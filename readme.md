@@ -1,35 +1,26 @@
 # retext-emoji [![Build Status][travis-badge]][travis] [![Coverage Status][codecov-badge]][codecov]
 
-<!--lint disable heading-increment list-item-spacing-->
-
 Emoji, gemoji, and emoticons in [**retext**][retext].
 
 ## Installation
 
-[npm][npm-install]:
+[npm][]:
 
 ```bash
 npm install retext-emoji
 ```
 
-**retext-emoji** is also available as an AMD, CommonJS, and
-globals module, [uncompressed and compressed][releases].
-
 ## Usage
-
-Dependencies:
 
 ```javascript
 var retext = require('retext');
 var emoji = require('retext-emoji');
-```
 
-Process:
-
-```javascript
 var file = retext()
-    .use(emoji, {convert: 'encode'})
-    .process('I’m going to bed. :zzz:');
+  .use(emoji, {convert: 'encode'})
+  .process('I’m going to bed. :zzz:');
+
+console.log(String(file));
 ```
 
 Yields:
@@ -61,14 +52,14 @@ classified as `EmoticonNode`s.
 
 ```idl
 interface Emoticon < Symbol {
-    type: "EmoticonNode";
-    data: EmoticonData;
+  type: "EmoticonNode";
+  data: EmoticonData;
 }
 
 interface EmoticonData {
-    names: [string];
-    description: string | null;
-    tags: [string];
+  names: [string];
+  description: string | null;
+  tags: [string];
 }
 ```
 
@@ -91,9 +82,7 @@ interface EmoticonData {
 
 [codecov]: https://codecov.io/github/wooorm/retext-emoji
 
-[npm-install]: https://docs.npmjs.com/cli/install
-
-[releases]: https://github.com/wooorm/retext-emoji/releases
+[npm]: https://docs.npmjs.com/cli/install
 
 [license]: LICENSE
 
