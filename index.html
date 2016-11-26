@@ -1,41 +1,27 @@
 <!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="utf-8" />
-        <title>retext-emoji</title>
-        <style>
-            label {
-                display: block;
-            }
-            fieldset {
-                border-width: 0;
-            }
-        </style>
-    </head>
-    <body>
-        <h1>retext-emoji</h1>
-        <p><strong>Note</strong>: This demo contains unicode emoticons. Without proper rendering support, you may see question marks, boxes, or other symbols instead of emoticons.</p>
-        <p>A quick demo of <a href="https://github.com/wooorm/retext-emoji">retext-emoji</a>.</p>
-        <p>Just paste (or write) some text in the text area below, choose whether you want to encode (from “&lt;3” and “:heart:” to ❤️) or decode (from “❤️” and “&lt;3” to “:heart:”), and the converted output will magically appear next to it.</p>
-        <p>Please raise any issues on <a href="https://github.com/wooorm/retext-emoji/issues">Github</a>.</p>
-        <hr />
-        <fieldset>
-            <label for="convert">
-                Convert:
-                <select name="convert">
-                    <option value="encode" selected>encode</option>
-                    <option value="decode">decode</option>
-                </select>
-            </label>
-        </fieldset>
-        <p><strong>Note</strong>: For a list of supported emoticons, see <a href="https://github.com/wooorm/gemoji/#supported-gemoji">wooorm/gemoji</a>’s and <a href="https://github.com/wooorm/emoticon/#supported-emoticons">wooorm/emoticon</a>’s repositories.</p>
-        <textarea spellcheck="false" rows="20" cols="80" autofocus>I’m going to bed. :zzz:
+<meta charset="utf8">
+<title>retext-emoji</title>
+<style>label {display: block} fieldset {border-width: 0}</style>
+<h1>retext-emoji</h1>
+<p><strong>Note</strong>: This demo contains unicode emoticons. Without proper rendering support, you may see question marks, boxes, or other symbols instead of emoticons.</p>
+<p>A quick demo of <a href="https://github.com/wooorm/retext-emoji">retext-emoji</a>. No cruft.</p>
+<p>Just paste (or write) some text in the text area below, choose whether you want to encode (from “&lt;3” and “:heart:” to ❤️) or decode (from “❤️” and “&lt;3” to “:heart:”), and the converted output will magically appear next to it.</p>
+<p>Please raise any issues on <a href="https://github.com/wooorm/retext-emoji/issues">Github</a>.</p>
+<fieldset>
+  <label for="convert">
+    Convert:
+    <select name="convert">
+      <option value="encode" selected>encode</option>
+      <option value="decode">decode</option>
+    </select>
+  </label>
+</fieldset>
+<p><strong>Note</strong>: For a list of supported emoticons, see <a href="https://github.com/wooorm/gemoji/#supported-gemoji">wooorm/gemoji</a>’s and <a href="https://github.com/wooorm/emoticon/#support">wooorm/emoticon</a>’s repositories.</p>
+<textarea spellcheck="false" rows="20" cols="80" autofocus>I’m going to bed. :zzz:
 It’s raining 🐱s and 🐶s!
 
 &lt;3 xoxo &lt;3
 
 =-3</textarea>
-        <textarea rows="20" cols="80" readonly></textarea>
-        <script src="build.js"></script>
-    </body>
-</html>
+<textarea rows="20" cols="80" readonly></textarea>
+<script src="build.js"></script>

@@ -1,0 +1,14 @@
+{
+  "name": "retext-emoji-www",
+  "private": true,
+  "dependencies": {
+    "retext": "^4.0.0",
+    "retext-emoji": "^2.0.0"
+  },
+  "devDependencies": {
+    "browserify": "^13.1.1"
+  },
+  "scripts": {
+    "build": "browserify index.js > build.js"
+  }
+}

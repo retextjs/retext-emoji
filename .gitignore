@@ -1,6 +1,7 @@
 .DS_Store
-bower_components/
-build/
-components/
+*.log
+.nyc_output/
 coverage/
 node_modules/
+retext-emoji.js
+retext-emoji.min.js

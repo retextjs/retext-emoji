@@ -1,66 +1,23 @@
-/**
- * Dependencies.
- */
+'use strict';
 
-var Retext = require('wooorm/retext@0.5.0');
-var emoji = require('wooorm/retext-emoji@0.5.4');
+var retext = require('retext');
+var emoji = require('retext-emoji');
 
-/**
- * Retext.
- */
+retext().use(emoji);
 
-var retext;
-
-/**
- * DOM elements.
- */
-
-var $input = document.getElementsByTagName('textarea')[0];
-var $output = document.getElementsByTagName('textarea')[1];
 var $convert = document.getElementsByName('convert')[0];
+var $areas = document.getElementsByTagName('textarea');
+var $input = $areas[0];
+var $output = $areas[1];
 
-/**
- * Event handlers
- */
+$convert.addEventListener('change', oninputchange);
+$input.addEventListener('input', oninputchange);
 
-function onconvertchange() {
-    var value = $convert.selectedOptions[0];
+oninputchange();
 
-    if (!value) {
-        return;
-    }
+function oninputchange() {
+  var state = $convert.selectedOptions[0].value;
+  var processor = retext().use(emoji, {convert : state});
 
-    value = value.value;
-
-    retext = new Retext().use(emoji, {
-        'convert' : value
-    });
-
-    emojify();
+  $output.value = processor.process($input.value);
 }
-
-/**
- * Emojify input.
- */
-
-function emojify(value) {
-    retext.parse($input.value, function (err, tree) {
-        if (err) throw err;
-
-        $output.value = tree;
-    });
-}
-
-/**
- * Attach event handlers.
- */
-
-$convert.addEventListener('change', onconvertchange);
-
-$input.addEventListener('input', emojify);
-
-/**
- * Provide initial emoji-fication.
- */
-
-onconvertchange();
