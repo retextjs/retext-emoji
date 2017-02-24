@@ -20,7 +20,7 @@
   ],
   "dependencies": {
     "emoticon": "^2.0.0",
-    "gemoji": "^2.0.1",
+    "gemoji": "^4.1.0",
     "nlcst-affix-emoticon-modifier": "^1.0.0",
     "nlcst-emoji-modifier": "^1.0.0",
     "nlcst-emoticon-modifier": "^1.0.0",
