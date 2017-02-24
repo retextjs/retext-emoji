@@ -55,8 +55,9 @@ var shortcodes = {};
 })();
 
 /* Attacher. */
-function emoji(processor, options) {
-  var proto = processor.Parser.prototype;
+function emoji(options) {
+  var Parser = this.Parser;
+  var proto = Parser.prototype;
   var convert = (options || {}).convert;
   var fn;
 

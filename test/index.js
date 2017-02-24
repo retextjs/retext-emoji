@@ -13,7 +13,7 @@ test('toString()', function (t) {
   t.test('should throw when given invalid `convert`', function (st) {
     st.throws(
       function () {
-        retext().use(emoji, {convert: false});
+        retext().use(emoji, {convert: false}).freeze();
       },
       /Illegal invocation: `false` is not a valid value/
     );
@@ -57,7 +57,7 @@ test('toString()', function (t) {
   t.test('should not transform without `convert`', function (st) {
     var processor = retext().use(emoji);
     var input = 'It’s raining 🐱s and :dog:s. Now :3.';
-    var output = processor.process(input).toString();
+    var output = processor.processSync(input).toString();
 
     st.equal(output, input);
 
@@ -68,7 +68,7 @@ test('toString()', function (t) {
     var processor = retext().use(emoji, {convert: 'encode'});
 
     st.equal(
-      processor.process('It’s raining 🐱s and :dog:s. Now :3.').toString(),
+      processor.processSync('It’s raining 🐱s and :dog:s. Now :3.').toString(),
       'It’s raining 🐱s and 🐶s. Now 👨.'
     );
 
@@ -79,7 +79,7 @@ test('toString()', function (t) {
     var processor = retext().use(emoji, {convert: 'decode'});
 
     st.equal(
-      processor.process('It’s raining 🐱s and :dog:s. Now :3.').toString(),
+      processor.processSync('It’s raining 🐱s and :dog:s. Now :3.').toString(),
       'It’s raining :cat:s and :dog:s. Now :man:.'
     );
 
@@ -100,7 +100,7 @@ test('toString()', function (t) {
       .use(emoji);
 
     st.equal(
-      processor.process('It’s raining 🐱s and :dog:s. Now :3.').toString(),
+      processor.processSync('It’s raining 🐱s and :dog:s. Now :3.').toString(),
       'It’s raining 🐱s and :dog:s. Now :3.'
     );
 

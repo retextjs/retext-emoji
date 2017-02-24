@@ -18,7 +18,7 @@ var emoji = require('retext-emoji');
 
 var file = retext()
   .use(emoji, {convert: 'encode'})
-  .process('I’m going to bed. :zzz:');
+  .processSync('I’m going to bed. :zzz:');
 
 console.log(String(file));
 ```
