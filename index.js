@@ -95,7 +95,8 @@ function emoji(options) {
     info = unicodes[value] || shortcodes[value] || emoticons[value];
 
     if (!data) {
-      data = node.data = {};
+      data = {};
+      node.data = data;
     }
 
     data.names = info.names.concat();
