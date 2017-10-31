@@ -55,14 +55,17 @@ var shortcodes = {};
 })();
 
 function getProtoFunction(fn) {
-  if (!fn) { return 'useFirst'; }
-  if (fn === 'use' || fn === 'useFirst') { return fn; }
+  if (!fn) {
+    return 'useFirst';
+  }
+  if (fn === 'use' || fn === 'useFirst') {
+    return fn;
+  }
   throw new TypeError(
     'Illegal invocation: `' + fn +
     '` is not a valid value for modifiers. in `retext#use(emoji, options)`'
   );
 }
-
 
 /* Attacher. */
 function emoji(rawOptions) {
