@@ -21,6 +21,17 @@ test('toString()', function (t) {
     st.end();
   });
 
+  t.test('should throw when given invalid `modifier fn`', function (st) {
+    st.throws(
+      function () {
+        retext().use(emoji, {emojiModifierFn: 'InvalidFnName'}).freeze();
+      },
+      /Illegal invocation: `InvalidFnName` is not a valid value/
+    );
+
+    st.end();
+  });
+
   t.test('should classify emoticons', function (st) {
     var processor = retext().use(emoji);
     var tree = processor.parse('This makes me feel :).');
@@ -81,6 +92,33 @@ test('toString()', function (t) {
     st.equal(
       processor.processSync('It’s raining 🐱s and :dog:s. Now :3.').toString(),
       'It’s raining :cat:s and :dog:s. Now :man:.'
+    );
+
+    st.end();
+  });
+
+  t.test('should not encode things that are not emojis', function (st) {
+    var processor = retext().use(emoji, {
+      convert: 'encode',
+      emoticonModifierFn: 'use',
+      affixEmoticonModifier: 'use',
+      emojiModifier: 'useFirst'
+    });
+
+    st.equal(
+      processor.processSync('Beautiful URL https://www.example.org?dl=0 :)').toString(),
+      'Beautiful URL https://www.example.org?dl=0 😃'
+    );
+
+    st.end();
+  });
+
+  t.test('should not error on emojis only', function (st) {
+    var processor = retext().use(emoji, {convert: 'encode'});
+
+    st.equal(
+      processor.processSync('☕️☕️☕️☕️').toString(),
+      '☕️☕️☕️☕️'
     );
 
     st.end();

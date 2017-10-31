@@ -54,16 +54,31 @@ var shortcodes = {};
   emoticons = result;
 })();
 
+function getProtoFunction(fn) {
+  if (!fn) { return 'useFirst'; }
+  if (fn === 'use' || fn === 'useFirst') { return fn; }
+  throw new TypeError(
+    'Illegal invocation: `' + fn +
+    '` is not a valid value for modifiers. in `retext#use(emoji, options)`'
+  );
+}
+
+
 /* Attacher. */
-function emoji(options) {
+function emoji(rawOptions) {
+  var options = rawOptions || {};
   var Parser = this.Parser;
   var proto = Parser.prototype;
-  var convert = (options || {}).convert;
+  var convert = options.convert;
   var fn;
 
-  proto.useFirst('tokenizeSentence', emoticonModifier);
-  proto.useFirst('tokenizeSentence', emojiModifier);
-  proto.useFirst('tokenizeParagraph', affixEmoticonModifier);
+  var emojiModifierFn = getProtoFunction(options.emojiModifierFn);
+  var emoticonModifierFn = getProtoFunction(options.emoticonModifierFn);
+  var affixEmoticonModifierFn = getProtoFunction(options.affixEmoticonModifierFn);
+
+  proto[emojiModifierFn]('tokenizeSentence', emojiModifier);
+  proto[emoticonModifierFn]('tokenizeSentence', emoticonModifier);
+  proto[affixEmoticonModifierFn]('tokenizeParagraph', affixEmoticonModifier);
 
   if (convert !== null && convert !== undefined) {
     fn = fns[convert];

@@ -49,6 +49,11 @@ When `encode`, converts short-codes and emoticons to their unicode equivalent
 When `decode`, converts unicode emoji and emoticons to their short-code
 equivalent (`❤️` and `<3` to `:heart:`).
 
+###### `options.emojiModifierFn` | `options.emoticonModifierFn` | `options.affixEmoticonModifierFn`
+
+Can be 'use' or 'useFirst'. Defaults to useFirst when nothing is defined. These allow to change the behavior on the parsing.
+
+
 ### `EmoticonNode`
 
 `retext-emoji` adds a new node to [NLCST][]: `Emoticon` ([Symbol][]).
