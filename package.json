@@ -9,8 +9,8 @@
     "emoticon",
     "emoji"
   ],
-  "repository": "https://github.com/wooorm/retext-emoji",
-  "bugs": "https://github.com/wooorm/retext-emoji/issues",
+  "repository": "retextjs/retext-emoji",
+  "bugs": "https://github.com/retextjs/retext-emoji/issues",
   "author": "Titus Wormer <tituswormer@gmail.com> (http://wooorm.com)",
   "contributors": [
     "Titus Wormer <tituswormer@gmail.com> (http://wooorm.com)"
@@ -64,6 +64,8 @@
     ]
   },
   "remarkConfig": {
-    "plugins": ["preset-wooorm"]
+    "plugins": [
+      "preset-wooorm"
+    ]
   }
 }

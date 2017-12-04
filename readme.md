@@ -80,13 +80,13 @@ interface EmoticonData {
 
 <!-- Definitions -->
 
-[travis-badge]: https://img.shields.io/travis/wooorm/retext-emoji.svg
+[travis-badge]: https://img.shields.io/travis/retextjs/retext-emoji.svg
 
-[travis]: https://travis-ci.org/wooorm/retext-emoji
+[travis]: https://travis-ci.org/retextjs/retext-emoji
 
-[codecov-badge]: https://img.shields.io/codecov/c/github/wooorm/retext-emoji.svg
+[codecov-badge]: https://img.shields.io/codecov/c/github/retextjs/retext-emoji.svg
 
-[codecov]: https://codecov.io/github/wooorm/retext-emoji
+[codecov]: https://codecov.io/github/retextjs/retext-emoji
 
 [npm]: https://docs.npmjs.com/cli/install
 
@@ -94,11 +94,11 @@ interface EmoticonData {
 
 [author]: http://wooorm.com
 
-[retext]: https://github.com/wooorm/retext
+[retext]: https://github.com/retextjs/retext
 
-[nlcst]: https://github.com/wooorm/nlcst
+[nlcst]: https://github.com/syntax-tree/nlcst
 
-[symbol]: https://github.com/wooorm/nlcst#symbol
+[symbol]: https://github.com/syntax-tree/nlcst#symbol
 
 [gemoji]: https://github.com/wooorm/gemoji/#supported-gemoji
 
