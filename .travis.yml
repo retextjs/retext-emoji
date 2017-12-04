@@ -1,7 +1,7 @@
 language: node_js
 node_js:
 - '4.0'
-- '8.0'
+- '9.0'
 sudo: false
 after_script: bash <(curl -s https://codecov.io/bash)
 deploy:
@@ -11,7 +11,7 @@ deploy:
       secure: V53jr9VQv2689wNscG7rb2Hk+I5dKTDBlxUvdyRel0aEOeJXcgjfkqLeZMQcQs4/WF8yJa3ZWnTeBy7JHbsZxPH9cRFq1mkqVzqVwYDMFMJd5IKO3nCJ7C6LT+IAMRVvpytQ/a6aujr5owwLIU3s+DxSIj7TbgD5rnLv4yAf6Og=
     on:
       tags: true
-      node: '8.0'
+      node: '9.0'
   - provider: releases
     skip_cleanup: true
     api_key:
@@ -21,4 +21,4 @@ deploy:
       - "retext-emoji.min.js"
     on:
       tags: true
-      node: '8.0'
+      node: '9.0'
