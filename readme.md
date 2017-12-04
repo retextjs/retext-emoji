@@ -74,6 +74,13 @@ interface EmoticonData {
 `retext-emoji` supports every [`gemoji`][gemoji] and every
 [`emoticon`][emoticon].
 
+## Contribute
+
+See [`contribute.md` in `retextjs/retext`][contribute] for ways to get started.
+
+This organisation has a [Code of Conduct][coc].  By interacting with this
+repository, organisation, or community you agree to abide by its terms.
+
 ## License
 
 [MIT][license] © [Titus Wormer][author]
@@ -103,3 +110,7 @@ interface EmoticonData {
 [gemoji]: https://github.com/wooorm/gemoji/#supported-gemoji
 
 [emoticon]: https://github.com/wooorm/emoticon/#supported-emoticon
+
+[contribute]: https://github.com/retextjs/retext/blob/master/contributing.md
+
+[coc]: https://github.com/retextjs/retext/blob/master/code-of-conduct.md
