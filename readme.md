@@ -13,14 +13,14 @@ npm install retext-emoji
 ## Usage
 
 ```javascript
-var retext = require('retext');
-var emoji = require('retext-emoji');
+var retext = require('retext')
+var emoji = require('retext-emoji')
 
 var file = retext()
   .use(emoji, {convert: 'encode'})
-  .processSync('I’m going to bed. :zzz:');
+  .processSync('I’m going to bed. :zzz:')
 
-console.log(String(file));
+console.log(String(file))
 ```
 
 Yields:
@@ -51,21 +51,22 @@ equivalent (`❤️` and `<3` to `:heart:`).
 
 ### `EmoticonNode`
 
-`retext-emoji` adds a new node to [NLCST][]: `Emoticon` ([Symbol][]).
+`retext-emoji` adds a new node to [nlcst][]:
+**Emoticon** ([**Literal**][literal]).
 
 Whether emoji (`❤️`), emoticon (`<3`), or gemoji (`:heart:`), all are
 classified as `EmoticonNode`s.
 
 ```idl
 interface Emoticon < Symbol {
-  type: "EmoticonNode";
-  data: EmoticonData;
+  type: "EmoticonNode"
+  data: EmoticonData
 }
 
 interface EmoticonData {
-  names: [string];
-  description: string | null;
-  tags: [string];
+  names: [string][]
+  description: string?
+  tags: [string]
 }
 ```
 
@@ -114,7 +115,7 @@ repository, organisation, or community you agree to abide by its terms.
 
 [nlcst]: https://github.com/syntax-tree/nlcst
 
-[symbol]: https://github.com/syntax-tree/nlcst#symbol
+[literal]: https://github.com/syntax-tree/nlcst#literal
 
 [gemoji]: https://github.com/wooorm/gemoji/#supported-gemoji
 
