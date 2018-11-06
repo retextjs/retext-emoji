@@ -5,3 +5,4 @@ coverage/
 node_modules/
 retext-emoji.js
 retext-emoji.min.js
+yarn.lock
