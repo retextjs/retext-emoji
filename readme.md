@@ -1,4 +1,4 @@
-# retext-emoji [![Build Status][travis-badge]][travis] [![Coverage Status][codecov-badge]][codecov]
+# retext-emoji [![Build][build-badge]][build] [![Coverage][coverage-badge]][coverage] [![Downloads][downloads-badge]][downloads] [![Chat][chat-badge]][chat]
 
 Emoji, gemoji, and emoticons in [**retext**][retext].
 
@@ -88,13 +88,21 @@ repository, organisation, or community you agree to abide by its terms.
 
 <!-- Definitions -->
 
-[travis-badge]: https://img.shields.io/travis/retextjs/retext-emoji.svg
+[build-badge]: https://img.shields.io/travis/retextjs/retext-emoji.svg
 
-[travis]: https://travis-ci.org/retextjs/retext-emoji
+[build]: https://travis-ci.org/retextjs/retext-emoji
 
-[codecov-badge]: https://img.shields.io/codecov/c/github/retextjs/retext-emoji.svg
+[coverage-badge]: https://img.shields.io/codecov/c/github/retextjs/retext-emoji.svg
 
-[codecov]: https://codecov.io/github/retextjs/retext-emoji
+[coverage]: https://codecov.io/github/retextjs/retext-emoji
+
+[downloads-badge]: https://img.shields.io/npm/dm/retext-emoji.svg
+
+[downloads]: https://www.npmjs.com/package/retext-emoji
+
+[chat-badge]: https://img.shields.io/badge/join%20the%20community-on%20spectrum-7b16ff.svg
+
+[chat]: https://spectrum.chat/unified/retext
 
 [npm]: https://docs.npmjs.com/cli/install
 
