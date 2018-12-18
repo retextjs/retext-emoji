@@ -19,5 +19,5 @@ function oninputchange() {
   var state = $convert.selectedOptions[0].value;
   var processor = retext().use(emoji, {convert : state});
 
-  $output.value = processor.process($input.value);
+  $output.value = processor.processSync($input.value);
 }

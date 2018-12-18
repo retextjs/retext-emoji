@@ -2,8 +2,8 @@
   "name": "retext-emoji-www",
   "private": true,
   "dependencies": {
-    "retext": "^4.0.0",
-    "retext-emoji": "^2.0.0"
+    "retext": "^6.0.1",
+    "retext-emoji": "^5.0.1"
   },
   "devDependencies": {
     "browserify": "^13.1.1"
