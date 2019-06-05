@@ -1,18 +1,26 @@
-# retext-emoji [![Build][build-badge]][build] [![Coverage][coverage-badge]][coverage] [![Downloads][downloads-badge]][downloads] [![Chat][chat-badge]][chat]
+# retext-emoji
 
-Emoji, gemoji, and emoticons in [**retext**][retext].
+[![Build][build-badge]][build]
+[![Coverage][coverage-badge]][coverage]
+[![Downloads][downloads-badge]][downloads]
+[![Size][size-badge]][size]
+[![Sponsors][sponsors-badge]][collective]
+[![Backers][backers-badge]][collective]
+[![Chat][chat-badge]][chat]
 
-## Installation
+[**retext**][retext] plugin to support emoji, gemoji, and emoticons.
+
+## Install
 
 [npm][]:
 
-```bash
+```sh
 npm install retext-emoji
 ```
 
-## Usage
+## Use
 
-```javascript
+```js
 var retext = require('retext')
 var emoji = require('retext-emoji')
 
@@ -25,7 +33,7 @@ console.log(String(file))
 
 Yields:
 
-```text
+```txt
 I’m going to bed. 💤
 ```
 
@@ -33,29 +41,25 @@ I’m going to bed. 💤
 
 ### `retext().use(emoji[, options])`
 
-Emoji, gemoji, and emoticons in [**retext**][retext].
-
-##### `options`
-
-Optional configuration.
+Support emoji, gemoji, and emoticons.
 
 ###### `options.convert`
 
-How to convert (`'encode'` or `'decode'`, optional).
+If, and *how* to convert (`'encode'` or `'decode'`, optional).
 
-When `encode`, converts short-codes and emoticons to their unicode equivalent
-(`:heart:` and `<3` to `❤️`).
+When `encode` is given, converts short-codes and emoticons to their unicode
+equivalent (`:heart:` and `<3` to `❤️`).
 
-When `decode`, converts unicode emoji and emoticons to their short-code
+When `decode` is given, converts unicode emoji and emoticons to their short-code
 equivalent (`❤️` and `<3` to `:heart:`).
 
 ### `EmoticonNode`
 
-`retext-emoji` adds a new node to [nlcst][]:
+`retext-emoji` adds a new node to [**nlcst**][nlcst]:
 **Emoticon** ([**Literal**][literal]).
 
-Whether emoji (`❤️`), emoticon (`<3`), or gemoji (`:heart:`), all are
-classified as `EmoticonNode`s.
+Whether emoji (`❤️`), emoticon (`<3`), or gemoji (`:heart:`), all are classified
+as `EmoticonNode`s.
 
 ```idl
 interface Emoticon < Symbol {
@@ -64,7 +68,7 @@ interface Emoticon < Symbol {
 }
 
 interface EmoticonData {
-  names: [string][]
+  names: [string]
   description: string?
   tags: [string]
 }
@@ -89,6 +93,20 @@ repository, organisation, or community you agree to abide by its terms.
 
 <!-- Definitions -->
 
+See [`contributing.md`][contributing] in [`retextjs/.github`][health] for ways
+to get started.
+See [`support.md`][support] for ways to get help.
+
+This project has a [Code of Conduct][coc].
+By interacting with this repository, organisation, or community you agree to
+abide by its terms.
+
+## License
+
+[MIT][license] © [Titus Wormer][author]
+
+<!-- Definitions -->
+
 [build-badge]: https://img.shields.io/travis/retextjs/retext-emoji.svg
 
 [build]: https://travis-ci.org/retextjs/retext-emoji
@@ -101,11 +119,29 @@ repository, organisation, or community you agree to abide by its terms.
 
 [downloads]: https://www.npmjs.com/package/retext-emoji
 
+[size-badge]: https://img.shields.io/bundlephobia/minzip/retext-emoji.svg
+
+[size]: https://bundlephobia.com/result?p=retext-emoji
+
+[sponsors-badge]: https://opencollective.com/unified/sponsors/badge.svg
+
+[backers-badge]: https://opencollective.com/unified/backers/badge.svg
+
+[collective]: https://opencollective.com/unified
+
 [chat-badge]: https://img.shields.io/badge/join%20the%20community-on%20spectrum-7b16ff.svg
 
 [chat]: https://spectrum.chat/unified/retext
 
 [npm]: https://docs.npmjs.com/cli/install
+
+[health]: https://github.com/retextjs/.github
+
+[contributing]: https://github.com/retextjs/.github/blob/master/contributing.md
+
+[support]: https://github.com/retextjs/.github/blob/master/support.md
+
+[coc]: https://github.com/retextjs/.github/blob/master/code-of-conduct.md
 
 [license]: license
 
@@ -117,10 +153,6 @@ repository, organisation, or community you agree to abide by its terms.
 
 [literal]: https://github.com/syntax-tree/nlcst#literal
 
-[gemoji]: https://github.com/wooorm/gemoji/#supported-gemoji
+[gemoji]: https://github.com/wooorm/gemoji/blob/master/support.md
 
-[emoticon]: https://github.com/wooorm/emoticon/#supported-emoticon
-
-[contributing]: https://github.com/retextjs/retext/blob/master/contributing.md
-
-[coc]: https://github.com/retextjs/retext/blob/master/code-of-conduct.md
+[emoticon]: https://github.com/wooorm/emoticon/blob/master/support.md
