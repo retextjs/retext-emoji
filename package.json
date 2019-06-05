@@ -38,6 +38,7 @@
     "retext": "^6.0.0",
     "tape": "^4.0.0",
     "tinyify": "^2.0.0",
+    "unist-builder": "^1.0.4",
     "xo": "^0.24.0"
   },
   "scripts": {
@@ -46,7 +47,7 @@
     "build-mangle": "browserify . -s retextEmoji -p tinyify > retext-emoji.min.js",
     "build": "npm run build-bundle && npm run build-mangle",
     "test-api": "node test",
-    "test-coverage": "nyc --reporter lcov tape test/index.js",
+    "test-coverage": "nyc --reporter lcov tape test.js",
     "test": "npm run format && npm run build && npm run test-coverage"
   },
   "nyc": {
