@@ -92,6 +92,7 @@ test('toString()', function(t) {
         function transformer(node) {
           visit(node, visitor)
         }
+
         function visitor(child) {
           child.data = {}
         }
