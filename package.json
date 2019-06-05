@@ -1,10 +1,12 @@
 {
   "name": "retext-emoji",
   "version": "5.0.1",
-  "description": "Emoji, gemoji, and emoticons with retext",
+  "description": "retext plugin to support emoji, gemoji, and emoticons",
   "license": "MIT",
   "keywords": [
+    "unified",
     "retext",
+    "plugin",
     "gemoji",
     "emoticon",
     "emoji"
