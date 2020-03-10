@@ -81,18 +81,6 @@ interface EmoticonData {
 
 ## Contribute
 
-See [`contributing.md` in `retextjs/retext`][contributing] for ways to get
-started.
-
-This organisation has a [code of conduct][coc].  By interacting with this
-repository, organization, or community you agree to abide by its terms.
-
-## License
-
-[MIT][license] © [Titus Wormer][author]
-
-<!-- Definitions -->
-
 See [`contributing.md`][contributing] in [`retextjs/.github`][health] for ways
 to get started.
 See [`support.md`][support] for ways to get help.
