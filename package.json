@@ -32,7 +32,7 @@
     "nlcst-emoji-modifier": "^4.0.0",
     "nlcst-emoticon-modifier": "^1.0.0",
     "nlcst-to-string": "^2.0.0",
-    "unist-util-visit": "^1.0.0"
+    "unist-util-visit": "^2.0.0"
   },
   "devDependencies": {
     "browserify": "^16.0.0",
