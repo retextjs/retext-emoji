@@ -3,12 +3,14 @@
 var affixEmoticonModifier = require('nlcst-affix-emoticon-modifier')
 var emoticonModifier = require('nlcst-emoticon-modifier')
 var emojiModifier = require('nlcst-emoji-modifier')
-var emoticons = require('emoticon')
 var toString = require('nlcst-to-string')
-var gemoji = require('gemoji')
 var visit = require('unist-util-visit')
+var emoticons = require('emoticon')
+var gemoji = require('gemoji')
 
 module.exports = emoji
+
+var own = {}.hasOwnProperty
 
 var type = 'EmoticonNode'
 
@@ -18,10 +20,10 @@ var fns = {
   decode: toGemoji
 }
 
-var unicodes = gemoji.unicode
-var names = gemoji.name
+var emoji2info = {}
 
-var shortcodes = {}
+var emoticon2emoji = {}
+var gemoji2emoji = {}
 
 init()
 
@@ -55,74 +57,78 @@ function emoji(options) {
   }
 
   function visitor(node) {
-    var data = node.data
-    var value = toString(node)
+    var emoji = parse(toString(node))
     var info
+    var data
+
+    if (!emoji) return
 
     if (fn) {
-      fn(node)
+      node.value = fn(emoji)
     }
 
-    info = unicodes[value] || shortcodes[value] || emoticons[value]
-
-    if (!data) {
-      data = {}
-      node.data = data
-    }
-
-    data.names = info.names.concat()
+    info = emoji2info[emoji]
+    data = node.data || (node.data = {})
+    data.emoji = info.emoji
     data.description = info.description
+    data.names = info.names.concat()
     data.tags = info.tags.concat()
   }
 }
 
-// Replace a unicode emoji with a short-code.
-function toGemoji(node) {
-  var value = toString(node)
-  var info = (unicodes[value] || emoticons[value] || {}).shortcode
-
-  if (info) {
-    node.value = info
-  }
+// Map a value to an emoji.
+function parse(value) {
+  if (own.call(emoji2info, value)) return value
+  if (own.call(emoticon2emoji, value)) return emoticon2emoji[value]
+  if (own.call(gemoji2emoji, value)) return gemoji2emoji[value]
 }
 
-// Replace a short-code with a unicode emoji.
-function toEmoji(node) {
-  var value = toString(node)
-  var info = (shortcodes[value] || emoticons[value] || {}).emoji
-
-  if (info) {
-    node.value = info
-  }
+// Change to a GitHub emoji short-code.
+function toGemoji(emoji) {
+  return ':' + emoji2info[emoji].names[0] + ':'
 }
 
+// Change to an emoji.
+function toEmoji(emoji) {
+  return emoji
+}
+
+// Construct dictionaries.
 function init() {
-  var key
-  var shortcode
-  var result = {}
-  var length = emoticons.length
+  var length = gemoji.length
   var index = -1
-  var count
+  var info
   var offset
-  var subset
-  var name
-
-  for (key in names) {
-    shortcode = ':' + key + ':'
-    shortcodes[shortcode] = names[key]
-    shortcodes[shortcode].shortcode = shortcode
-  }
+  var count
+  var values
+  var value
 
   while (++index < length) {
-    name = emoticons[index].name
-    subset = emoticons[index].emoticons
-    count = subset.length
+    info = gemoji[index]
+    values = info.names
+    count = values.length
     offset = -1
 
+    emoji2info[info.emoji] = info
+
     while (++offset < count) {
-      result[subset[offset]] = names[name]
+      value = values[offset]
+      gemoji2emoji[':' + value + ':'] = info.emoji
     }
   }
 
-  emoticons = result
+  index = -1
+  length = emoticons.length
+
+  while (++index < length) {
+    info = emoticons[index]
+    values = info.emoticons
+    count = values.length
+    offset = -1
+
+    while (++offset < count) {
+      value = values[offset]
+      emoticon2emoji[value] = info.emoji
+    }
+  }
 }

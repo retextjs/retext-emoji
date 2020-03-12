@@ -46,8 +46,9 @@ test('emoji', function(t) {
             {
               position: p(1, 20, 19, 1, 22, 21),
               data: {
+                emoji: '😃',
+                description: 'grinning face with big eyes',
                 names: ['smiley'],
-                description: 'smiling face with open mouth',
                 tags: ['happy', 'joy', 'haha']
               }
             },
@@ -86,8 +87,9 @@ test('emoji', function(t) {
             {
               position: p(1, 20, 19, 1, 25, 24),
               data: {
-                names: ['sob'],
+                emoji: '😭',
                 description: 'loudly crying face',
+                names: ['sob'],
                 tags: ['sad', 'cry', 'bawling']
               }
             },
@@ -119,7 +121,12 @@ test('emoji', function(t) {
             'EmoticonNode',
             {
               position: p(1, 14, 13, 1, 16, 15),
-              data: {names: ['cat'], description: 'cat face', tags: ['pet']}
+              data: {
+                emoji: '🐱',
+                description: 'cat face',
+                names: ['cat'],
+                tags: ['pet']
+              }
             },
             '🐱'
           ),
@@ -135,7 +142,12 @@ test('emoji', function(t) {
             'EmoticonNode',
             {
               position: p(1, 22, 21, 1, 24, 23),
-              data: {names: ['dog'], description: 'dog face', tags: ['pet']}
+              data: {
+                emoji: '🐶',
+                description: 'dog face',
+                names: ['dog'],
+                tags: ['pet']
+              }
             },
             '🐶'
           ),
@@ -147,6 +159,44 @@ test('emoji', function(t) {
       ])
     ]),
     'should classify emoji'
+  )
+
+  t.deepEqual(
+    processor.runSync(
+      u('RootNode', [
+        u('ParagraphNode', [
+          u('SentenceNode', [
+            u('WordNode', [u('TextNode', 'This')]),
+            u('WhiteSpaceNode', ' '),
+            u('WordNode', [u('TextNode', 'makes')]),
+            u('WhiteSpaceNode', ' '),
+            u('WordNode', [u('TextNode', 'me')]),
+            u('WhiteSpaceNode', ' '),
+            u('WordNode', [u('TextNode', 'feel')]),
+            u('WhiteSpaceNode', ' '),
+            u('EmoticonNode', '*weird*'),
+            u('PunctuationNode', '.')
+          ])
+        ])
+      ])
+    ),
+    u('RootNode', [
+      u('ParagraphNode', [
+        u('SentenceNode', [
+          u('WordNode', [u('TextNode', 'This')]),
+          u('WhiteSpaceNode', ' '),
+          u('WordNode', [u('TextNode', 'makes')]),
+          u('WhiteSpaceNode', ' '),
+          u('WordNode', [u('TextNode', 'me')]),
+          u('WhiteSpaceNode', ' '),
+          u('WordNode', [u('TextNode', 'feel')]),
+          u('WhiteSpaceNode', ' '),
+          u('EmoticonNode', '*weird*'),
+          u('PunctuationNode', '.')
+        ])
+      ])
+    ]),
+    'should ignore unknown emoji'
   )
 
   retext()
@@ -204,7 +254,7 @@ test('emoji', function(t) {
   t.end()
 })
 
-// eslint-disable-next-line max-params
+// eslint-disable-next-line max-params, unicorn/prevent-abbreviations
 function p(sl, sc, so, el, ec, eo) {
   return {start: point(sl, sc, so), end: point(el, ec, eo)}
 }

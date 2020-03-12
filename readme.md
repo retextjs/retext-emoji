@@ -68,6 +68,7 @@ interface Emoticon < Symbol {
 }
 
 interface EmoticonData {
+  emoji: string
   names: [string]
   description: string?
   tags: [string]
