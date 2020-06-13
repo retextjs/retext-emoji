@@ -6,15 +6,13 @@ var visit = require('unist-util-visit')
 var u = require('unist-builder')
 var emoji = require('.')
 
-test('emoji', function(t) {
+test('emoji', function (t) {
   var processor = retext().use(emoji)
   var fixture = 'It’s raining 🐱s and :dog:s. Now :3.'
 
   t.throws(
-    function() {
-      retext()
-        .use(emoji, {convert: false})
-        .freeze()
+    function () {
+      retext().use(emoji, {convert: false}).freeze()
     },
     /Illegal invocation: `false` is not a valid value/,
     'should throw when given invalid `convert`'
@@ -201,7 +199,7 @@ test('emoji', function(t) {
 
   retext()
     .use(emoji)
-    .process(fixture, function(err, file) {
+    .process(fixture, function (err, file) {
       t.deepEqual(
         [err, String(file)],
         [null, fixture],
@@ -211,7 +209,7 @@ test('emoji', function(t) {
 
   retext()
     .use(emoji, {convert: 'encode'})
-    .process(fixture, function(err, file) {
+    .process(fixture, function (err, file) {
       t.deepEqual(
         [err, String(file)],
         [null, 'It’s raining 🐱s and 🐶s. Now 👨.'],
@@ -221,7 +219,7 @@ test('emoji', function(t) {
 
   retext()
     .use(emoji, {convert: 'decode'})
-    .process(fixture, function(err, file) {
+    .process(fixture, function (err, file) {
       t.deepEqual(
         [err, String(file)],
         [null, 'It’s raining :cat:s and :dog:s. Now :man:.'],
@@ -232,7 +230,7 @@ test('emoji', function(t) {
   retext()
     .use(data)
     .use(emoji)
-    .process(fixture, function(err, file) {
+    .process(fixture, function (err, file) {
       t.deepEqual(
         [err, String(file)],
         [null, fixture],
