@@ -1,6 +1,6 @@
 {
   "name": "retext-emoji",
-  "version": "7.0.0",
+  "version": "7.0.1",
   "description": "retext plugin to support emoji, gemoji, and emoticons",
   "license": "MIT",
   "keywords": [
