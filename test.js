@@ -238,6 +238,16 @@ test('emoji', function (t) {
       )
     })
 
+  retext()
+    .use(emoji, {convert: 'decode'})
+    .process('Zap! ⚡️', function (err, file) {
+      t.deepEqual(
+        [err, String(file)],
+        [null, 'Zap! :zap:'],
+        'should support a superfluous variant selector 16'
+      )
+    })
+
   function data() {
     return transformer
     function transformer(node) {

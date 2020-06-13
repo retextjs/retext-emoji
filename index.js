@@ -14,6 +14,8 @@ var own = {}.hasOwnProperty
 
 var type = 'EmoticonNode'
 
+var vs16 = 0xfe0f
+
 // Map of visitors.
 var fns = {
   encode: toEmoji,
@@ -78,9 +80,19 @@ function emoji(options) {
 
 // Map a value to an emoji.
 function parse(value) {
+  var without
+
   if (own.call(emoji2info, value)) return value
   if (own.call(emoticon2emoji, value)) return emoticon2emoji[value]
   if (own.call(gemoji2emoji, value)) return gemoji2emoji[value]
+
+  if (value.charCodeAt(value.length - 1) === vs16) {
+    without = value.slice(0, -1)
+    /* istanbul ignore else - pretty weird to have something that parses as an
+     * emoji, with a superfluous fe0f, and not have it exist, but hey, better
+     * to be sure. */
+    if (own.call(emoji2info, without)) return without
+  }
 }
 
 // Change to a GitHub emoji short-code.
