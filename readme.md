@@ -126,11 +126,11 @@ abide by its terms.
 
 [health]: https://github.com/retextjs/.github
 
-[contributing]: https://github.com/retextjs/.github/blob/master/contributing.md
+[contributing]: https://github.com/retextjs/.github/blob/HEAD/contributing.md
 
-[support]: https://github.com/retextjs/.github/blob/master/support.md
+[support]: https://github.com/retextjs/.github/blob/HEAD/support.md
 
-[coc]: https://github.com/retextjs/.github/blob/master/code-of-conduct.md
+[coc]: https://github.com/retextjs/.github/blob/HEAD/code-of-conduct.md
 
 [license]: license
 
@@ -142,6 +142,6 @@ abide by its terms.
 
 [literal]: https://github.com/syntax-tree/nlcst#literal
 
-[gemoji]: https://github.com/wooorm/gemoji/blob/master/support.md
+[gemoji]: https://github.com/wooorm/gemoji/blob/main/support.md
 
-[emoticon]: https://github.com/wooorm/emoticon/blob/master/support.md
+[emoticon]: https://github.com/wooorm/emoticon/blob/main/support.md
