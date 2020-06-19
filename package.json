@@ -47,7 +47,7 @@
     "xo": "^0.32.0"
   },
   "scripts": {
-    "format": "remark . -qfo && prettier --write \"**/*.js\" && xo --fix",
+    "format": "remark . -qfo && prettier . --write && xo --fix",
     "build-bundle": "browserify . -s retextEmoji > retext-emoji.js",
     "build-mangle": "browserify . -s retextEmoji -p tinyify > retext-emoji.min.js",
     "build": "npm run build-bundle && npm run build-mangle",
