@@ -96,9 +96,9 @@ abide by its terms.
 
 <!-- Definitions -->
 
-[build-badge]: https://img.shields.io/travis/retextjs/retext-emoji.svg
+[build-badge]: https://github.com/retextjs/retext-emoji/workflows/main/badge.svg
 
-[build]: https://travis-ci.org/retextjs/retext-emoji
+[build]: https://github.com/retextjs/retext-emoji/actions
 
 [coverage-badge]: https://img.shields.io/codecov/c/github/retextjs/retext-emoji.svg
 
