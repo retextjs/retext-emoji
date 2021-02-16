@@ -199,9 +199,9 @@ test('emoji', function (t) {
 
   retext()
     .use(emoji)
-    .process(fixture, function (err, file) {
+    .process(fixture, function (error, file) {
       t.deepEqual(
-        [err, String(file)],
+        [error, String(file)],
         [null, fixture],
         'should not transform without `convert`'
       )
@@ -209,9 +209,9 @@ test('emoji', function (t) {
 
   retext()
     .use(emoji, {convert: 'encode'})
-    .process(fixture, function (err, file) {
+    .process(fixture, function (error, file) {
       t.deepEqual(
-        [err, String(file)],
+        [error, String(file)],
         [null, 'It’s raining 🐱s and 🐶s. Now 👨.'],
         'should encode'
       )
@@ -219,9 +219,9 @@ test('emoji', function (t) {
 
   retext()
     .use(emoji, {convert: 'decode'})
-    .process(fixture, function (err, file) {
+    .process(fixture, function (error, file) {
       t.deepEqual(
-        [err, String(file)],
+        [error, String(file)],
         [null, 'It’s raining :cat:s and :dog:s. Now :man:.'],
         'should decode'
       )
@@ -230,9 +230,9 @@ test('emoji', function (t) {
   retext()
     .use(data)
     .use(emoji)
-    .process(fixture, function (err, file) {
+    .process(fixture, function (error, file) {
       t.deepEqual(
-        [err, String(file)],
+        [error, String(file)],
         [null, fixture],
         'should not overwrite existing data'
       )
@@ -240,9 +240,9 @@ test('emoji', function (t) {
 
   retext()
     .use(emoji, {convert: 'decode'})
-    .process('Zap! ⚡️', function (err, file) {
+    .process('Zap! ⚡️', function (error, file) {
       t.deepEqual(
-        [err, String(file)],
+        [error, String(file)],
         [null, 'Zap! :zap:'],
         'should support a superfluous variant selector 16'
       )
