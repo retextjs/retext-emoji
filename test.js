@@ -1,10 +1,8 @@
-'use strict'
-
-var test = require('tape')
-var retext = require('retext')
-var visit = require('unist-util-visit')
-var u = require('unist-builder')
-var emoji = require('.')
+import test from 'tape'
+import retext from 'retext'
+import visit from 'unist-util-visit'
+import u from 'unist-builder'
+import emoji from './index.js'
 
 test('emoji', function (t) {
   var processor = retext().use(emoji)

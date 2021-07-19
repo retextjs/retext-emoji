@@ -1,14 +1,10 @@
-'use strict'
-
-var affixEmoticonModifier = require('nlcst-affix-emoticon-modifier')
-var emoticonModifier = require('nlcst-emoticon-modifier')
-var emojiModifier = require('nlcst-emoji-modifier')
-var toString = require('nlcst-to-string')
-var visit = require('unist-util-visit')
-var emoticons = require('emoticon')
-var gemoji = require('gemoji')
-
-module.exports = emoji
+import affixEmoticonModifier from 'nlcst-affix-emoticon-modifier'
+import emoticonModifier from 'nlcst-emoticon-modifier'
+import emojiModifier from 'nlcst-emoji-modifier'
+import toString from 'nlcst-to-string'
+import visit from 'unist-util-visit'
+import {emoticon} from 'emoticon'
+import {gemoji} from 'gemoji'
 
 var own = {}.hasOwnProperty
 
@@ -29,7 +25,7 @@ var gemoji2emoji = {}
 
 init()
 
-function emoji(options) {
+export default function retextEmoji(options) {
   var Parser = this.Parser
   var proto = Parser.prototype
   var convert = (options || {}).convert
@@ -130,10 +126,10 @@ function init() {
   }
 
   index = -1
-  length = emoticons.length
+  length = emoticon.length
 
   while (++index < length) {
-    info = emoticons[index]
+    info = emoticon[index]
     values = info.emoticons
     count = values.length
     offset = -1

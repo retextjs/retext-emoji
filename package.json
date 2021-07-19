@@ -22,12 +22,15 @@
   "contributors": [
     "Titus Wormer <tituswormer@gmail.com> (https://wooorm.com)"
   ],
+  "sideEffects": false,
+  "type": "module",
+  "main": "index.js",
   "files": [
     "index.js"
   ],
   "dependencies": {
-    "emoticon": "^3.1.0",
-    "gemoji": "^6.0.0",
+    "emoticon": "^4.0.0",
+    "gemoji": "^7.0.0",
     "nlcst-affix-emoticon-modifier": "^1.0.0",
     "nlcst-emoji-modifier": "^4.0.0",
     "nlcst-emoticon-modifier": "^1.0.0",
@@ -42,7 +45,7 @@
     "retext": "^7.0.0",
     "tape": "^5.0.0",
     "unist-builder": "^2.0.0",
-    "xo": "^0.37.0"
+    "xo": "^0.39.0"
   },
   "scripts": {
     "format": "remark . -qfo && prettier . -w --loglevel warn && xo --fix",
@@ -60,8 +63,9 @@
   },
   "xo": {
     "prettier": true,
-    "esnext": false,
     "rules": {
+      "no-var": "off",
+      "prefer-arrow-callback": "off",
       "guard-for-in": "off"
     }
   },
