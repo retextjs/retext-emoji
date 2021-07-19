@@ -1,5 +1,2 @@
 coverage/
-retext-emoji.js
-retext-emoji.min.js
-*.json
 *.md
