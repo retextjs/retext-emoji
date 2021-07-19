@@ -1,6 +1,6 @@
 import test from 'tape'
 import retext from 'retext'
-import visit from 'unist-util-visit'
+import {visit} from 'unist-util-visit'
 import u from 'unist-builder'
 import emoji from './index.js'
 

@@ -1,8 +1,8 @@
-import affixEmoticonModifier from 'nlcst-affix-emoticon-modifier'
-import emoticonModifier from 'nlcst-emoticon-modifier'
-import emojiModifier from 'nlcst-emoji-modifier'
-import toString from 'nlcst-to-string'
-import visit from 'unist-util-visit'
+import {affixEmoticonModifier} from 'nlcst-affix-emoticon-modifier'
+import {emoticonModifier} from 'nlcst-emoticon-modifier'
+import {emojiModifier} from 'nlcst-emoji-modifier'
+import {toString} from 'nlcst-to-string'
+import {visit} from 'unist-util-visit'
 import {emoticon} from 'emoticon'
 import {gemoji} from 'gemoji'
 
