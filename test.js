@@ -2,15 +2,15 @@ import test from 'tape'
 import {retext} from 'retext'
 import {visit} from 'unist-util-visit'
 import {u} from 'unist-builder'
-import emoji from './index.js'
+import retextEmoji from './index.js'
 
-test('emoji', function (t) {
-  var processor = retext().use(emoji)
-  var fixture = 'It’s raining 🐱s and :dog:s. Now :3.'
+test('retext-emoji', (t) => {
+  const processor = retext().use(retextEmoji)
+  const fixture = 'It’s raining 🐱s and :dog:s. Now :3.'
 
   t.throws(
-    function () {
-      retext().use(emoji, {convert: false}).freeze()
+    () => {
+      retext().use(retextEmoji, {convert: false}).freeze()
     },
     /Illegal invocation: `false` is not a valid value/,
     'should throw when given invalid `convert`'
@@ -196,8 +196,8 @@ test('emoji', function (t) {
   )
 
   retext()
-    .use(emoji)
-    .process(fixture, function (error, file) {
+    .use(retextEmoji)
+    .process(fixture, (error, file) => {
       t.deepEqual(
         [error, String(file)],
         [null, fixture],
@@ -206,8 +206,8 @@ test('emoji', function (t) {
     })
 
   retext()
-    .use(emoji, {convert: 'encode'})
-    .process(fixture, function (error, file) {
+    .use(retextEmoji, {convert: 'encode'})
+    .process(fixture, (error, file) => {
       t.deepEqual(
         [error, String(file)],
         [null, 'It’s raining 🐱s and 🐶s. Now 👨.'],
@@ -216,8 +216,8 @@ test('emoji', function (t) {
     })
 
   retext()
-    .use(emoji, {convert: 'decode'})
-    .process(fixture, function (error, file) {
+    .use(retextEmoji, {convert: 'decode'})
+    .process(fixture, (error, file) => {
       t.deepEqual(
         [error, String(file)],
         [null, 'It’s raining :cat:s and :dog:s. Now :man:.'],
@@ -227,8 +227,8 @@ test('emoji', function (t) {
 
   retext()
     .use(data)
-    .use(emoji)
-    .process(fixture, function (error, file) {
+    .use(retextEmoji)
+    .process(fixture, (error, file) => {
       t.deepEqual(
         [error, String(file)],
         [null, fixture],
@@ -237,8 +237,8 @@ test('emoji', function (t) {
     })
 
   retext()
-    .use(emoji, {convert: 'decode'})
-    .process('Zap! ⚡️', function (error, file) {
+    .use(retextEmoji, {convert: 'decode'})
+    .process('Zap! ⚡️', (error, file) => {
       t.deepEqual(
         [error, String(file)],
         [null, 'Zap! :zap:'],

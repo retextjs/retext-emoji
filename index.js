@@ -6,30 +6,35 @@ import {visit} from 'unist-util-visit'
 import {emoticon} from 'emoticon'
 import {gemoji} from 'gemoji'
 
-var own = {}.hasOwnProperty
+const own = {}.hasOwnProperty
 
-var type = 'EmoticonNode'
+const type = 'EmoticonNode'
 
-var vs16 = 0xfe0f
+const vs16 = 0xfe0f
 
 // Map of visitors.
-var fns = {
-  encode: toEmoji,
-  decode: toGemoji
+const fns = {
+  // Change to an emoji.
+  encode: (emoji) => {
+    return emoji
+  },
+  // Change to a GitHub emoji short-code.
+  decode: (emoji) => {
+    return ':' + emoji2info[emoji].names[0] + ':'
+  }
 }
 
-var emoji2info = {}
-
-var emoticon2emoji = {}
-var gemoji2emoji = {}
+const emoji2info = {}
+const emoticon2emoji = {}
+const gemoji2emoji = {}
 
 init()
 
-export default function retextEmoji(options) {
-  var Parser = this.Parser
-  var proto = Parser.prototype
-  var convert = (options || {}).convert
-  var fn
+export default function retextEmoji(options = {}) {
+  const Parser = this.Parser
+  const proto = Parser.prototype
+  const convert = options.convert
+  let fn
 
   proto.useFirst('tokenizeSentence', emoticonModifier)
   proto.useFirst('tokenizeSentence', emojiModifier)
@@ -48,95 +53,62 @@ export default function retextEmoji(options) {
     }
   }
 
-  return transformer
+  return (node) => {
+    visit(node, type, (node) => {
+      const emoji = parse(toString(node))
 
-  function transformer(node) {
-    visit(node, type, visitor)
-  }
+      if (!emoji) return
 
-  function visitor(node) {
-    var emoji = parse(toString(node))
-    var info
-    var data
+      if (fn) {
+        node.value = fn(emoji)
+      }
 
-    if (!emoji) return
-
-    if (fn) {
-      node.value = fn(emoji)
-    }
-
-    info = emoji2info[emoji]
-    data = node.data || (node.data = {})
-    data.emoji = info.emoji
-    data.description = info.description
-    data.names = info.names.concat()
-    data.tags = info.tags.concat()
+      const info = emoji2info[emoji]
+      const data = node.data || (node.data = {})
+      data.emoji = info.emoji
+      data.description = info.description
+      data.names = info.names.concat()
+      data.tags = info.tags.concat()
+    })
   }
 }
 
 // Map a value to an emoji.
 function parse(value) {
-  var without
-
   if (own.call(emoji2info, value)) return value
   if (own.call(emoticon2emoji, value)) return emoticon2emoji[value]
   if (own.call(gemoji2emoji, value)) return gemoji2emoji[value]
 
   if (value.charCodeAt(value.length - 1) === vs16) {
-    without = value.slice(0, -1)
-    /* istanbul ignore else - pretty weird to have something that parses as an
-     * emoji, with a superfluous fe0f, and not have it exist, but hey, better
-     * to be sure. */
+    const without = value.slice(0, -1)
     if (own.call(emoji2info, without)) return without
   }
 }
 
-// Change to a GitHub emoji short-code.
-function toGemoji(emoji) {
-  return ':' + emoji2info[emoji].names[0] + ':'
-}
-
-// Change to an emoji.
-function toEmoji(emoji) {
-  return emoji
-}
-
 // Construct dictionaries.
 function init() {
-  var length = gemoji.length
-  var index = -1
-  var info
-  var offset
-  var count
-  var values
-  var value
+  let index = -1
 
-  while (++index < length) {
-    info = gemoji[index]
-    values = info.names
-    count = values.length
-    offset = -1
+  while (++index < gemoji.length) {
+    const info = gemoji[index]
+    const values = info.names
+    let offset = -1
 
     emoji2info[info.emoji] = info
 
-    while (++offset < count) {
-      value = values[offset]
-      gemoji2emoji[':' + value + ':'] = info.emoji
+    while (++offset < values.length) {
+      gemoji2emoji[':' + values[offset] + ':'] = info.emoji
     }
   }
 
   index = -1
-  length = emoticon.length
 
-  while (++index < length) {
-    info = emoticon[index]
-    values = info.emoticons
-    count = values.length
-    offset = -1
+  while (++index < emoticon.length) {
+    const info = emoticon[index]
+    let offset = -1
 
-    while (++offset < count) {
-      value = values[offset]
-      emoticon2emoji[value] = info.emoji
+    while (++offset < info.emoticons.length) {
+      emoticon2emoji[info.emoticons[offset]] = info.emoji
     }
   }
 }
