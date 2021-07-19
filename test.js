@@ -1,7 +1,7 @@
 import test from 'tape'
-import retext from 'retext'
+import {retext} from 'retext'
 import {visit} from 'unist-util-visit'
-import u from 'unist-builder'
+import {u} from 'unist-builder'
 import emoji from './index.js'
 
 test('emoji', function (t) {
