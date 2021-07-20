@@ -1,3 +1,16 @@
+/**
+ * @typedef Options
+ *   Configuration.
+ * @property {'encode'|'decode'} [convert]
+ *   If, and *how* to convert (`'encode'` or `'decode'`, optional).
+ *
+ *   When `encode` is given, converts short-codes and emoticons to their unicode
+ *   equivalent (`:heart:` and `<3` to `❤️`).
+ *
+ *   When `decode` is given, converts unicode emoji and emoticons to their short-code
+ *   equivalent (`❤️` and `<3` to `:heart:`).
+ */
+
 import {affixEmoticonModifier} from 'nlcst-affix-emoticon-modifier'
 import {emoticonModifier} from 'nlcst-emoticon-modifier'
 import {emojiModifier} from 'nlcst-emoji-modifier'
@@ -12,49 +25,81 @@ const type = 'EmoticonNode'
 
 const vs16 = 0xfe0f
 
-// Map of visitors.
+/** @type {Record<string, gemoji[number]>} */
+const emoji2info = {}
+/** @type {Record<string, string>} */
+const emoticon2emoji = {}
+/** @type {Record<string, string>} */
+const gemoji2emoji = {}
+
+/**
+ * Map of visitors.
+ *
+ * @type {Record<string, (value: string) => string>}
+ */
 const fns = {
-  // Change to an emoji.
+  /**
+   * Change to an emoji.
+   *
+   * @param {string} emoji
+   * @returns {string}
+   */
   encode: (emoji) => {
     return emoji
   },
-  // Change to a GitHub emoji short-code.
+  /**
+   * Change to a GitHub emoji short-code.
+   *
+   * @param {string} emoji
+   * @returns {string}
+   */
   decode: (emoji) => {
     return ':' + emoji2info[emoji].names[0] + ':'
   }
 }
 
-const emoji2info = {}
-const emoticon2emoji = {}
-const gemoji2emoji = {}
-
 init()
 
+/**
+ * Plugin to support emoji, gemoji, and emoticons.
+ *
+ * @type {import('unified').Plugin<[Options?]>}
+ */
 export default function retextEmoji(options = {}) {
   const Parser = this.Parser
-  const proto = Parser.prototype
+  // Hush.
+  /* c8 ignore next */
+  if (!Parser) throw new Error('Expected parser')
   const convert = options.convert
+  /** @type {fns[keyof fns]|undefined} */
   let fn
-
+  // Hush.
+  // type-coverage:ignore-next-line
+  const proto = Parser.prototype
+  // Hush.
+  // type-coverage:ignore-next-line
   proto.useFirst('tokenizeSentence', emoticonModifier)
+  // Hush.
+  // type-coverage:ignore-next-line
   proto.useFirst('tokenizeSentence', emojiModifier)
+  // Hush.
+  // type-coverage:ignore-next-line
   proto.useFirst('tokenizeParagraph', affixEmoticonModifier)
 
   if (convert !== null && convert !== undefined) {
-    fn = fns[convert]
-
-    if (!fn) {
+    if (!Object.keys(fns).includes(convert)) {
       throw new TypeError(
-        'Illegal invocation: `' +
+        'Invalid `convert` value `' +
           convert +
-          '` is not a valid value for ' +
-          '`options.convert` in `retext#use(emoji, options)`'
+          "`, expected `'encode'` or `'decode'`"
       )
     }
+
+    fn = fns[convert]
   }
 
   return (node) => {
-    visit(node, type, (node) => {
+    visit(node, type, (/** @type {import('unist').Literal<string>} */ node) => {
       const emoji = parse(toString(node))
 
       if (!emoji) return
@@ -73,7 +118,11 @@ export default function retextEmoji(options = {}) {
   }
 }
 
-// Map a value to an emoji.
+/**
+ * Map a value to an emoji.
+ *
+ * @param {string} value
+ */
 function parse(value) {
   if (own.call(emoji2info, value)) return value
   if (own.call(emoticon2emoji, value)) return emoticon2emoji[value]

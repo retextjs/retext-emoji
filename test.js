@@ -10,9 +10,10 @@ test('retext-emoji', (t) => {
 
   t.throws(
     () => {
+      // @ts-expect-error: runtime.
       retext().use(retextEmoji, {convert: false}).freeze()
     },
-    /Illegal invocation: `false` is not a valid value/,
+    /Invalid `convert` value `false`, expected `'encode'` or `'decode'`/,
     'should throw when given invalid `convert`'
   )
 
@@ -226,7 +227,11 @@ test('retext-emoji', (t) => {
     })
 
   retext()
-    .use(data)
+    .use(() => (node) => {
+      visit(node, (child) => {
+        child.data = {}
+      })
+    })
     .use(retextEmoji)
     .process(fixture, (error, file) => {
       t.deepEqual(
@@ -246,25 +251,27 @@ test('retext-emoji', (t) => {
       )
     })
 
-  function data() {
-    return transformer
-    function transformer(node) {
-      visit(node, visitor)
-    }
-
-    function visitor(child) {
-      child.data = {}
-    }
-  }
-
   t.end()
 })
 
+/**
+ * @param {number} sl
+ * @param {number} sc
+ * @param {number} so
+ * @param {number} el
+ * @param {number} ec
+ * @param {number} eo
+ */
 // eslint-disable-next-line max-params, unicorn/prevent-abbreviations
 function p(sl, sc, so, el, ec, eo) {
   return {start: point(sl, sc, so), end: point(el, ec, eo)}
 }
 
+/**
+ * @param {number} l
+ * @param {number} c
+ * @param {number} o
+ */
 function point(l, c, o) {
   return {line: l, column: c, offset: o}
 }
