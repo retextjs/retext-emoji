@@ -23,7 +23,7 @@ const own = {}.hasOwnProperty
 
 const type = 'EmoticonNode'
 
-const vs16 = 0xfe0f
+const vs16 = 0xfe_0f
 
 /** @type {Record<string, gemoji[number]>} */
 const emoji2info = {}
@@ -44,18 +44,14 @@ const fns = {
    * @param {string} emoji
    * @returns {string}
    */
-  encode: (emoji) => {
-    return emoji
-  },
+  encode: (emoji) => emoji,
   /**
    * Change to a GitHub emoji short-code.
    *
    * @param {string} emoji
    * @returns {string}
    */
-  decode: (emoji) => {
-    return ':' + emoji2info[emoji].names[0] + ':'
-  }
+  decode: (emoji) => ':' + emoji2info[emoji].names[0] + ':'
 }
 
 init()
