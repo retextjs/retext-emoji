@@ -1,4 +1,8 @@
 /**
+ * @typedef {import('nlcst').Root} Root
+ *
+ * @typedef {import('nlcst-emoticon-modifier')} DoNotTouchAsThisImportIncludesEmoticonsInTree
+ *
  * @typedef Options
  *   Configuration.
  * @property {'encode'|'decode'} [convert]
@@ -20,8 +24,6 @@ import {emoticon} from 'emoticon'
 import {gemoji} from 'gemoji'
 
 const own = {}.hasOwnProperty
-
-const type = 'EmoticonNode'
 
 const vs16 = 0xfe_0f
 
@@ -59,7 +61,7 @@ init()
 /**
  * Plugin to support emoji, gemoji, and emoticons.
  *
- * @type {import('unified').Plugin<[Options?]>}
+ * @type {import('unified').Plugin<[Options?], Root>}
  */
 export default function retextEmoji(options = {}) {
   const Parser = this.Parser
@@ -95,7 +97,7 @@ export default function retextEmoji(options = {}) {
   }
 
   return (node) => {
-    visit(node, type, (/** @type {import('unist').Literal<string>} */ node) => {
+    visit(node, 'EmoticonNode', (node) => {
       const emoji = parse(toString(node))
 
       if (!emoji) return
