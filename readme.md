@@ -8,17 +8,57 @@
 [![Backers][backers-badge]][collective]
 [![Chat][chat-badge]][chat]
 
-[**retext**][retext] plugin to support emoji, gemoji, and emoticons.
+**[retext][]** plugin to support emoji (`❤️`), gemoji (`:heart:`), and
+emoticons (`<3`).
+
+## Contents
+
+*   [What is this?](#what-is-this)
+*   [When should I use this?](#when-should-i-use-this)
+*   [Install](#install)
+*   [Use](#use)
+*   [API](#api)
+    *   [`unified().use(retextEmoji[, options])`](#unifieduseretextemoji-options)
+*   [Data](#data)
+*   [Syntax tree](#syntax-tree)
+*   [Types](#types)
+*   [Compatibility](#compatibility)
+*   [Contribute](#contribute)
+*   [License](#license)
+
+## What is this?
+
+This package is a [unified][] ([retext][]) plugin to classify emoji (`❤️`),
+gemoji (`:heart:`), and emoticons (`<3`) as a specific node, and to optionally
+transform them from one type to another.
+
+## When should I use this?
+
+You can either use this plugin any time there are emoji, gemoji, or emoticons
+in prose that are (incorrectly) warned about by linting plugins, or you can
+use it to transform them.
 
 ## Install
 
-This package is [ESM only](https://gist.github.com/sindresorhus/a39789f98801d908bbc7ff3ecc99d99c):
-Node 12+ is needed to use it and it must be `import`ed instead of `require`d.
-
-[npm][]:
+This package is [ESM only][esm].
+In Node.js (version 12.20+, 14.14+, 16.0+, or 18.0+), install with [npm][]:
 
 ```sh
 npm install retext-emoji
+```
+
+In Deno with [`esm.sh`][esmsh]:
+
+```js
+import retextEmoji from 'https://esm.sh/retext-emoji@8'
+```
+
+In browsers with [`esm.sh`][esmsh]:
+
+```html
+<script type="module">
+  import retextEmoji from 'https://esm.sh/retext-emoji@8?bundle'
+</script>
 ```
 
 ## Use
@@ -27,9 +67,9 @@ npm install retext-emoji
 import retext from 'retext'
 import emoji from 'retext-emoji'
 
-const file = retext()
+const file = await retext()
   .use(emoji, {convert: 'encode'})
-  .processSync('I’m going to bed. :zzz:')
+  .process('I’m going to bed. :zzz:')
 
 console.log(String(file))
 ```
@@ -47,44 +87,67 @@ The default export is `retextEmoji`.
 
 ### `unified().use(retextEmoji[, options])`
 
-Support emoji, gemoji, and emoticons.
+Support emoji (`❤️`), gemoji (`:heart:`), and emoticons (`<3`).
+
+##### `options`
+
+Configuration (optional).
 
 ###### `options.convert`
 
 If, and *how* to convert (`'encode'` or `'decode'`, optional).
 
-When `encode` is given, converts short-codes and emoticons to their unicode
+When `encode` is given, converts gemoji and emoticons to their unicode
 equivalent (`:heart:` and `<3` to `❤️`).
 
-When `decode` is given, converts unicode emoji and emoticons to their short-code
+When `decode` is given, converts unicode emoji and emoticons to their gemoji
 equivalent (`❤️` and `<3` to `:heart:`).
 
-### `EmoticonNode`
-
-`retext-emoji` adds a new node to [**nlcst**][nlcst]:
-**Emoticon** ([**Literal**][literal]).
-
-Whether emoji (`❤️`), emoticon (`<3`), or gemoji (`:heart:`), all are classified
-as `EmoticonNode`s.
-
-```idl
-interface Emoticon < Symbol {
-  type: "EmoticonNode"
-  data: EmoticonData
-}
-
-interface EmoticonData {
-  emoji: string
-  names: [string]
-  description: string?
-  tags: [string]
-}
-```
-
-## Support
+## Data
 
 `retext-emoji` supports every [`gemoji`][gemoji] and every
 [`emoticon`][emoticon].
+
+## Syntax tree
+
+This plugin applies several nlcst utilities to build the AST.
+See their readmes for the node types supported in the tree:
+
+*   [`nlcst-emoticon-modifier`](https://github.com/syntax-tree/nlcst-emoticon-modifier#ast)
+    — emoticons
+*   [`nlcst-emoji-modifier`](https://github.com/syntax-tree/nlcst-emoji-modifier)
+    — emoji and gemoji
+
+## Types
+
+This package is fully typed with [TypeScript][].
+It exports the additional type `Options`.
+
+It also registers the node types with `@types/nlcst`.
+If you’re working with the syntax tree, make sure to import this plugin
+somewhere in your types, as that registers the new node types in the tree.
+
+```js
+/**
+ * @typedef {import('retext-emoji')}
+ */
+
+import {visit} from 'unist-util-visit'
+
+/** @type {import('nlcst').Root} */
+const tree = getNlcstNodeSomeHow()
+
+visit(tree, (node) => {
+  // `node` can now be `Emoticon`.
+})
+```
+
+## Compatibility
+
+Projects maintained by the unified collective are compatible with all maintained
+versions of Node.js.
+As of now, that is Node.js 12.20+, 14.14+, 16.0+, and 18.0+.
+Our projects sometimes work with older versions, but this is not guaranteed.
 
 ## Contribute
 
@@ -92,7 +155,7 @@ See [`contributing.md`][contributing] in [`retextjs/.github`][health] for ways
 to get started.
 See [`support.md`][support] for ways to get help.
 
-This project has a [Code of Conduct][coc].
+This project has a [code of conduct][coc].
 By interacting with this repository, organisation, or community you agree to
 abide by its terms.
 
@@ -130,23 +193,27 @@ abide by its terms.
 
 [npm]: https://docs.npmjs.com/cli/install
 
+[esm]: https://gist.github.com/sindresorhus/a39789f98801d908bbc7ff3ecc99d99c
+
+[esmsh]: https://esm.sh
+
+[typescript]: https://www.typescriptlang.org
+
 [health]: https://github.com/retextjs/.github
 
-[contributing]: https://github.com/retextjs/.github/blob/HEAD/contributing.md
+[contributing]: https://github.com/retextjs/.github/blob/main/contributing.md
 
-[support]: https://github.com/retextjs/.github/blob/HEAD/support.md
+[support]: https://github.com/retextjs/.github/blob/main/support.md
 
-[coc]: https://github.com/retextjs/.github/blob/HEAD/code-of-conduct.md
+[coc]: https://github.com/retextjs/.github/blob/main/code-of-conduct.md
 
 [license]: license
 
 [author]: https://wooorm.com
 
+[unified]: https://github.com/unifiedjs/unified
+
 [retext]: https://github.com/retextjs/retext
-
-[nlcst]: https://github.com/syntax-tree/nlcst
-
-[literal]: https://github.com/syntax-tree/nlcst#literal
 
 [gemoji]: https://github.com/wooorm/gemoji/blob/main/support.md
 

@@ -4,7 +4,7 @@
  * @typedef {import('nlcst-emoticon-modifier')} DoNotTouchAsThisImportIncludesEmoticonsInTree
  *
  * @typedef Options
- *   Configuration.
+ *   Configuration (optional).
  * @property {'encode'|'decode'} [convert]
  *   If, and *how* to convert (`'encode'` or `'decode'`, optional).
  *
