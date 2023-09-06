@@ -51,14 +51,14 @@ npm install retext-emoji
 In Deno with [`esm.sh`][esmsh]:
 
 ```js
-import retextEmoji from 'https://esm.sh/retext-emoji@8'
+import retextEmoji from 'https://esm.sh/retext-emoji@9'
 ```
 
 In browsers with [`esm.sh`][esmsh]:
 
 ```html
 <script type="module">
-  import retextEmoji from 'https://esm.sh/retext-emoji@8?bundle'
+  import retextEmoji from 'https://esm.sh/retext-emoji@9?bundle'
 </script>
 ```
 
