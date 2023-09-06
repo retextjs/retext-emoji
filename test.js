@@ -1,3 +1,7 @@
+/**
+ * @typedef {import('nlcst-emoticon-modifier').Emoticon} Emoticon
+ */
+
 import assert from 'node:assert/strict'
 import test from 'node:test'
 import {retext} from 'retext'
@@ -9,9 +13,9 @@ test('retext-emoji', async function (t) {
 
   await t.test('should throw when given invalid `convert`', async function () {
     assert.throws(function () {
-      // @ts-expect-error: runtime.
+      // @ts-expect-error: check how the runtime handles invalid `convert`.
       retext().use(retextEmoji, {convert: false}).freeze()
-    }, /Invalid `convert` value `false`, expected `'encode'` or `'decode'`/)
+    }, /Invalid `convert` value `false`, expected `'decode'` or `'encode'`/)
   })
 
   await t.test('should classify emoticons', async function () {
@@ -236,6 +240,8 @@ test('retext-emoji', async function (t) {
   })
 
   await t.test('should not overwrite existing data', async function () {
+    /** @type {Emoticon} */
+    // @ts-expect-error: unregistered data.
     const emoji = u('EmoticonNode', {data: {alpha: true, bravo: 2}}, ':+1:')
 
     await retext()

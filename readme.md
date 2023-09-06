@@ -137,7 +137,7 @@ import {visit} from 'unist-util-visit'
 /** @type {import('nlcst').Root} */
 const tree = getNlcstNodeSomeHow()
 
-visit(tree, (node) => {
+visit(tree, function (node) {
   // `node` can now be `Emoticon`.
 })
 ```
