@@ -5,11 +5,17 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
 import {retext} from 'retext'
+import retextEmoji from 'retext-emoji'
 import {u} from 'unist-builder'
-import retextEmoji from './index.js'
+
+const processor = retext().use(retextEmoji)
 
 test('retext-emoji', async function (t) {
-  const processor = retext().use(retextEmoji)
+  await t.test('should expose the public api', async function () {
+    assert.deepEqual(Object.keys(await import('retext-emoji')).sort(), [
+      'default'
+    ])
+  })
 
   await t.test('should throw when given invalid `convert`', async function () {
     assert.throws(function () {
