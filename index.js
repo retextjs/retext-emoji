@@ -63,26 +63,24 @@ init()
  *
  * @type {import('unified').Plugin<[Options?], Root>}
  */
-export default function retextEmoji(options = {}) {
-  const Parser = this.Parser
-  // Hush.
-  /* c8 ignore next */
-  if (!Parser) throw new Error('Expected parser')
-  const convert = options.convert
+export default function retextEmoji(options) {
+  const convert = (options || {}).convert
   /** @type {fns[keyof fns]|undefined} */
   let fn
-  // Hush.
-  // type-coverage:ignore-next-line
-  const proto = Parser.prototype
-  // Hush.
-  // type-coverage:ignore-next-line
-  proto.useFirst('tokenizeSentence', emoticonModifier)
-  // Hush.
-  // type-coverage:ignore-next-line
-  proto.useFirst('tokenizeSentence', emojiModifier)
-  // Hush.
-  // type-coverage:ignore-next-line
-  proto.useFirst('tokenizeParagraph', affixEmoticonModifier)
+
+  let sentence = this.data('nlcstSentenceExtensions')
+  let paragraph = this.data('nlcstParagraphExtensions')
+
+  if (!sentence) {
+    this.data('nlcstSentenceExtensions', (sentence = []))
+  }
+
+  if (!paragraph) {
+    this.data('nlcstParagraphExtensions', (paragraph = []))
+  }
+
+  sentence.push(emojiModifier, emoticonModifier)
+  paragraph.push(affixEmoticonModifier)
 
   if (convert !== null && convert !== undefined) {
     if (!Object.keys(fns).includes(convert)) {
@@ -108,9 +106,13 @@ export default function retextEmoji(options = {}) {
 
       const info = emoji2info[emoji]
       const data = node.data || (node.data = {})
+      // @ts-expect-error: to do: register extra data.
       data.emoji = info.emoji
+      // @ts-expect-error: to do: register extra data.
       data.description = info.description
+      // @ts-expect-error: to do: register extra data.
       data.names = info.names.concat()
+      // @ts-expect-error: to do: register extra data.
       data.tags = info.tags.concat()
     })
   }

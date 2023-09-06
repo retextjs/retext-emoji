@@ -205,7 +205,7 @@ test('retext-emoji', (t) => {
     .process(fixture, (error, file) => {
       t.deepEqual(
         [error, String(file)],
-        [null, fixture],
+        [undefined, fixture],
         'should not transform without `convert`'
       )
     })
@@ -215,7 +215,7 @@ test('retext-emoji', (t) => {
     .process(fixture, (error, file) => {
       t.deepEqual(
         [error, String(file)],
-        [null, 'It’s raining 🐱s and 🐶s. Now 👨.'],
+        [undefined, 'It’s raining 🐱s and 🐶s. Now 👨.'],
         'should encode'
       )
     })
@@ -225,7 +225,7 @@ test('retext-emoji', (t) => {
     .process(fixture, (error, file) => {
       t.deepEqual(
         [error, String(file)],
-        [null, 'It’s raining :cat:s and :dog:s. Now :man:.'],
+        [undefined, 'It’s raining :cat:s and :dog:s. Now :man:.'],
         'should decode'
       )
     })
@@ -246,7 +246,7 @@ test('retext-emoji', (t) => {
     .process(fixture, (error, file) => {
       t.deepEqual(
         [error, String(file)],
-        [null, fixture],
+        [undefined, fixture],
         'should not overwrite existing data'
       )
     })
@@ -256,7 +256,7 @@ test('retext-emoji', (t) => {
     .process('Zap! ⚡️', (error, file) => {
       t.deepEqual(
         [error, String(file)],
-        [null, 'Zap! :zap:'],
+        [undefined, 'Zap! :zap:'],
         'should support a superfluous variant selector 16'
       )
     })
