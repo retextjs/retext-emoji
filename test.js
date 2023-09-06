@@ -1,3 +1,7 @@
+/**
+ * @typedef {import('nlcst').Root} Root
+ */
+
 import test from 'tape'
 import {retext} from 'retext'
 import {visit} from 'unist-util-visit'
@@ -226,11 +230,17 @@ test('retext-emoji', (t) => {
       )
     })
 
+  // To do: see if this can be removed.
   retext()
-    .use(() => (node) => {
-      visit(node, (child) => {
-        child.data = {}
-      })
+    .use(function () {
+      /**
+       * @param {Root} node
+       */
+      return function (node) {
+        visit(node, (child) => {
+          child.data = {}
+        })
+      }
     })
     .use(retextEmoji)
     .process(fixture, (error, file) => {
