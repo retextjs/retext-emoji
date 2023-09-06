@@ -19,6 +19,7 @@ emoticons (`<3`).
 *   [Use](#use)
 *   [API](#api)
     *   [`unified().use(retextEmoji[, options])`](#unifieduseretextemoji-options)
+    *   [`Options`](#options)
 *   [Data](#data)
 *   [Syntax tree](#syntax-tree)
 *   [Types](#types)
@@ -41,7 +42,7 @@ use it to transform them.
 ## Install
 
 This package is [ESM only][esm].
-In Node.js (version 12.20+, 14.14+, 16.0+, or 18.0+), install with [npm][]:
+In Node.js (version 16+), install with [npm][]:
 
 ```sh
 npm install retext-emoji
@@ -83,71 +84,62 @@ I’m going to bed. 💤
 ## API
 
 This package exports no identifiers.
-The default export is `retextEmoji`.
+The default export is [`retextEmoji`][api-retext-emoji].
 
 ### `unified().use(retextEmoji[, options])`
 
-Support emoji (`❤️`), gemoji (`:heart:`), and emoticons (`<3`).
+Plugin to support emoji (`❤️`), gemoji (`:heart:`), and emoticons (`<3`).
 
-##### `options`
+###### Parameters
 
-Configuration (optional).
+*   `options` ([`Options`][api-options], optional)
+    — configuration
 
-###### `options.convert`
+###### Returns
 
-If, and *how* to convert (`'encode'` or `'decode'`, optional).
+Transform ([`Transformer`][unified-transformer]).
 
-When `encode` is given, converts gemoji and emoticons to their unicode
-equivalent (`:heart:` and `<3` to `❤️`).
+### `Options`
 
-When `decode` is given, converts unicode emoji and emoticons to their gemoji
-equivalent (`❤️` and `<3` to `:heart:`).
+Configuration (TypeScript type).
+
+###### Fields
+
+*   `convert` (`'encode'` or `'decode'`, optional)
+    — whether to decode (`❤️` and `<3` to `:heart:`), encode (`:heart:` and
+    `<3` to `❤️`), or do nothing
 
 ## Data
 
-`retext-emoji` supports every [`gemoji`][gemoji] and every
-[`emoticon`][emoticon].
+`retext-emoji` supports every [`emoticon`][emoticon] and [`gemoji`][gemoji].
 
 ## Syntax tree
 
 This plugin applies several nlcst utilities to build the AST.
 See their readmes for the node types supported in the tree:
 
-*   [`nlcst-emoticon-modifier`](https://github.com/syntax-tree/nlcst-emoticon-modifier#ast)
+*   [`nlcst-emoticon-modifier`][nlcst-emoticon-modifier]
     — emoticons
-*   [`nlcst-emoji-modifier`](https://github.com/syntax-tree/nlcst-emoji-modifier)
+*   [`nlcst-emoji-modifier`][nlcst-emoji-modifier]
     — emoji and gemoji
 
 ## Types
 
 This package is fully typed with [TypeScript][].
-It exports the additional type `Options`.
+It exports the additional type [`Options`][api-options].
 
-It also registers the node types with `@types/nlcst`.
-If you’re working with the syntax tree, make sure to import this plugin
-somewhere in your types, as that registers the new node types in the tree.
-
-```js
-/**
- * @typedef {import('retext-emoji')}
- */
-
-import {visit} from 'unist-util-visit'
-
-/** @type {import('nlcst').Root} */
-const tree = getNlcstNodeSomeHow()
-
-visit(tree, function (node) {
-  // `node` can now be `Emoticon`.
-})
-```
+The `Emoticon` node is exposed from
+[`nlcst-emoticon-modifier`][nlcst-emoticon-modifier].
 
 ## Compatibility
 
-Projects maintained by the unified collective are compatible with all maintained
+Projects maintained by the unified collective are compatible with maintained
 versions of Node.js.
-As of now, that is Node.js 12.20+, 14.14+, 16.0+, and 18.0+.
-Our projects sometimes work with older versions, but this is not guaranteed.
+
+When we cut a new major release, we drop support for unmaintained versions of
+Node.
+This means we try to keep the current release line, `retext-emoji@^8`,
+compatible with Node.js 12.
 
 ## Contribute
 
@@ -177,9 +169,9 @@ abide by its terms.
 
 [downloads]: https://www.npmjs.com/package/retext-emoji
 
-[size-badge]: https://img.shields.io/bundlephobia/minzip/retext-emoji.svg
+[size-badge]: https://img.shields.io/bundlejs/size/retext-emoji
 
-[size]: https://bundlephobia.com/result?p=retext-emoji
+[size]: https://bundlejs.com/?q=retext-emoji
 
 [sponsors-badge]: https://opencollective.com/unified/sponsors/badge.svg
 
@@ -211,10 +203,20 @@ abide by its terms.
 
 [author]: https://wooorm.com
 
-[unified]: https://github.com/unifiedjs/unified
-
-[retext]: https://github.com/retextjs/retext
+[emoticon]: https://github.com/wooorm/emoticon/blob/main/support.md
 
 [gemoji]: https://github.com/wooorm/gemoji/blob/main/support.md
 
-[emoticon]: https://github.com/wooorm/emoticon/blob/main/support.md
+[nlcst-emoticon-modifier]: https://github.com/syntax-tree/nlcst-emoticon-modifier
+
+[nlcst-emoji-modifier]: https://github.com/syntax-tree/nlcst-emoji-modifier
+
+[retext]: https://github.com/retextjs/retext
+
+[unified]: https://github.com/unifiedjs/unified
+
+[unified-transformer]: https://github.com/unifiedjs/unified#transformer
+
+[api-retext-emoji]: #unifieduseretextemoji-options
+
+[api-options]: #options
