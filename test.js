@@ -1,169 +1,197 @@
-/**
- * @typedef {import('nlcst').Root} Root
- */
-
-import test from 'tape'
+import assert from 'node:assert/strict'
+import test from 'node:test'
 import {retext} from 'retext'
-import {visit} from 'unist-util-visit'
 import {u} from 'unist-builder'
 import retextEmoji from './index.js'
 
-test('retext-emoji', (t) => {
+test('retext-emoji', async function (t) {
   const processor = retext().use(retextEmoji)
-  const fixture = 'It’s raining 🐱s and :dog:s. Now :3.'
 
-  t.throws(
-    () => {
+  await t.test('should throw when given invalid `convert`', async function () {
+    assert.throws(function () {
       // @ts-expect-error: runtime.
       retext().use(retextEmoji, {convert: false}).freeze()
-    },
-    /Invalid `convert` value `false`, expected `'encode'` or `'decode'`/,
-    'should throw when given invalid `convert`'
-  )
+    }, /Invalid `convert` value `false`, expected `'encode'` or `'decode'`/)
+  })
 
-  t.deepEqual(
-    processor.runSync(processor.parse('This makes me feel :).')),
-    u('RootNode', {position: p(1, 1, 0, 1, 23, 22)}, [
-      u('ParagraphNode', {position: p(1, 1, 0, 1, 23, 22)}, [
-        u('SentenceNode', {position: p(1, 1, 0, 1, 23, 22)}, [
-          u('WordNode', {position: p(1, 1, 0, 1, 5, 4)}, [
-            u('TextNode', {position: p(1, 1, 0, 1, 5, 4)}, 'This')
-          ]),
-          u('WhiteSpaceNode', {position: p(1, 5, 4, 1, 6, 5)}, ' '),
-          u('WordNode', {position: p(1, 6, 5, 1, 11, 10)}, [
-            u('TextNode', {position: p(1, 6, 5, 1, 11, 10)}, 'makes')
-          ]),
-          u('WhiteSpaceNode', {position: p(1, 11, 10, 1, 12, 11)}, ' '),
-          u('WordNode', {position: p(1, 12, 11, 1, 14, 13)}, [
-            u('TextNode', {position: p(1, 12, 11, 1, 14, 13)}, 'me')
-          ]),
-          u('WhiteSpaceNode', {position: p(1, 14, 13, 1, 15, 14)}, ' '),
-          u('WordNode', {position: p(1, 15, 14, 1, 19, 18)}, [
-            u('TextNode', {position: p(1, 15, 14, 1, 19, 18)}, 'feel')
-          ]),
-          u('WhiteSpaceNode', {position: p(1, 19, 18, 1, 20, 19)}, ' '),
-          u(
-            'EmoticonNode',
-            {
-              position: p(1, 20, 19, 1, 22, 21),
-              data: {
-                emoji: '😃',
-                description: 'grinning face with big eyes',
-                names: ['smiley'],
-                tags: ['happy', 'joy', 'haha']
-              }
-            },
-            ':)'
-          ),
-          u('PunctuationNode', {position: p(1, 22, 21, 1, 23, 22)}, '.')
+  await t.test('should classify emoticons', async function () {
+    const tree = processor.parse('This makes me feel :).')
+
+    await processor.run(tree)
+
+    assert.deepEqual(
+      tree,
+      u('RootNode', {position: p(1, 1, 0, 1, 23, 22)}, [
+        u('ParagraphNode', {position: p(1, 1, 0, 1, 23, 22)}, [
+          u('SentenceNode', {position: p(1, 1, 0, 1, 23, 22)}, [
+            u('WordNode', {position: p(1, 1, 0, 1, 5, 4)}, [
+              u('TextNode', {position: p(1, 1, 0, 1, 5, 4)}, 'This')
+            ]),
+            u('WhiteSpaceNode', {position: p(1, 5, 4, 1, 6, 5)}, ' '),
+            u('WordNode', {position: p(1, 6, 5, 1, 11, 10)}, [
+              u('TextNode', {position: p(1, 6, 5, 1, 11, 10)}, 'makes')
+            ]),
+            u('WhiteSpaceNode', {position: p(1, 11, 10, 1, 12, 11)}, ' '),
+            u('WordNode', {position: p(1, 12, 11, 1, 14, 13)}, [
+              u('TextNode', {position: p(1, 12, 11, 1, 14, 13)}, 'me')
+            ]),
+            u('WhiteSpaceNode', {position: p(1, 14, 13, 1, 15, 14)}, ' '),
+            u('WordNode', {position: p(1, 15, 14, 1, 19, 18)}, [
+              u('TextNode', {position: p(1, 15, 14, 1, 19, 18)}, 'feel')
+            ]),
+            u('WhiteSpaceNode', {position: p(1, 19, 18, 1, 20, 19)}, ' '),
+            u(
+              'EmoticonNode',
+              {
+                position: p(1, 20, 19, 1, 22, 21),
+                data: {
+                  emoji: '😃',
+                  description: 'grinning face with big eyes',
+                  names: ['smiley'],
+                  tags: ['happy', 'joy', 'haha']
+                }
+              },
+              ':)'
+            ),
+            u('PunctuationNode', {position: p(1, 22, 21, 1, 23, 22)}, '.')
+          ])
         ])
       ])
-    ]),
-    'should classify emoticons'
-  )
+    )
+  })
 
-  t.deepEqual(
-    processor.runSync(processor.parse('This makes me feel :sob:.')),
-    u('RootNode', {position: p(1, 1, 0, 1, 26, 25)}, [
-      u('ParagraphNode', {position: p(1, 1, 0, 1, 26, 25)}, [
-        u('SentenceNode', {position: p(1, 1, 0, 1, 26, 25)}, [
-          u('WordNode', {position: p(1, 1, 0, 1, 5, 4)}, [
-            u('TextNode', {position: p(1, 1, 0, 1, 5, 4)}, 'This')
-          ]),
-          u('WhiteSpaceNode', {position: p(1, 5, 4, 1, 6, 5)}, ' '),
-          u('WordNode', {position: p(1, 6, 5, 1, 11, 10)}, [
-            u('TextNode', {position: p(1, 6, 5, 1, 11, 10)}, 'makes')
-          ]),
-          u('WhiteSpaceNode', {position: p(1, 11, 10, 1, 12, 11)}, ' '),
-          u('WordNode', {position: p(1, 12, 11, 1, 14, 13)}, [
-            u('TextNode', {position: p(1, 12, 11, 1, 14, 13)}, 'me')
-          ]),
-          u('WhiteSpaceNode', {position: p(1, 14, 13, 1, 15, 14)}, ' '),
-          u('WordNode', {position: p(1, 15, 14, 1, 19, 18)}, [
-            u('TextNode', {position: p(1, 15, 14, 1, 19, 18)}, 'feel')
-          ]),
-          u('WhiteSpaceNode', {position: p(1, 19, 18, 1, 20, 19)}, ' '),
-          u(
-            'EmoticonNode',
-            {
-              position: p(1, 20, 19, 1, 25, 24),
-              data: {
-                emoji: '😭',
-                description: 'loudly crying face',
-                names: ['sob'],
-                tags: ['sad', 'cry', 'bawling']
-              }
-            },
-            ':sob:'
-          ),
-          u('PunctuationNode', {position: p(1, 25, 24, 1, 26, 25)}, '.')
-        ])
-      ])
-    ]),
-    'should classify gemoji'
-  )
+  await t.test('should classify gemoji', async function () {
+    const tree = processor.parse('This makes me feel :sob:.')
 
-  t.deepEqual(
-    processor.runSync(processor.parse('It’s raining 🐱s and 🐶s.')),
-    u('RootNode', {position: p(1, 1, 0, 1, 26, 25)}, [
-      u('ParagraphNode', {position: p(1, 1, 0, 1, 26, 25)}, [
-        u('SentenceNode', {position: p(1, 1, 0, 1, 26, 25)}, [
-          u('WordNode', {position: p(1, 1, 0, 1, 5, 4)}, [
-            u('TextNode', {position: p(1, 1, 0, 1, 3, 2)}, 'It'),
-            u('PunctuationNode', {position: p(1, 3, 2, 1, 4, 3)}, '’'),
-            u('TextNode', {position: p(1, 4, 3, 1, 5, 4)}, 's')
-          ]),
-          u('WhiteSpaceNode', {position: p(1, 5, 4, 1, 6, 5)}, ' '),
-          u('WordNode', {position: p(1, 6, 5, 1, 13, 12)}, [
-            u('TextNode', {position: p(1, 6, 5, 1, 13, 12)}, 'raining')
-          ]),
-          u('WhiteSpaceNode', {position: p(1, 13, 12, 1, 14, 13)}, ' '),
-          u(
-            'EmoticonNode',
-            {
-              position: p(1, 14, 13, 1, 16, 15),
-              data: {
-                emoji: '🐱',
-                description: 'cat face',
-                names: ['cat'],
-                tags: ['pet']
-              }
-            },
-            '🐱'
-          ),
-          u('WordNode', {position: p(1, 16, 15, 1, 17, 16)}, [
-            u('TextNode', {position: p(1, 16, 15, 1, 17, 16)}, 's')
-          ]),
-          u('WhiteSpaceNode', {position: p(1, 17, 16, 1, 18, 17)}, ' '),
-          u('WordNode', {position: p(1, 18, 17, 1, 21, 20)}, [
-            u('TextNode', {position: p(1, 18, 17, 1, 21, 20)}, 'and')
-          ]),
-          u('WhiteSpaceNode', {position: p(1, 21, 20, 1, 22, 21)}, ' '),
-          u(
-            'EmoticonNode',
-            {
-              position: p(1, 22, 21, 1, 24, 23),
-              data: {
-                emoji: '🐶',
-                description: 'dog face',
-                names: ['dog'],
-                tags: ['pet']
-              }
-            },
-            '🐶'
-          ),
-          u('WordNode', {position: p(1, 24, 23, 1, 26, 25)}, [
-            u('TextNode', {position: p(1, 24, 23, 1, 25, 24)}, 's'),
+    await processor.run(tree)
+
+    assert.deepEqual(
+      tree,
+      u('RootNode', {position: p(1, 1, 0, 1, 26, 25)}, [
+        u('ParagraphNode', {position: p(1, 1, 0, 1, 26, 25)}, [
+          u('SentenceNode', {position: p(1, 1, 0, 1, 26, 25)}, [
+            u('WordNode', {position: p(1, 1, 0, 1, 5, 4)}, [
+              u('TextNode', {position: p(1, 1, 0, 1, 5, 4)}, 'This')
+            ]),
+            u('WhiteSpaceNode', {position: p(1, 5, 4, 1, 6, 5)}, ' '),
+            u('WordNode', {position: p(1, 6, 5, 1, 11, 10)}, [
+              u('TextNode', {position: p(1, 6, 5, 1, 11, 10)}, 'makes')
+            ]),
+            u('WhiteSpaceNode', {position: p(1, 11, 10, 1, 12, 11)}, ' '),
+            u('WordNode', {position: p(1, 12, 11, 1, 14, 13)}, [
+              u('TextNode', {position: p(1, 12, 11, 1, 14, 13)}, 'me')
+            ]),
+            u('WhiteSpaceNode', {position: p(1, 14, 13, 1, 15, 14)}, ' '),
+            u('WordNode', {position: p(1, 15, 14, 1, 19, 18)}, [
+              u('TextNode', {position: p(1, 15, 14, 1, 19, 18)}, 'feel')
+            ]),
+            u('WhiteSpaceNode', {position: p(1, 19, 18, 1, 20, 19)}, ' '),
+            u(
+              'EmoticonNode',
+              {
+                position: p(1, 20, 19, 1, 25, 24),
+                data: {
+                  emoji: '😭',
+                  description: 'loudly crying face',
+                  names: ['sob'],
+                  tags: ['sad', 'cry', 'bawling']
+                }
+              },
+              ':sob:'
+            ),
             u('PunctuationNode', {position: p(1, 25, 24, 1, 26, 25)}, '.')
           ])
         ])
       ])
-    ]),
-    'should classify emoji'
-  )
+    )
+  })
 
-  t.deepEqual(
-    processor.runSync(
+  await t.test('should classify emoji', async function () {
+    const tree = processor.parse('It’s raining 🐱s and 🐶s.')
+
+    await processor.run(tree)
+
+    assert.deepEqual(
+      tree,
+      u('RootNode', {position: p(1, 1, 0, 1, 26, 25)}, [
+        u('ParagraphNode', {position: p(1, 1, 0, 1, 26, 25)}, [
+          u('SentenceNode', {position: p(1, 1, 0, 1, 26, 25)}, [
+            u('WordNode', {position: p(1, 1, 0, 1, 5, 4)}, [
+              u('TextNode', {position: p(1, 1, 0, 1, 3, 2)}, 'It'),
+              u('PunctuationNode', {position: p(1, 3, 2, 1, 4, 3)}, '’'),
+              u('TextNode', {position: p(1, 4, 3, 1, 5, 4)}, 's')
+            ]),
+            u('WhiteSpaceNode', {position: p(1, 5, 4, 1, 6, 5)}, ' '),
+            u('WordNode', {position: p(1, 6, 5, 1, 13, 12)}, [
+              u('TextNode', {position: p(1, 6, 5, 1, 13, 12)}, 'raining')
+            ]),
+            u('WhiteSpaceNode', {position: p(1, 13, 12, 1, 14, 13)}, ' '),
+            u(
+              'EmoticonNode',
+              {
+                position: p(1, 14, 13, 1, 16, 15),
+                data: {
+                  emoji: '🐱',
+                  description: 'cat face',
+                  names: ['cat'],
+                  tags: ['pet']
+                }
+              },
+              '🐱'
+            ),
+            u('WordNode', {position: p(1, 16, 15, 1, 17, 16)}, [
+              u('TextNode', {position: p(1, 16, 15, 1, 17, 16)}, 's')
+            ]),
+            u('WhiteSpaceNode', {position: p(1, 17, 16, 1, 18, 17)}, ' '),
+            u('WordNode', {position: p(1, 18, 17, 1, 21, 20)}, [
+              u('TextNode', {position: p(1, 18, 17, 1, 21, 20)}, 'and')
+            ]),
+            u('WhiteSpaceNode', {position: p(1, 21, 20, 1, 22, 21)}, ' '),
+            u(
+              'EmoticonNode',
+              {
+                position: p(1, 22, 21, 1, 24, 23),
+                data: {
+                  emoji: '🐶',
+                  description: 'dog face',
+                  names: ['dog'],
+                  tags: ['pet']
+                }
+              },
+              '🐶'
+            ),
+            u('WordNode', {position: p(1, 24, 23, 1, 26, 25)}, [
+              u('TextNode', {position: p(1, 24, 23, 1, 25, 24)}, 's'),
+              u('PunctuationNode', {position: p(1, 25, 24, 1, 26, 25)}, '.')
+            ])
+          ])
+        ])
+      ])
+    )
+  })
+
+  await t.test('should ignore unknown emoji', async function () {
+    const tree = u('RootNode', [
+      u('ParagraphNode', [
+        u('SentenceNode', [
+          u('WordNode', [u('TextNode', 'This')]),
+          u('WhiteSpaceNode', ' '),
+          u('WordNode', [u('TextNode', 'makes')]),
+          u('WhiteSpaceNode', ' '),
+          u('WordNode', [u('TextNode', 'me')]),
+          u('WhiteSpaceNode', ' '),
+          u('WordNode', [u('TextNode', 'feel')]),
+          u('WhiteSpaceNode', ' '),
+          u('EmoticonNode', '*weird*'),
+          u('PunctuationNode', '.')
+        ])
+      ])
+    ])
+
+    await processor.run(tree)
+
+    assert.deepEqual(
+      tree,
       u('RootNode', [
         u('ParagraphNode', [
           u('SentenceNode', [
@@ -180,88 +208,66 @@ test('retext-emoji', (t) => {
           ])
         ])
       ])
-    ),
-    u('RootNode', [
-      u('ParagraphNode', [
-        u('SentenceNode', [
-          u('WordNode', [u('TextNode', 'This')]),
-          u('WhiteSpaceNode', ' '),
-          u('WordNode', [u('TextNode', 'makes')]),
-          u('WhiteSpaceNode', ' '),
-          u('WordNode', [u('TextNode', 'me')]),
-          u('WhiteSpaceNode', ' '),
-          u('WordNode', [u('TextNode', 'feel')]),
-          u('WhiteSpaceNode', ' '),
-          u('EmoticonNode', '*weird*'),
-          u('PunctuationNode', '.')
-        ])
-      ])
-    ]),
-    'should ignore unknown emoji'
-  )
+    )
+  })
 
-  retext()
-    .use(retextEmoji)
-    .process(fixture, (error, file) => {
-      t.deepEqual(
-        [error, String(file)],
-        [undefined, fixture],
-        'should not transform without `convert`'
+  await t.test('should not transform without `convert`', async function () {
+    const file = await retext()
+      .use(retextEmoji)
+      .process('It’s raining 🐱s and :dog:s. Now :3.')
+
+    assert.deepEqual(String(file), 'It’s raining 🐱s and :dog:s. Now :3.')
+  })
+
+  await t.test('should encode', async function () {
+    const file = await retext()
+      .use(retextEmoji, {convert: 'encode'})
+      .process('It’s raining 🐱s and :dog:s. Now :3.')
+
+    assert.deepEqual(String(file), 'It’s raining 🐱s and 🐶s. Now 👨.')
+  })
+
+  await t.test('should decode', async function () {
+    const file = await retext()
+      .use(retextEmoji, {convert: 'decode'})
+      .process('It’s raining 🐱s and :dog:s. Now :3.')
+
+    assert.deepEqual(String(file), 'It’s raining :cat:s and :dog:s. Now :man:.')
+  })
+
+  await t.test('should not overwrite existing data', async function () {
+    const emoji = u('EmoticonNode', {data: {alpha: true, bravo: 2}}, ':+1:')
+
+    await retext()
+      .use(retextEmoji)
+      .run(
+        u('RootNode', [u('SentenceNode', [emoji, u('PunctuationNode', '.')])])
       )
-    })
 
-  retext()
-    .use(retextEmoji, {convert: 'encode'})
-    .process(fixture, (error, file) => {
-      t.deepEqual(
-        [error, String(file)],
-        [undefined, 'It’s raining 🐱s and 🐶s. Now 👨.'],
-        'should encode'
-      )
-    })
-
-  retext()
-    .use(retextEmoji, {convert: 'decode'})
-    .process(fixture, (error, file) => {
-      t.deepEqual(
-        [error, String(file)],
-        [undefined, 'It’s raining :cat:s and :dog:s. Now :man:.'],
-        'should decode'
-      )
-    })
-
-  // To do: see if this can be removed.
-  retext()
-    .use(function () {
-      /**
-       * @param {Root} node
-       */
-      return function (node) {
-        visit(node, (child) => {
-          child.data = {}
-        })
+    assert.deepEqual(emoji, {
+      type: 'EmoticonNode',
+      value: ':+1:',
+      data: {
+        alpha: true,
+        bravo: 2,
+        description: 'thumbs up',
+        emoji: '👍',
+        names: ['+1', 'thumbsup'],
+        tags: ['approve', 'ok']
       }
     })
-    .use(retextEmoji)
-    .process(fixture, (error, file) => {
-      t.deepEqual(
-        [error, String(file)],
-        [undefined, fixture],
-        'should not overwrite existing data'
-      )
-    })
+  })
 
-  retext()
-    .use(retextEmoji, {convert: 'decode'})
-    .process('Zap! ⚡️', (error, file) => {
-      t.deepEqual(
-        [error, String(file)],
-        [undefined, 'Zap! :zap:'],
-        'should support a superfluous variant selector 16'
-      )
-    })
+  await t.test(
+    'should support a superfluous variant selector 16',
+    async function () {
+      const file = await retext()
+        .use(retextEmoji, {convert: 'decode'})
+        .process('Zap! ⚡️')
 
-  t.end()
+      assert.deepEqual(String(file), 'Zap! :zap:')
+    }
+  )
 })
 
 /**
